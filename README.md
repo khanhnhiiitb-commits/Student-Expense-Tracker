@@ -17,6 +17,3 @@ Nghiên cứu, thiết kế và xây dựng phiên bản MVP của ứng dụng 
 * **Hồng Nhã** - Business Analyst
 * **Thu Liễu** - UI/UX Designer
 * **Khánh Nhi** - Developer
-
-## Công nghệ dự kiến sử dụng
-Hệ thống dự kiến được phát triển dưới dạng ứng dụng desktop bằng C# WinForms hoặc ứng dụng di động với Java Android, kết hợp với hệ quản trị cơ sở dữ liệu phù hợp để lưu trữ thông tin giao dịch của người dùng.
