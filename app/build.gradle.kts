@@ -45,4 +45,10 @@ dependencies {
     annotationProcessor(libs.room.compiler)
     implementation("org.mindrot:jbcrypt:0.4")
     testImplementation("junit:junit:4.13.2")
+    implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
+}
+configurations.all {
+    resolutionStrategy {
+        exclude(group = "org.hamcrest", module = "hamcrest-core")
+    }
 }

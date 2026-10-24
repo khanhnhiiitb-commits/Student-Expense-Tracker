@@ -115,7 +115,12 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(RegisterActivity.this, "Đăng ký tài khoản thành công!", Toast.LENGTH_SHORT).show();
-                        finish(); // Đóng màn hình đăng ký, quay về màn hình đăng nhập
+                        android.content.Intent intent = new android.content.Intent(RegisterActivity.this, vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.main.MainActivity.class);
+
+                        intent.putExtra("USER_NAME", fullName);
+
+                        startActivity(intent);
+                        finish();
                     }
                 });
             }
