@@ -38,8 +38,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.room.common)
     implementation(libs.room.runtime)
+    implementation(libs.testng)
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
     annotationProcessor(libs.room.compiler)
+    implementation("org.mindrot:jbcrypt:0.4")
+    testImplementation("junit:junit:4.13.2")
 }

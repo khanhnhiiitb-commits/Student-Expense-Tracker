@@ -10,6 +10,7 @@ constraintlayout = "2.2.2"
 roomCommon = "2.8.5"
 roomRuntime = "2.8.5"
 roomCompiler = "2.8.5"
+testng = "6.9.6"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -22,6 +23,7 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

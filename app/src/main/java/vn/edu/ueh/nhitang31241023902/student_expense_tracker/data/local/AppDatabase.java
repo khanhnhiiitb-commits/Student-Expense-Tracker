@@ -6,6 +6,9 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
+
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.dao.CategoryDao;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.dao.TransactionDao;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.dao.UserDao;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.CategoryEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.TransactionEntity;
@@ -16,6 +19,7 @@ import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.U
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract UserDao userDao();
+    public abstract CategoryDao categoryDao();
     public abstract TransactionDao transactionDao();
 
     private static volatile AppDatabase INSTANCE;
