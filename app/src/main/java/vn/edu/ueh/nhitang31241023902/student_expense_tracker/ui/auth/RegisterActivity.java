@@ -1,10 +1,10 @@
 package vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.auth;
 
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView; // Đã thêm import cho TextView
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,10 +34,21 @@ public class RegisterActivity extends AppCompatActivity {
         edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
         btnRegister = findViewById(R.id.btnRegister);
 
+        // 1. Ánh xạ nút "Đã có tài khoản? Đăng nhập"
+        TextView tvLoginNow = findViewById(R.id.tvLoginNow);
+
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 validateAndRegister();
+            }
+        });
+
+        // 2. Gắn sự kiện click để quay lại màn hình Login
+        tvLoginNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // Đóng RegisterActivity, tự động quay về LoginActivity ở dưới
             }
         });
     }
