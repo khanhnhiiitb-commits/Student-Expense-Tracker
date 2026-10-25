@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#F8FAFC">
 
-    <!-- 1. Header Bar -->
+    <!-- Header Bar -->
     <RelativeLayout
         android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
@@ -15,14 +15,13 @@
         android:paddingBottom="12dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Nút Back hình tròn -->
         <TextView
             android:id="@+id/btnBack"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/bg_chip_gray"
+            android:background="#E2E8F0"
             android:gravity="center"
             android:text="‹"
             android:textColor="#334155"
@@ -38,7 +37,6 @@
             android:textSize="17sp"
             android:textStyle="bold" />
 
-        <!-- Nút Lưu góc phải -->
         <TextView
             android:id="@+id/btnSaveTop"
             android:layout_width="wrap_content"
@@ -52,15 +50,14 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
-    <!-- 2. Nút Tạo danh mục cố định ở đáy màn hình -->
+    <!-- Nút Tạo danh mục ở đáy màn hình -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnCreateCategoryBottom"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/bg_btn_pill_blue"
-        android:elevation="4dp"
+        android:background="#2563EB"
         android:stateListAnimator="@null"
         android:text="+ Tạo danh mục"
         android:textAllCaps="false"
@@ -69,7 +66,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- 3. Khu vực cuộn nội dung -->
+    <!-- Khu vực cuộn nội dung -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -85,22 +82,22 @@
             android:orientation="vertical"
             android:paddingHorizontal="20dp">
 
-            <!-- Tab Chi tiêu / Thu nhập -->
+            <!-- Phân loại Type: Chi tiêu (9) / Thu nhập (6) theo đặc tả SP3-03.1 -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="46dp"
                 android:layout_marginTop="6dp"
-                android:background="@drawable/bg_chip_gray"
+                android:background="#E2E8F0"
                 android:orientation="horizontal"
                 android:padding="4dp">
 
-                <!-- Tab Chi tiêu (Đang chọn) -->
+                <!-- Chi tiêu -->
                 <LinearLayout
-                    android:id="@+id/tabExpense"
+                    android:id="@+id/tabTypeExpense"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_btn_pill_blue"
+                    android:background="#2563EB"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -116,18 +113,17 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_btn_pill_blue"
-                        android:backgroundTint="#3B82F6"
+                        android:background="#1D4ED8"
                         android:gravity="center"
-                        android:text="8"
+                        android:text="9"
                         android:textColor="#FFFFFF"
                         android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <!-- Tab Thu nhập -->
+                <!-- Thu nhập -->
                 <LinearLayout
-                    android:id="@+id/tabIncome"
+                    android:id="@+id/tabTypeIncome"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -146,21 +142,21 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_marginStart="8dp"
-                        android:background="#E2E8F0"
+                        android:background="#CBD5E1"
                         android:gravity="center"
-                        android:text="3"
+                        android:text="6"
                         android:textColor="#64748B"
                         android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Card Xem trước thẻ hiển thị -->
+            <!-- Card xem trước thẻ hiển thị -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_card_rounded_border"
+                android:background="#FFFFFF"
                 android:orientation="vertical"
                 android:padding="16dp">
 
@@ -180,12 +176,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:text="Chuẩn UEH Tracker"
+                        android:text="Entity: Categories"
                         android:textColor="#94A3B8"
                         android:textSize="11sp" />
                 </RelativeLayout>
 
-                <!-- Thẻ item mô phỏng bên trong -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -193,20 +188,14 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <!-- Box icon cafe -->
-                    <LinearLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/bg_chip_gray"
-                        android:backgroundTint="#FEF3C7"
-                        android:gravity="center">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="☕"
-                            android:textSize="22sp" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvPreviewEmoji"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:background="#FEF3C7"
+                        android:gravity="center"
+                        android:text="☕"
+                        android:textSize="22sp" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -234,8 +223,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/bg_chip_gray"
-                                android:backgroundTint="#FEF3C7"
+                                android:background="#FEF3C7"
                                 android:paddingHorizontal="6dp"
                                 android:paddingVertical="2dp"
                                 android:text="Tùy chỉnh"
@@ -247,7 +235,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:text="0 giao dịch"
+                                android:text="0 giao dịch liên kết"
                                 android:textColor="#94A3B8"
                                 android:textSize="11sp" />
                         </LinearLayout>
@@ -270,16 +258,15 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Card chứa Form nhập thông tin -->
+            <!-- Form điền tên danh mục (CategoryName) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_card_rounded_border"
+                android:background="#FFFFFF"
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Nhãn Tên danh mục -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -303,253 +290,114 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <!-- EditText tên danh mục -->
                 <EditText
                     android:id="@+id/edtCategoryName"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_input_field"
-                    android:hint="Cà phê &amp; Trà sữa"
+                    android:background="#F8FAFC"
+                    android:hint="Nhập tên (không được để trống)"
+                    android:maxLength="50"
                     android:paddingHorizontal="14dp"
                     android:textColor="#0F172A"
                     android:textColorHint="#94A3B8"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
-                <!-- Gợi ý nhanh -->
+                <!-- Gợi ý nhanh sinh viên -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:text="Gợi ý nhanh cho SV UEH:"
+                    android:text="Gợi ý danh mục sinh viên:"
                     android:textColor="#64748B"
                     android:textSize="12sp" />
 
-                <!-- Dòng gợi ý 1 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/bg_chip_gray"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="6dp"
-                        android:text="🧋 Trà sữa"
-                        android:textColor="#334155"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/bg_chip_gray"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="6dp"
-                        android:text="📐 In ấn Đồ án"
-                        android:textColor="#334155"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_chip_gray"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="6dp"
-                        android:text="📚 Sách giáo trình"
-                        android:textColor="#334155"
-                        android:textSize="12sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="6dp" android:background="#F1F5F9" android:paddingHorizontal="10dp" android:paddingVertical="6dp" android:text="🧋 Trà sữa" android:textColor="#334155" android:textSize="12sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="6dp" android:background="#F1F5F9" android:paddingHorizontal="10dp" android:paddingVertical="6dp" android:text="📐 In ấn Đồ án" android:textColor="#334155" android:textSize="12sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="#F1F5F9" android:paddingHorizontal="10dp" android:paddingVertical="6dp" android:text="🎓 Học bổng UEH" android:textColor="#334155" android:textSize="12sp" />
                 </LinearLayout>
 
-                <!-- Dòng gợi ý 2 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/bg_chip_gray"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="6dp"
-                        android:text="⛽ Xăng xe buýt"
-                        android:textColor="#334155"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_chip_gray"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="6dp"
-                        android:text="🍕 Liên hoan nhóm"
-                        android:textColor="#334155"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <!-- Header Chọn biểu tượng -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CHỌN BIỂU TƯỢNG"
-                        android:textColor="#1E293B"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="Xem thêm (40+)"
-                        android:textColor="#2563EB"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-
-                <!-- Lưới 18 biểu tượng (3 hàng x 6 cột) -->
-                <!-- Hàng icon 1 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:orientation="horizontal">
-
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_selected" android:gravity="center" android:text="☕" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🧋" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🍜" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🍕" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="📐" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="📑" android:textSize="20sp" />
-                </LinearLayout>
-
-                <!-- Hàng icon 2 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="4dp"
-                    android:orientation="horizontal">
-
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="💻" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🚌" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🛵" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🏠" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🛒" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🎮" android:textSize="20sp" />
-                </LinearLayout>
-
-                <!-- Hàng icon 3 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="4dp"
-                    android:orientation="horizontal">
-
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="⚽" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🎬" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="👕" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="💊" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="💡" android:textSize="20sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🎁" android:textSize="20sp" />
-                </LinearLayout>
-
-                <!-- Header Màu sắc nhận diện -->
+                <!-- Trường Icon (Emoji Grid) -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="MÀU SẮC NHẬN DIỆN"
+                    android:text="CHỌN BIỂU TƯỢNG (Icon)"
                     android:textColor="#1E293B"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
-                <!-- Dải 8 chấm tròn chọn màu -->
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:columnCount="6">
+
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#DBEAFE" android:gravity="center" android:text="☕" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="🧋" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="🍜" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="🍕" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="📐" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="📚" android:textSize="20sp" />
+
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="💻" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="🚌" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="🏠" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="🛍️" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="🎮" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="💊" android:textSize="20sp" />
+
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="🧾" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="💼" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="🎓" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="🎁" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="💡" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:layout_margin="2dp" android:background="#F8FAFC" android:gravity="center" android:text="📦" android:textSize="20sp" />
+                </GridLayout>
+
+                <!-- Trường Mã màu (Color Hex) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="MÀU SẮC NHẬN DIỆN (Color Hex)"
+                    android:textColor="#1E293B"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="42dp"
+                    android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <!-- Vàng (Đang chọn: có viền + tích trắng) -->
+                    <!-- Vàng cam (#F59E0B) được chọn -->
                     <TextView
-                        android:layout_width="34dp"
-                        android:layout_height="34dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_btn_pill_blue"
-                        android:backgroundTint="#F59E0B"
+                        android:background="#F59E0B"
                         android:gravity="center"
                         android:text="✓"
                         android:textColor="#FFFFFF"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
-                    <!-- Xanh dương -->
-                    <View
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_btn_pill_blue"
-                        android:backgroundTint="#2563EB" />
-
-                    <!-- Tím -->
-                    <View
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_btn_pill_blue"
-                        android:backgroundTint="#A855F7" />
-
-                    <!-- Xanh lá -->
-                    <View
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_btn_pill_blue"
-                        android:backgroundTint="#10B981" />
-
-                    <!-- Đỏ hồng -->
-                    <View
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_btn_pill_blue"
-                        android:backgroundTint="#F43F5E" />
-
-                    <!-- Cam -->
-                    <View
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_btn_pill_blue"
-                        android:backgroundTint="#F97316" />
-
-                    <!-- Cyan -->
-                    <View
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_btn_pill_blue"
-                        android:backgroundTint="#06B6D4" />
-
-                    <!-- Chàm/Indigo -->
-                    <View
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="@drawable/bg_btn_pill_blue"
-                        android:backgroundTint="#6366F1" />
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:layout_marginEnd="8dp" android:background="#2563EB" />
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:layout_marginEnd="8dp" android:background="#10B981" />
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:layout_marginEnd="8dp" android:background="#A855F7" />
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:layout_marginEnd="8dp" android:background="#F43F5E" />
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:layout_marginEnd="8dp" android:background="#F97316" />
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:layout_marginEnd="8dp" android:background="#06B6D4" />
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:background="#64748B" />
                 </LinearLayout>
 
             </LinearLayout>

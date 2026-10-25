@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="#F8FAFC">
 
-    <!-- 1. Header Bar -->
+    <!-- Header Bar -->
     <LinearLayout
         android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
@@ -17,15 +17,16 @@
         android:paddingBottom="12dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <TextView
             android:id="@+id/btnClose"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="#E2E8F0"
-            android:contentDescription="Đóng"
-            android:padding="6dp"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            app:tint="#475569" />
+            android:gravity="center"
+            android:text="✕"
+            android:textColor="#475569"
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -37,14 +38,14 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- 2. Nút Lưu giao dịch ở đáy màn hình -->
+    <!-- Nút Lưu giao dịch ở đáy màn hình -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSaveTransaction"
         android:layout_width="match_parent"
-        android:layout_height="54dp"
+        android:layout_height="52dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="24dp"
-        android:background="#0284C7"
+        android:background="#2563EB"
         android:stateListAnimator="@null"
         android:text="Lưu giao dịch"
         android:textAllCaps="false"
@@ -53,7 +54,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- 3. Khu vực cuộn nội dung ở giữa -->
+    <!-- Khu vực cuộn form nhập liệu -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -69,8 +70,9 @@
             android:orientation="vertical"
             android:paddingHorizontal="20dp">
 
-            <!-- Tab Chi tiêu / Thu nhập -->
+            <!-- R01: Phân loại giao dịch (Expense / Income) -->
             <LinearLayout
+                android:id="@+id/layoutTabs"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
                 android:background="#E2E8F0"
@@ -85,7 +87,7 @@
                     android:background="#FFFFFF"
                     android:gravity="center"
                     android:text="↗ Chi tiêu"
-                    android:textColor="#0284C7"
+                    android:textColor="#2563EB"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -101,7 +103,7 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Tiền hiển thị -->
+            <!-- R03: Số tiền giao dịch (> 0) -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -133,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:text="đ"
-                    android:textColor="#0284C7"
+                    android:textColor="#2563EB"
                     android:textSize="24sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -142,7 +144,7 @@
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:columnCount="3">
 
                 <TextView android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:gravity="center" android:text="1" android:textColor="#0F172A" android:textSize="22sp" />
@@ -162,7 +164,7 @@
                 <TextView android:id="@+id/btnBackspace" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:gravity="center" android:text="⌫" android:textColor="#0F172A" android:textSize="22sp" android:textStyle="bold" />
             </GridLayout>
 
-            <!-- Tiêu đề Danh mục -->
+            <!-- R02: Chọn danh mục phù hợp (Lưới 9 danh mục chi tiêu theo SP3-03.1) -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -172,7 +174,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Danh mục"
+                    android:text="Danh mục chi tiêu"
                     android:textColor="#0F172A"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -183,58 +185,144 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:text="Xem tất cả"
-                    android:textColor="#0284C7"
+                    android:textColor="#2563EB"
                     android:textSize="13sp" />
             </RelativeLayout>
 
-            <!-- Lưới Danh mục -->
+            <!-- Lưới hiển thị danh mục theo đúng bảng 2.2 -->
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="4">
+                android:columnCount="3">
 
-                <LinearLayout android:layout_width="0dp" android:layout_height="64dp" android:layout_columnWeight="1" android:layout_margin="3dp" android:background="#E0F2FE" android:gravity="center" android:orientation="vertical">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@android:drawable/ic_menu_myplaces" app:tint="#0284C7" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Ăn uống" android:textColor="#0284C7" android:textSize="11sp" android:textStyle="bold" />
+                <!-- 1. Ăn uống (Đang chọn) -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="62dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="3dp"
+                    android:background="#DBEAFE"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🍜" android:textSize="20sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Ăn uống" android:textColor="#2563EB" android:textSize="11sp" android:textStyle="bold" />
                 </LinearLayout>
 
-                <LinearLayout android:layout_width="0dp" android:layout_height="64dp" android:layout_columnWeight="1" android:layout_margin="3dp" android:background="#FFFFFF" android:gravity="center" android:orientation="vertical">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@android:drawable/ic_menu_directions" app:tint="#D97706" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Đi lại" android:textColor="#334155" android:textSize="11sp" />
+                <!-- 2. Học tập -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="62dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="3dp"
+                    android:background="#FFFFFF"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📚" android:textSize="20sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Học tập" android:textColor="#334155" android:textSize="11sp" />
                 </LinearLayout>
 
-                <LinearLayout android:layout_width="0dp" android:layout_height="64dp" android:layout_columnWeight="1" android:layout_margin="3dp" android:background="#FFFFFF" android:gravity="center" android:orientation="vertical">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@android:drawable/ic_menu_agenda" app:tint="#059669" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Học tập" android:textColor="#334155" android:textSize="11sp" />
+                <!-- 3. Đi lại -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="62dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="3dp"
+                    android:background="#FFFFFF"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🚌" android:textSize="20sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Đi lại" android:textColor="#334155" android:textSize="11sp" />
                 </LinearLayout>
 
-                <LinearLayout android:layout_width="0dp" android:layout_height="64dp" android:layout_columnWeight="1" android:layout_margin="3dp" android:background="#FFFFFF" android:gravity="center" android:orientation="vertical">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@android:drawable/ic_menu_manage" app:tint="#7C3AED" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Nhà trọ" android:textColor="#334155" android:textSize="11sp" />
+                <!-- 4. Nhà ở -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="62dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="3dp"
+                    android:background="#FFFFFF"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🏠" android:textSize="20sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Nhà ở" android:textColor="#334155" android:textSize="11sp" />
                 </LinearLayout>
 
-                <LinearLayout android:layout_width="0dp" android:layout_height="64dp" android:layout_columnWeight="1" android:layout_margin="3dp" android:background="#FFFFFF" android:gravity="center" android:orientation="vertical">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@android:drawable/ic_menu_gallery" app:tint="#DB2777" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Mua sắm" android:textColor="#334155" android:textSize="11sp" />
+                <!-- 5. Mua sắm -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="62dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="3dp"
+                    android:background="#FFFFFF"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🛍️" android:textSize="20sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Mua sắm" android:textColor="#334155" android:textSize="11sp" />
                 </LinearLayout>
 
-                <LinearLayout android:layout_width="0dp" android:layout_height="64dp" android:layout_columnWeight="1" android:layout_margin="3dp" android:background="#FFFFFF" android:gravity="center" android:orientation="vertical">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@android:drawable/ic_menu_edit" app:tint="#CA8A04" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Hóa đơn" android:textColor="#334155" android:textSize="11sp" />
+                <!-- 6. Giải trí -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="62dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="3dp"
+                    android:background="#FFFFFF"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎮" android:textSize="20sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Giải trí" android:textColor="#334155" android:textSize="11sp" />
                 </LinearLayout>
 
-                <LinearLayout android:layout_width="0dp" android:layout_height="64dp" android:layout_columnWeight="1" android:layout_margin="3dp" android:background="#FFFFFF" android:gravity="center" android:orientation="vertical">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@android:drawable/ic_media_play" app:tint="#9333EA" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Giải trí" android:textColor="#334155" android:textSize="11sp" />
+                <!-- 7. Sức khỏe -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="62dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="3dp"
+                    android:background="#FFFFFF"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="💊" android:textSize="20sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Sức khỏe" android:textColor="#334155" android:textSize="11sp" />
                 </LinearLayout>
 
-                <LinearLayout android:layout_width="0dp" android:layout_height="64dp" android:layout_columnWeight="1" android:layout_margin="3dp" android:background="#FFFFFF" android:gravity="center" android:orientation="vertical">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@android:drawable/ic_menu_more" app:tint="#64748B" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="Khác" android:textColor="#334155" android:textSize="11sp" />
+                <!-- 8. Hóa đơn và dịch vụ -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="62dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="3dp"
+                    android:background="#FFFFFF"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🧾" android:textSize="20sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Hóa đơn &amp; DV" android:textColor="#334155" android:textSize="11sp" />
+                </LinearLayout>
+
+                <!-- 9. Chi tiêu khác -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="62dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="3dp"
+                    android:background="#FFFFFF"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📦" android:textSize="20sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Chi tiêu khác" android:textColor="#334155" android:textSize="11sp" />
                 </LinearLayout>
             </GridLayout>
 
-            <!-- Card thông tin chi tiết -->
+            <!-- Card thông tin chi tiết (R04: Ngày giao dịch, R05: Ghi chú) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -242,28 +330,29 @@
                 android:background="#FFFFFF"
                 android:orientation="vertical">
 
-                <!-- Thời gian -->
+                <!-- R04: Ngày giao dịch -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:padding="14dp">
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@android:drawable/ic_menu_today"
-                        app:tint="#0284C7" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📅"
+                        android:textSize="18sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="Thời gian"
+                        android:layout_marginStart="10dp"
+                        android:text="Ngày giao dịch"
                         android:textColor="#64748B"
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/tvTransactionDate"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
@@ -281,83 +370,42 @@
                         android:textSize="20sp" />
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#F1F5F9" />
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
 
-                <!-- Nguồn tiền -->
+                <!-- R05: Ghi chú giao dịch -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:padding="14dp">
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@android:drawable/ic_menu_save"
-                        app:tint="#0284C7" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📝"
+                        android:textSize="18sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="Nguồn tiền"
-                        android:textColor="#64748B"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="6dp"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="Tài khoản ngân hàng"
-                        android:textColor="#0F172A"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="›"
-                        android:textColor="#94A3B8"
-                        android:textSize="20sp" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#F1F5F9" />
-
-                <!-- Ghi chú -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:padding="14dp">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@android:drawable/ic_menu_info_details"
-                        app:tint="#0284C7" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="10dp"
                         android:text="Ghi chú"
                         android:textColor="#64748B"
                         android:textSize="14sp" />
 
-                    <TextView
+                    <EditText
+                        android:id="@+id/edtTransactionNote"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
                         android:layout_weight="1"
+                        android:background="@null"
                         android:gravity="end"
-                        android:text="Bữa trưa tại căn tin"
+                        android:hint="Nhập ghi chú (tối đa 255 ký tự)"
+                        android:maxLength="255"
+                        android:singleLine="true"
                         android:textColor="#0F172A"
+                        android:textColorHint="#94A3B8"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
