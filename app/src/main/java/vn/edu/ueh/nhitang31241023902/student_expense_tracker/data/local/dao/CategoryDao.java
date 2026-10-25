@@ -14,7 +14,8 @@ public interface CategoryDao {
     @Insert
     void insertCategories(List<CategoryEntity> categories);
 
-
+    @Query("SELECT * FROM categories WHERE categoryId = :id LIMIT 1")
+    CategoryEntity getCategoryById(long id);
     @Query("SELECT DISTINCT * FROM categories WHERE type = :type AND (userId IS NULL OR userId = :userId OR userId = -1)")
     List<CategoryEntity> getCategoriesByType(String type, int userId);
 }

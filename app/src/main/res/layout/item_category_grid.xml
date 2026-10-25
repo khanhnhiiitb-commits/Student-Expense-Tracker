@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="6dp">
+
+    <!-- Container nền icon có viền khi chọn -->
+    <LinearLayout
+        android:id="@+id/layoutIconBorder"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:background="#E2E8F0"
+        android:gravity="center"
+        android:padding="2dp">
+
+        <TextView
+            android:id="@+id/tvGridIcon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"
+            android:gravity="center"
+            android:text="📦"
+            android:textSize="22sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvGridName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="Danh mục"
+        android:textColor="#334155"
+        android:textSize="12sp" />
+</LinearLayout>

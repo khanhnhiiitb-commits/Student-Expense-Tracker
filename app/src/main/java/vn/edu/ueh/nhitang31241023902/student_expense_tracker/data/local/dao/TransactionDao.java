@@ -1,26 +1,21 @@
 package vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.dao;
 
-
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Update;
-import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.TransactionEntity;
+
 import java.util.List;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.TransactionEntity;
 
 @Dao
 public interface TransactionDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertTransaction(TransactionEntity transaction);
 
-    @Update
-    void updateTransaction(TransactionEntity transaction);
-
-    @Delete
-    void deleteTransaction(TransactionEntity transaction);
+    @Insert
+    long insertTransaction(TransactionEntity transaction);
 
     @Query("SELECT * FROM transactions WHERE userID = :userId ORDER BY transactionDate DESC")
-    List<TransactionEntity> getTransactionsByUser(long userId);
+    List<TransactionEntity> getTransactionsByUserId(long userId);
+
+    @Query("SELECT * FROM transactions ORDER BY transactionDate DESC")
+    List<TransactionEntity> getAllTransactions();
 }
