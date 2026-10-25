@@ -10,7 +10,8 @@ public class CategoryEntity {
     public Long userId; // NULL nếu là danh mục mặc định của hệ thống
     public String categoryName;
     public String type; // "Income" hoặc "Expense"
-
+    public CategoryEntity() {
+    }
     public CategoryEntity(Long userId, String categoryName, String type) {
         this.userId = userId;
         this.categoryName = categoryName;

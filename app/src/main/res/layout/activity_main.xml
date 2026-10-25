@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/bgColor"
     android:padding="24dp">
@@ -51,7 +53,20 @@
             android:textStyle="bold"
             android:textColor="@color/primaryBlue"/>
 
+
     </LinearLayout>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnOpenCategoryTemp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="#2563EB"
+        android:text="[TEST] Mở Quản lý danh mục"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"

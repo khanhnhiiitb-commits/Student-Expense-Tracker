@@ -113,9 +113,10 @@ public class RegisterActivity extends AppCompatActivity {
 
                 // 3. Tạo đối tượng User mới với mật khẩu đã được mã hóa
                 UserEntity newUser = new UserEntity(
+                        0,
                         fullName,
                         email,
-                        hashedPassword, // Lưu chuỗi hash thay vì mật khẩu thô
+                        hashedPassword,
                         System.currentTimeMillis()
                 );
 

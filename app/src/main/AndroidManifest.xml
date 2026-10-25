@@ -30,6 +30,9 @@
             android:name=".ui.main.AddCategoryActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.main.CategoryActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

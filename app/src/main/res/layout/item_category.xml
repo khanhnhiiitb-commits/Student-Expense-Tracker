@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="12dp"
+    android:background="?attr/selectableItemBackground">
+
+    <!-- Ô tròn chứa Emoji đại diện cho danh mục -->
+    <TextView
+        android:id="@+id/tvCategoryIcon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:background="#F1F5F9"
+        android:gravity="center"
+        android:text="📦"
+        android:textSize="20sp" />
+
+    <!-- Cụm tên và loại danh mục -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="14dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvCategoryName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tên danh mục"
+            android:textColor="#0F172A"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvCategorySubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Khoản chi tiêu"
+            android:textColor="#64748B"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <!-- Nút Sửa & Xóa -->
+    <TextView
+        android:id="@+id/btnEditCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:padding="6dp"
+        android:text="✎"
+        android:textColor="#64748B"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/btnDeleteCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:text="🗑"
+        android:textColor="#EF4444"
+        android:textSize="18sp" />
+
+</LinearLayout>

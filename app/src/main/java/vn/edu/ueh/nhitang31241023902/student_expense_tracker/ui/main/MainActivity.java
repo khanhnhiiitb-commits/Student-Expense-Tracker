@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.R;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.auth.LoginActivity;
@@ -20,6 +21,13 @@ public class MainActivity extends AppCompatActivity {
 
         TextView tvWelcome = findViewById(R.id.tvWelcome);
         Button btnLogout = findViewById(R.id.btnLogout);
+        AppCompatButton btnOpenCategoryTemp = findViewById(R.id.btnOpenCategoryTemp);
+
+        // Bắt sự kiện chuyển sang màn hình CategoryActivity
+        btnOpenCategoryTemp.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
+            startActivity(intent);
+        });
 
         // Lấy tên User từ SharedPreferences để hiển thị
         SharedPreferences prefs = getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
