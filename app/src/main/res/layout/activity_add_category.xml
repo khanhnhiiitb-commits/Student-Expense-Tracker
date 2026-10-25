@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8FAFC">
+
+    <!-- 1. Header Bar -->
+    <RelativeLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="44dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Nút Back hình tròn -->
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_chip_gray"
+            android:gravity="center"
+            android:text="‹"
+            android:textColor="#334155"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Tạo danh mục mới"
+            android:textColor="#1E293B"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <!-- Nút Lưu góc phải -->
+        <TextView
+            android:id="@+id/btnSaveTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:padding="6dp"
+            android:text="Lưu"
+            android:textColor="#2563EB"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <!-- 2. Nút Tạo danh mục cố định ở đáy màn hình -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnCreateCategoryBottom"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_btn_pill_blue"
+        android:elevation="4dp"
+        android:stateListAnimator="@null"
+        android:text="+ Tạo danh mục"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- 3. Khu vực cuộn nội dung -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@id/btnCreateCategoryBottom"
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp">
+
+            <!-- Tab Chi tiêu / Thu nhập -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_chip_gray"
+                android:orientation="horizontal"
+                android:padding="4dp">
+
+                <!-- Tab Chi tiêu (Đang chọn) -->
+                <LinearLayout
+                    android:id="@+id/tabExpense"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_btn_pill_blue"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="← Chi tiêu"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_btn_pill_blue"
+                        android:backgroundTint="#3B82F6"
+                        android:gravity="center"
+                        android:text="8"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Tab Thu nhập -->
+                <LinearLayout
+                    android:id="@+id/tabIncome"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="↗ Thu nhập"
+                        android:textColor="#64748B"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="8dp"
+                        android:background="#E2E8F0"
+                        android:gravity="center"
+                        android:text="3"
+                        android:textColor="#64748B"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Card Xem trước thẻ hiển thị -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_card_rounded_border"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="• XEM TRƯỚC THẺ HIỂN THỊ"
+                        android:textColor="#2563EB"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="Chuẩn UEH Tracker"
+                        android:textColor="#94A3B8"
+                        android:textSize="11sp" />
+                </RelativeLayout>
+
+                <!-- Thẻ item mô phỏng bên trong -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- Box icon cafe -->
+                    <LinearLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_chip_gray"
+                        android:backgroundTint="#FEF3C7"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="☕"
+                            android:textSize="22sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvPreviewCategoryName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cà phê &amp; Trà sữa"
+                            android:textColor="#0F172A"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_chip_gray"
+                                android:backgroundTint="#FEF3C7"
+                                android:paddingHorizontal="6dp"
+                                android:paddingVertical="2dp"
+                                android:text="Tùy chỉnh"
+                                android:textColor="#D97706"
+                                android:textSize="10sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:text="0 giao dịch"
+                                android:textColor="#94A3B8"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        android:text="✎"
+                        android:textColor="#94A3B8"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🗑"
+                        android:textColor="#94A3B8"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Card chứa Form nhập thông tin -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_card_rounded_border"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Nhãn Tên danh mục -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TÊN DANH MỤC"
+                        android:textColor="#1E293B"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="*"
+                        android:textColor="#EF4444"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- EditText tên danh mục -->
+                <EditText
+                    android:id="@+id/edtCategoryName"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Cà phê &amp; Trà sữa"
+                    android:paddingHorizontal="14dp"
+                    android:textColor="#0F172A"
+                    android:textColorHint="#94A3B8"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <!-- Gợi ý nhanh -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="Gợi ý nhanh cho SV UEH:"
+                    android:textColor="#64748B"
+                    android:textSize="12sp" />
+
+                <!-- Dòng gợi ý 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/bg_chip_gray"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="🧋 Trà sữa"
+                        android:textColor="#334155"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/bg_chip_gray"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="📐 In ấn Đồ án"
+                        android:textColor="#334155"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip_gray"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="📚 Sách giáo trình"
+                        android:textColor="#334155"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Dòng gợi ý 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/bg_chip_gray"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="⛽ Xăng xe buýt"
+                        android:textColor="#334155"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip_gray"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="🍕 Liên hoan nhóm"
+                        android:textColor="#334155"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Header Chọn biểu tượng -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHỌN BIỂU TƯỢNG"
+                        android:textColor="#1E293B"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="Xem thêm (40+)"
+                        android:textColor="#2563EB"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <!-- Lưới 18 biểu tượng (3 hàng x 6 cột) -->
+                <!-- Hàng icon 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:orientation="horizontal">
+
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_selected" android:gravity="center" android:text="☕" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🧋" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🍜" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🍕" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="📐" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="📑" android:textSize="20sp" />
+                </LinearLayout>
+
+                <!-- Hàng icon 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal">
+
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="💻" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🚌" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🛵" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🏠" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🛒" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🎮" android:textSize="20sp" />
+                </LinearLayout>
+
+                <!-- Hàng icon 3 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal">
+
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="⚽" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🎬" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="👕" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="💊" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="💡" android:textSize="20sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="3dp" android:layout_weight="1" android:background="@drawable/bg_icon_box_normal" android:gravity="center" android:text="🎁" android:textSize="20sp" />
+                </LinearLayout>
+
+                <!-- Header Màu sắc nhận diện -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="MÀU SẮC NHẬN DIỆN"
+                    android:textColor="#1E293B"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <!-- Dải 8 chấm tròn chọn màu -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- Vàng (Đang chọn: có viền + tích trắng) -->
+                    <TextView
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_btn_pill_blue"
+                        android:backgroundTint="#F59E0B"
+                        android:gravity="center"
+                        android:text="✓"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <!-- Xanh dương -->
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_btn_pill_blue"
+                        android:backgroundTint="#2563EB" />
+
+                    <!-- Tím -->
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_btn_pill_blue"
+                        android:backgroundTint="#A855F7" />
+
+                    <!-- Xanh lá -->
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_btn_pill_blue"
+                        android:backgroundTint="#10B981" />
+
+                    <!-- Đỏ hồng -->
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_btn_pill_blue"
+                        android:backgroundTint="#F43F5E" />
+
+                    <!-- Cam -->
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_btn_pill_blue"
+                        android:backgroundTint="#F97316" />
+
+                    <!-- Cyan -->
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_btn_pill_blue"
+                        android:backgroundTint="#06B6D4" />
+
+                    <!-- Chàm/Indigo -->
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/bg_btn_pill_blue"
+                        android:backgroundTint="#6366F1" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
