@@ -2,16 +2,19 @@ package vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.dao;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.CategoryEntity;
 import java.util.List;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.CategoryEntity;
 
 @Dao
 public interface CategoryDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long insertCategory(CategoryEntity category);
+    @Insert
+    void insertCategory(CategoryEntity category);
 
-    @Query("SELECT * FROM categories")
-    List<CategoryEntity> getAllCategories();
+    @Insert
+    void insertCategories(List<CategoryEntity> categories);
+
+
+    @Query("SELECT * FROM categories WHERE type = :type AND (userId IS NULL OR userId = :userId)")
+    List<CategoryEntity> getCategoriesByType(String type, int userId);
 }
