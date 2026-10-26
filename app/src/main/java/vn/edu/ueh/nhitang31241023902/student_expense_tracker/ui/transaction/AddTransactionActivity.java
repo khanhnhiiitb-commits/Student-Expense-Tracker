@@ -220,65 +220,240 @@ public class AddTransactionActivity extends AppCompatActivity {
 
     // 5. Lưu giao dịch Thu nhập / Chi tiêu và tiếp tục ghi
     private void saveTransaction() {
-        if (rawAmountBuilder.length() == 0) {
-            Toast.makeText(this, "Vui lòng nhập số tiền", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        BigDecimal amountDecimal;
-        try {
-            amountDecimal = new BigDecimal(rawAmountBuilder.toString());
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Số tiền không hợp lệ", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (amountDecimal.compareTo(BigDecimal.ZERO) <= 0) {
-            Toast.makeText(this, "Số tiền phải lớn hơn 0", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (selectedCategoryId <= 0) {
-            Toast.makeText(this, "Vui lòng chọn danh mục", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String note = edtTransactionNote.getText().toString().trim();
-
-        new Thread(() -> {
-            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-
-            SharedPreferences prefs = getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
-            String userEmail = prefs.getString("USER_EMAIL", "");
-            int currentUserId = -1;
-            if (!userEmail.isEmpty()) {
-                UserEntity user = db.userDao().getUserByEmail(userEmail);
-                if (user != null) {
-                    currentUserId = user.userId;
-                }
+        // Lưu giao dịch sau khi kiểm tra dữ liệu
+            // 1. Kiểm tra số tiền
+            if (rawAmountBuilder.length() == 0) {
+                Toast.makeText(
+                        this,
+                        "Vui lòng nhập số tiền",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
             }
 
-            // Tạo đối tượng TransactionEntity khớp đúng 6 tham số
-            TransactionEntity transaction = new TransactionEntity(
-                    currentUserId,              // 1. long userID
-                    selectedCategoryId,         // 2. long categoryID
-                    amountDecimal,              // 3. BigDecimal amount
-                    note,                       // 4. String note
-                    selectedDateMillis,         // 5. long transactionDate
-                    System.currentTimeMillis()   // 6. long createdAt
-            );
+            BigDecimal amountDecimal;
 
-            db.transactionDao().insertTransaction(transaction);
+            try {
+                amountDecimal = new BigDecimal(rawAmountBuilder.toString());
+            } catch (NumberFormatException e) {
+                Toast.makeText(
+                        this,
+                        "Số tiền không hợp lệ",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
 
-            runOnUiThread(() -> {
-                String message = currentType.equals("Income") ? "Đã lưu thu nhập thành công!" : "Đã lưu chi tiêu thành công!";
-                Toast.makeText(AddTransactionActivity.this, message, Toast.LENGTH_SHORT).show();
+            if (amountDecimal.compareTo(BigDecimal.ZERO) <= 0) {
+                Toast.makeText(
+                        this,
+                        "Số tiền phải lớn hơn 0",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
 
-                // Làm mới ô nhập liệu để sẵn sàng ghi tiếp
-                resetInputFields();
-            });
-        }).start();
-    }
+            // 2. Kiểm tra giới hạn số tiền
+            if (rawAmountBuilder.length() > 12) {
+                Toast.makeText(
+                        this,
+                        "Số tiền vượt quá giới hạn cho phép",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
+
+            // 3. Kiểm tra danh mục đã được chọn
+            CategoryEntity selectedCategory =
+                    categorySelectAdapter.getSelectedCategory();
+
+            if (selectedCategory == null || selectedCategoryId <= 0) {
+                Toast.makeText(
+                        this,
+                        "Vui lòng chọn danh mục",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
+
+            // 4. Kiểm tra loại giao dịch
+            if (selectedCategory.type == null
+                    || !selectedCategory.type.equals(currentType)) {
+                Toast.makeText(
+                        this,
+                        "Danh mục không phù hợp với loại giao dịch",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
+
+            // 5. Kiểm tra ghi chú
+            String note = edtTransactionNote.getText().toString().trim();
+
+            if (note.length() > 200) {
+                edtTransactionNote.setError(
+                        "Ghi chú không được vượt quá 200 ký tự"
+                );
+                edtTransactionNote.requestFocus();
+                return;
+            }
+
+            // 6. Kiểm tra ngày giao dịch
+            if (selectedDateMillis <= 0) {
+                Toast.makeText(
+                        this,
+                        "Ngày giao dịch không hợp lệ",
+                        Toast.LENGTH_SHORT
+                ).show();
+                return;
+            }
+
+            // Lưu các giá trị hiện tại trước khi chạy luồng nền
+            final long categoryIdToSave = selectedCategoryId;
+            final String typeToSave = currentType;
+            final long dateToSave = selectedDateMillis;
+
+            // Tránh người dùng nhấn Lưu nhiều lần
+            btnSaveTransaction.setEnabled(false);
+
+            new Thread(() -> {
+
+                AppDatabase db = AppDatabase.getDatabase(
+                        getApplicationContext()
+                );
+
+                try {
+                    // 7. Kiểm tra người dùng
+                    SharedPreferences prefs = getSharedPreferences(
+                            "ExpenseAppPrefs",
+                            Context.MODE_PRIVATE
+                    );
+
+                    String userEmail = prefs.getString("USER_EMAIL", "");
+
+                    if (userEmail == null || userEmail.trim().isEmpty()) {
+                        runOnUiThread(() -> {
+                            btnSaveTransaction.setEnabled(true);
+
+                            Toast.makeText(
+                                    AddTransactionActivity.this,
+                                    "Vui lòng đăng nhập trước khi lưu giao dịch",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        });
+                        return;
+                    }
+
+                    UserEntity user = db.userDao().getUserByEmail(userEmail);
+
+                    if (user == null || user.userId <= 0) {
+                        runOnUiThread(() -> {
+                            btnSaveTransaction.setEnabled(true);
+
+                            Toast.makeText(
+                                    AddTransactionActivity.this,
+                                    "Không tìm thấy tài khoản hợp lệ",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        });
+                        return;
+                    }
+
+                    // 8. Kiểm tra danh mục vẫn tồn tại trong database
+                    CategoryEntity category =
+                            db.categoryDao().getCategoryById(categoryIdToSave);
+
+                    if (category == null) {
+                        runOnUiThread(() -> {
+                            btnSaveTransaction.setEnabled(true);
+
+                            Toast.makeText(
+                                    AddTransactionActivity.this,
+                                    "Danh mục không còn tồn tại",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        });
+                        return;
+                    }
+
+                    // 9. Kiểm tra danh mục phù hợp với loại giao dịch
+                    if (category.type == null
+                            || !category.type.equals(typeToSave)) {
+
+                        runOnUiThread(() -> {
+                            btnSaveTransaction.setEnabled(true);
+
+                            Toast.makeText(
+                                    AddTransactionActivity.this,
+                                    "Danh mục không phù hợp với loại giao dịch",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        });
+                        return;
+                    }
+
+                    // 10. Kiểm tra quyền sử dụng danh mục
+                    if (category.userId != null
+                            && category.userId != -1
+                            && category.userId != user.userId) {
+
+                        runOnUiThread(() -> {
+                            btnSaveTransaction.setEnabled(true);
+
+                            Toast.makeText(
+                                    AddTransactionActivity.this,
+                                    "Bạn không thể sử dụng danh mục này",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        });
+                        return;
+                    }
+
+                    // 11. Chỉ lưu khi tất cả kiểm tra đều hợp lệ
+                    TransactionEntity transaction = new TransactionEntity(
+                            user.userId,
+                            categoryIdToSave,
+                            amountDecimal,
+                            note,
+                            dateToSave,
+                            System.currentTimeMillis()
+                    );
+
+                    db.transactionDao().insertTransaction(transaction);
+
+                    runOnUiThread(() -> {
+
+                        String message = typeToSave.equals("Income")
+                                ? "Đã lưu thu nhập thành công!"
+                                : "Đã lưu chi tiêu thành công!";
+
+                        Toast.makeText(
+                                AddTransactionActivity.this,
+                                message,
+                                Toast.LENGTH_SHORT
+                        ).show();
+
+                        resetInputFields();
+
+                        btnSaveTransaction.setEnabled(true);
+                    });
+
+                } catch (Exception e) {
+
+                    runOnUiThread(() -> {
+                        btnSaveTransaction.setEnabled(true);
+
+                        Toast.makeText(
+                                AddTransactionActivity.this,
+                                "Không thể lưu giao dịch. Vui lòng thử lại.",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    });
+                }
+
+            }).start();
+        }
+
 
     // 6. Đưa các ô nhập liệu về trạng thái ban đầu
     private void resetInputFields() {
