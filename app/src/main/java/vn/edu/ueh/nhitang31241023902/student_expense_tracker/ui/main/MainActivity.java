@@ -6,11 +6,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.R;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.auth.LoginActivity;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.transaction.AddTransactionActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,30 +21,57 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Ánh xạ các thành phần giao diện
         TextView tvWelcome = findViewById(R.id.tvWelcome);
         Button btnLogout = findViewById(R.id.btnLogout);
-        AppCompatButton btnOpenCategoryTemp = findViewById(R.id.btnOpenCategoryTemp);
 
-        // Bắt sự kiện chuyển sang màn hình CategoryActivity
-        btnOpenCategoryTemp.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
-            startActivity(intent);
-        });
+        AppCompatButton btnOpenCategoryTemp =
+                findViewById(R.id.btnOpenCategoryTemp);
 
-        // Lấy tên User từ SharedPreferences để hiển thị
-        SharedPreferences prefs = getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
+        AppCompatButton btnTestAddTransaction =
+                findViewById(R.id.btnTestAddTransaction);
+
+        // Lấy tên người dùng đã đăng nhập
+        SharedPreferences prefs = getSharedPreferences(
+                "ExpenseAppPrefs",
+                Context.MODE_PRIVATE
+        );
+
         String userName = prefs.getString("USER_NAME", "Bạn");
         tvWelcome.setText("Chào, " + userName + "!");
 
-        // Xử lý Đăng xuất
+        // Chuyển sang màn hình Danh mục
+        btnOpenCategoryTemp.setOnClickListener(v -> {
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    CategoryActivity.class
+            );
+
+            startActivity(intent);
+        });
+
+        // Chuyển sang màn hình Thêm giao dịch
+        btnTestAddTransaction.setOnClickListener(v -> {
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    AddTransactionActivity.class
+            );
+
+            startActivity(intent);
+        });
+
+        // Xử lý đăng xuất
         btnLogout.setOnClickListener(v -> {
-            // Xóa toàn bộ dữ liệu phiên đăng nhập
             SharedPreferences.Editor editor = prefs.edit();
+
             editor.clear();
             editor.apply();
 
-            // Chuyển hướng về màn hình Đăng nhập
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    LoginActivity.class
+            );
+
             startActivity(intent);
             finish();
         });
