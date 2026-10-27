@@ -51,8 +51,18 @@
             android:textColor="@color/primaryBlue"
             android:textSize="32sp"
             android:textStyle="bold" />
+
     </LinearLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvRecentTransactions"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:nestedScrollingEnabled="false"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp" />
     <!-- Cụm nút test: hiển thị ngang cạnh nhau -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -67,7 +77,7 @@
             android:layout_marginEnd="6dp"
             android:layout_weight="1"
             android:background="#2563EB"
-            android:text="[TEST] Danh mục"
+            android:text="Quản lý Danh mục"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="13sp"

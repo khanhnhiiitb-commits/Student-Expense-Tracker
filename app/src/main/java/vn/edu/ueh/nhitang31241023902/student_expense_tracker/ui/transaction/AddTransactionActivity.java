@@ -46,7 +46,8 @@ public class AddTransactionActivity extends AppCompatActivity {
     private final StringBuilder rawAmountBuilder = new StringBuilder();
     private long selectedCategoryId = -1;
     private long selectedDateMillis = System.currentTimeMillis();
-
+    private long editTransactionId = -1; // -1 nghĩa là đang ở chế độ Thêm mới
+    private TransactionEntity existingTransaction; // Lưu trữ dữ liệu giao dịch cũ
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,10 +61,58 @@ public class AddTransactionActivity extends AppCompatActivity {
 
         // Mặc định tải danh mục cho tab hiện tại
         loadCategories(currentType);
+        // Mặc định tải danh mục cho tab hiện tại
+        loadCategories(currentType);
+
+        // --- BẮT ĐẦU ĐOẠN CODE THÊM MỚI ---
+        editTransactionId = getIntent().getLongExtra("EDIT_TRANSACTION_ID", -1);
+        if (editTransactionId != -1) {
+            btnSaveTransaction.setText("Cập nhật giao dịch");
+            loadTransactionForEdit();
+        }
+        // --- KẾT THÚC ĐOẠN CODE THÊM MỚI ---
 
         btnSaveTransaction.setOnClickListener(v -> saveTransaction());
+        btnSaveTransaction.setOnClickListener(v -> saveTransaction());
     }
+    private void loadTransactionForEdit() {
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+            // Lấy giao dịch cũ từ Room (Đảm bảo TransactionDao đã có hàm getTransactionById)
+            existingTransaction = db.transactionDao().getTransactionById(editTransactionId);
 
+            if (existingTransaction != null) {
+                // Lấy thêm thông tin danh mục để biết là Thu nhập hay Chi tiêu
+                CategoryEntity cat = db.categoryDao().getCategoryById(existingTransaction.categoryID);
+
+                runOnUiThread(() -> {
+                    // 1. Điền lại số tiền cũ
+                    if (existingTransaction.amount != null) {
+                        rawAmountBuilder.setLength(0);
+                        rawAmountBuilder.append(existingTransaction.amount.toBigInteger().toString());
+                        updateAmountDisplay();
+                    }
+
+                    // 2. Điền lại ghi chú cũ
+                    if (existingTransaction.note != null) {
+                        edtTransactionNote.setText(existingTransaction.note);
+                    }
+
+                    // 3. Đặt lại ngày giao dịch cũ
+                    selectedDateMillis = existingTransaction.transactionDate;
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    tvTransactionDate.setText(sdf.format(new java.util.Date(selectedDateMillis)));
+
+                    // 4. Chuyển đúng Tab (Thu/Chi) và gắn lại Danh mục
+                    if (cat != null) {
+                        switchTab(cat.type);
+                        selectedCategoryId = cat.categoryId;
+                        // Nếu Adapter có hàm setSelectedCategoryId, gọi ở đây để bôi đậm danh mục
+                    }
+                });
+            }
+        }).start();
+    }
     private void initViews() {
         btnClose = findViewById(R.id.btnClose);
         tabExpense = findViewById(R.id.tabExpense);
@@ -410,33 +459,42 @@ public class AddTransactionActivity extends AppCompatActivity {
                     }
 
                     // 11. Chỉ lưu khi tất cả kiểm tra đều hợp lệ
-                    TransactionEntity transaction = new TransactionEntity(
-                            user.userId,
-                            categoryIdToSave,
-                            amountDecimal,
-                            note,
-                            dateToSave,
-                            System.currentTimeMillis()
-                    );
 
-                    db.transactionDao().insertTransaction(transaction);
+                    if (editTransactionId != -1 && existingTransaction != null) {
+                        // CHẾ ĐỘ CẬP NHẬT GIAO DỊCH
+                        existingTransaction.amount = amountDecimal;
+                        existingTransaction.categoryID = categoryIdToSave;
+                        existingTransaction.note = note;
+                        existingTransaction.transactionDate = dateToSave;
 
-                    runOnUiThread(() -> {
+                        db.transactionDao().updateTransaction(existingTransaction);
 
-                        String message = typeToSave.equals("Income")
-                                ? "Đã lưu thu nhập thành công!"
-                                : "Đã lưu chi tiêu thành công!";
+                        runOnUiThread(() -> {
+                            Toast.makeText(AddTransactionActivity.this, "Đã cập nhật giao dịch thành công!", Toast.LENGTH_SHORT).show();
+                            finish(); // Sửa xong thì đóng màn hình về lại trang chủ
+                        });
+                    } else {
+                        // CHẾ ĐỘ THÊM MỚI GIAO DỊCH (Giữ nguyên code cũ của bạn)
+                        TransactionEntity transaction = new TransactionEntity(
+                                user.userId,
+                                categoryIdToSave,
+                                amountDecimal,
+                                note,
+                                dateToSave,
+                                System.currentTimeMillis()
+                        );
 
-                        Toast.makeText(
-                                AddTransactionActivity.this,
-                                message,
-                                Toast.LENGTH_SHORT
-                        ).show();
+                        db.transactionDao().insertTransaction(transaction);
 
-                        resetInputFields();
-
-                        btnSaveTransaction.setEnabled(true);
-                    });
+                        runOnUiThread(() -> {
+                            String message = typeToSave.equals("Income")
+                                    ? "Đã lưu thu nhập thành công!"
+                                    : "Đã lưu chi tiêu thành công!";
+                            Toast.makeText(AddTransactionActivity.this, message, Toast.LENGTH_SHORT).show();
+                            resetInputFields();
+                            btnSaveTransaction.setEnabled(true);
+                        });
+                    }
 
                 } catch (Exception e) {
 

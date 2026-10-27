@@ -64,30 +64,47 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         CategoryEntity item = list.get(position);
         if (item == null) return;
 
-        holder.tvName.setText(item.categoryName);
-
-        // 1. Gán Emoji và màu nền tương ứng theo tên danh mục
-        bindCategoryIcon(holder.tvIcon, item.categoryName);
-
-        // 2. Cập nhật trạng thái hiển thị
-        if (item.userId == null || item.userId <= 0) {
-            holder.tvSubtitle.setText("Mặc định · Cố định hệ thống");
-            // Ẩn nút sửa/xóa với danh mục mặc định của hệ thống
-            holder.btnDelete.setVisibility(View.GONE);
-            holder.btnEdit.setVisibility(View.GONE);
-        } else {
+        // Xử lý Tách Icon và Tên cho danh mục tùy chỉnh
+        if (item.userId != null && item.userId > 0) {
             holder.tvSubtitle.setText("Tùy chỉnh · Danh mục của bạn");
             holder.btnDelete.setVisibility(View.VISIBLE);
             holder.btnEdit.setVisibility(View.VISIBLE);
+
+            // Tách emoji ra khỏi tên (Vì lúc lưu mình nối bằng dấu cách: "Emoji Tên")
+            String fullName = item.categoryName != null ? item.categoryName : "";
+            int firstSpaceIndex = fullName.indexOf(" ");
+
+            if (firstSpaceIndex != -1 && firstSpaceIndex <= 2) {
+                // Cắt phần icon và phần tên
+                String iconPart = fullName.substring(0, firstSpaceIndex);
+                String namePart = fullName.substring(firstSpaceIndex + 1);
+
+                holder.tvIcon.setText(iconPart); // Đưa Icon vào đúng ô vuông
+                holder.tvName.setText(namePart); // Tên hiển thị bình thường
+            } else {
+                holder.tvIcon.setText("🏷️");
+                holder.tvName.setText(fullName);
+            }
+            // Set nền ô icon cho danh mục tự tạo
+            holder.tvIcon.setBackgroundColor(Color.parseColor("#F1F5F9"));
 
             // Bắt sự kiện sửa/xóa
             holder.btnEdit.setOnClickListener(v -> {
                 if (actionListener != null) actionListener.onEdit(item);
             });
-
             holder.btnDelete.setOnClickListener(v -> {
                 if (actionListener != null) actionListener.onDelete(item);
             });
+
+        } else {
+            // Xử lý cho danh mục mặc định của hệ thống
+            holder.tvName.setText(item.categoryName);
+            holder.tvSubtitle.setText("Mặc định · Cố định hệ thống");
+            holder.btnDelete.setVisibility(View.GONE);
+            holder.btnEdit.setVisibility(View.GONE);
+
+            // Gán Emoji và màu nền tự động theo tên
+            bindCategoryIcon(holder.tvIcon, item.categoryName);
         }
 
         // Bắt sự kiện click vào item

@@ -20,7 +20,7 @@ import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.C
 public class CategorySelectAdapter extends RecyclerView.Adapter<CategorySelectAdapter.ViewHolder> {
 
     public interface OnCategorySelectedListener {
-        void onSelected(CategoryEntity category);
+        void onSelected(CategoryEntity category); // Đổi tên cho nhất quán
     }
 
     private Context context;
@@ -38,11 +38,32 @@ public class CategorySelectAdapter extends RecyclerView.Adapter<CategorySelectAd
         if (newList != null) {
             this.list.addAll(newList);
         }
-        this.selectedPosition = 0;
+        // Giữ nguyên vị trí được chọn nếu có, ngược lại chọn 0
+        if (selectedPosition >= this.list.size()) {
+            selectedPosition = 0;
+        }
         if (!this.list.isEmpty() && listener != null) {
-            listener.onSelected(this.list.get(0));
+            listener.onSelected(this.list.get(selectedPosition));
         }
         notifyDataSetChanged();
+    }
+
+    // Hàm tự động tìm và bôi đậm danh mục dựa vào ID (Dùng khi Chỉnh sửa giao dịch cũ)
+    public void setSelectedCategoryId(long categoryId) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).categoryId == categoryId) {
+                int oldPosition = selectedPosition;
+                selectedPosition = i;
+                notifyItemChanged(oldPosition);
+                notifyItemChanged(selectedPosition);
+
+                // Kích hoạt listener để Activity nhận dữ liệu
+                if (listener != null) {
+                    listener.onSelected(list.get(selectedPosition));
+                }
+                break;
+            }
+        }
     }
 
     public CategoryEntity getSelectedCategory() {
@@ -61,58 +82,108 @@ public class CategorySelectAdapter extends RecyclerView.Adapter<CategorySelectAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        CategoryEntity item = list.get(position);
-        if (item == null) return;
+        CategoryEntity category = list.get(position);
+        if (category == null) return;
 
-        holder.tvName.setText(item.categoryName);
-        holder.tvIcon.setText(getEmojiForCategory(item.categoryName));
+        String fullName = category.categoryName != null ? category.categoryName : "";
+        int firstSpaceIndex = fullName.indexOf(" ");
 
-        // Highlight viền nếu item đang được chọn
-        if (selectedPosition == position) {
-            holder.layoutBorder.setBackgroundColor(Color.parseColor("#2563EB")); // Viền xanh
-            holder.tvName.setTextColor(Color.parseColor("#2563EB"));
-            holder.tvName.setTypeface(null, android.graphics.Typeface.BOLD);
+        if (category.userId != null && category.userId > 0 && firstSpaceIndex != -1 && firstSpaceIndex <= 2) {
+            String iconPart = fullName.substring(0, firstSpaceIndex);
+            String namePart = fullName.substring(firstSpaceIndex + 1);
+
+            holder.tvIcon.setText(iconPart);
+            holder.tvName.setText(namePart);
+            holder.tvIcon.setBackgroundColor(Color.parseColor("#F1F5F9"));
         } else {
-            holder.layoutBorder.setBackgroundColor(Color.parseColor("#E2E8F0")); // Viền xám
-            holder.tvName.setTextColor(Color.parseColor("#64748B"));
-            holder.tvName.setTypeface(null, android.graphics.Typeface.NORMAL);
+            holder.tvName.setText(fullName);
+            bindCategoryIcon(holder.tvIcon, fullName);
+        }
+
+        if (selectedPosition == position) {
+            holder.itemView.setBackgroundColor(Color.parseColor("#DBEAFE"));
+        } else {
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
         holder.itemView.setOnClickListener(v -> {
-            int prevPos = selectedPosition;
+            int oldPosition = selectedPosition;
             selectedPosition = holder.getAdapterPosition();
-            notifyItemChanged(prevPos);
+
+            notifyItemChanged(oldPosition);
             notifyItemChanged(selectedPosition);
 
             if (listener != null) {
-                listener.onSelected(item);
+                listener.onSelected(category);
             }
         });
+    }
+
+    private void bindCategoryIcon(TextView tvIcon, String name) {
+        if (name == null) return;
+        switch (name.trim()) {
+            case "Ăn uống":
+                tvIcon.setText("🍜");
+                tvIcon.setBackgroundColor(Color.parseColor("#FEF3C7"));
+                break;
+            case "Học tập":
+                tvIcon.setText("📚");
+                tvIcon.setBackgroundColor(Color.parseColor("#D1FAE5"));
+                break;
+            case "Đi lại":
+                tvIcon.setText("🚌");
+                tvIcon.setBackgroundColor(Color.parseColor("#FFEDD5"));
+                break;
+            case "Nhà ở":
+                tvIcon.setText("🏠");
+                tvIcon.setBackgroundColor(Color.parseColor("#EDE9FE"));
+                break;
+            case "Mua sắm":
+                tvIcon.setText("🛍️");
+                tvIcon.setBackgroundColor(Color.parseColor("#FCE7F3"));
+                break;
+            case "Giải trí":
+                tvIcon.setText("🎮");
+                tvIcon.setBackgroundColor(Color.parseColor("#E0E7FF"));
+                break;
+            case "Sức khỏe":
+                tvIcon.setText("💊");
+                tvIcon.setBackgroundColor(Color.parseColor("#FEE2E2"));
+                break;
+            case "Hóa đơn và dịch vụ":
+                tvIcon.setText("🧾");
+                tvIcon.setBackgroundColor(Color.parseColor("#FEF9C3"));
+                break;
+            case "Chi tiêu khác":
+                tvIcon.setText("📦");
+                tvIcon.setBackgroundColor(Color.parseColor("#F1F5F9"));
+                break;
+            case "Lương / Làm thêm":
+                tvIcon.setText("💰");
+                tvIcon.setBackgroundColor(Color.parseColor("#DCFCE7"));
+                break;
+            case "Trợ cấp gia đình":
+                tvIcon.setText("👨‍👩‍👧");
+                tvIcon.setBackgroundColor(Color.parseColor("#E0F2FE"));
+                break;
+            case "Học bổng":
+                tvIcon.setText("🎓");
+                tvIcon.setBackgroundColor(Color.parseColor("#FEF3C7"));
+                break;
+            case "Thu nhập khác":
+                tvIcon.setText("💵");
+                tvIcon.setBackgroundColor(Color.parseColor("#F1F5F9"));
+                break;
+            default:
+                tvIcon.setText("🏷️");
+                tvIcon.setBackgroundColor(Color.parseColor("#F1F5F9"));
+                break;
+        }
     }
 
     @Override
     public int getItemCount() {
         return list.size();
-    }
-
-    private String getEmojiForCategory(String name) {
-        if (name == null) return "📦";
-        switch (name.trim()) {
-            case "Ăn uống": return "🍜";
-            case "Học tập": return "📚";
-            case "Đi lại": return "🚌";
-            case "Nhà ở": return "🏠";
-            case "Mua sắm": return "🛍️";
-            case "Giải trí": return "🎮";
-            case "Sức khỏe": return "💊";
-            case "Hóa đơn và dịch vụ": return "🧾";
-            case "Chi tiêu khác": return "📦";
-            case "Lương / Làm thêm": return "💰";
-            case "Trợ cấp gia đình": return "👨‍👩‍👧";
-            case "Học bổng": return "🎓";
-            case "Thu nhập khác": return "💵";
-            default: return "🏷️";
-        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

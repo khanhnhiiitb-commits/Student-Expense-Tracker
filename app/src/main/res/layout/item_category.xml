@@ -5,33 +5,33 @@
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:padding="12dp"
-    android:background="?attr/selectableItemBackground">
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/bg_card_rounded">
 
-    <!-- Ô tròn chứa Emoji đại diện cho danh mục -->
+    <!-- Icon danh mục dạng Emoji với viền tròn bo cong -->
     <TextView
         android:id="@+id/tvCategoryIcon"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:background="#F1F5F9"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:gravity="center"
-        android:text="📦"
-        android:textSize="20sp" />
+        android:textSize="22sp"
+        android:text="📦" />
 
-    <!-- Cụm tên và loại danh mục -->
+    <!-- Tên và phân loại danh mục -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginStart="14dp"
+        android:layout_marginStart="12dp"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvCategoryName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tên danh mục"
+            android:text="Ăn uống"
             android:textColor="#0F172A"
-            android:textSize="15sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -39,29 +39,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="Khoản chi tiêu"
+            android:text="Mặc định · Cố định hệ thống"
             android:textColor="#64748B"
             android:textSize="12sp" />
     </LinearLayout>
 
-    <!-- Nút Sửa & Xóa -->
+    <!-- Nút Sửa (Icon hoặc chữ) -->
     <TextView
         android:id="@+id/btnEditCategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:padding="6dp"
-        android:text="✎"
-        android:textColor="#64748B"
-        android:textSize="18sp" />
+        android:padding="8dp"
+        android:text="✏️"
+        android:textSize="16sp"
+        android:background="?attr/selectableItemBackgroundBorderless" />
 
+    <!-- Nút Xóa (Icon hoặc chữ) -->
     <TextView
         android:id="@+id/btnDeleteCategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:text="🗑"
-        android:textColor="#EF4444"
-        android:textSize="18sp" />
+        android:padding="8dp"
+        android:layout_marginStart="4dp"
+        android:text="🗑️"
+        android:textSize="16sp"
+        android:background="?attr/selectableItemBackgroundBorderless" />
 
 </LinearLayout>

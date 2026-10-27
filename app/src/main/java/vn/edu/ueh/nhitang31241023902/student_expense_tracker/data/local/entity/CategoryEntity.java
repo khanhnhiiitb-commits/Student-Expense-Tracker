@@ -17,4 +17,5 @@ public class CategoryEntity {
         this.categoryName = categoryName;
         this.type = type;
     }
+
 }
