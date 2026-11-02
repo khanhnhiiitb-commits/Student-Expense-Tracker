@@ -36,6 +36,9 @@
         <activity
             android:name=".ui.transaction.AddTransactionActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.main.BudgetSetupActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

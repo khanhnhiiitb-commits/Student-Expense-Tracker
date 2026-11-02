@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
+    android:layout_marginBottom="12dp"
+    android:layout_marginHorizontal="16dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="0dp"
     app:strokeColor="#E0E0E0"
@@ -16,7 +17,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-
+        <!-- Khung chứa Icon -->
         <FrameLayout
             android:id="@+id/flIconContainer"
             android:layout_width="40dp"
@@ -25,13 +26,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/ivCategoryIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+            <TextView
+                android:id="@+id/tvCategoryIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                app:tint="#424242"
-                tools:src="@drawable/ic_food" />
+                android:textSize="20sp"
+                tools:text="🍜" />
         </FrameLayout>
 
         <!-- Tên danh mục -->

@@ -219,14 +219,5 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom Navigation Bar (Giả lập theo hình) -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
-    <!-- Lưu ý: Cần tạo file menu (ví dụ: Trang chủ, Ngân sách, Thêm, Báo cáo, Hồ sơ) -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

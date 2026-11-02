@@ -1,109 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bgColor"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:background="#F5F7FA">
 
-    <!-- Lời chào -->
-    <TextView
-        android:id="@+id/tvWelcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chào mừng bạn!"
-        android:textColor="@color/textColorDark"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="Hôm nay bạn chi tiêu thế nào?"
-        android:textColor="@color/textColorGray"
-        android:textSize="14sp" />
-
-    <!-- Thẻ Tổng số dư -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_input"
-        android:elevation="2dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="24dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Tổng số dư hiện tại"
-            android:textColor="@color/textColorGray"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tvTotalBalance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0 VNĐ"
-            android:textColor="@color/primaryBlue"
-            android:textSize="32sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvRecentTransactions"
+    <!-- Khu vực hiển thị các Fragment (Trang chủ, Ngân sách, v.v.) -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1"
-        android:nestedScrollingEnabled="false"
-        android:clipToPadding="false"
-        android:paddingBottom="16dp" />
-    <!-- Cụm nút test: hiển thị ngang cạnh nhau -->
-    <LinearLayout
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Thanh điều hướng dưới cùng -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal">
+        android:background="@android:color/white"
+        app:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnOpenCategoryTemp"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="6dp"
-            android:layout_weight="1"
-            android:background="#2563EB"
-            android:text="Quản lý Danh mục"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:textStyle="bold" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnTestAddTransaction"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="6dp"
-            android:layout_weight="1"
-            android:background="#16A34A"
-            android:text="+ Thêm giao dịch"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    <!-- Nút Đăng xuất -->
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="@android:color/holo_red_light"
-        android:text="Đăng xuất" />
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
