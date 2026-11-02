@@ -69,9 +69,21 @@ public class AddCategoryActivity extends AppCompatActivity {
         // Nhận dữ liệu loại danh mục hoặc ID chỉnh sửa
         editCategoryId = getIntent().getLongExtra("EDIT_CATEGORY_ID", -1);
         if (editCategoryId > 0) {
-            String name = getIntent().getStringExtra("CATEGORY_NAME");
+            String fullName = getIntent().getStringExtra("CATEGORY_NAME");
             String type = getIntent().getStringExtra("CATEGORY_TYPE");
-            if (name != null) edtCategoryName.setText(name);
+            if (fullName != null) {
+                String[] parts = fullName.split(" ", 3);
+                if (parts.length == 3 && parts[1].startsWith("#")) {
+                    selectedIcon = parts[0];
+                    selectedColorHex = parts[1];
+                    edtCategoryName.setText(parts[2]); // Chỉ set tên thuần túy
+                } else if (parts.length >= 2) {
+                    selectedIcon = parts[0];
+                    edtCategoryName.setText(fullName.substring(parts[0].length()).trim());
+                } else {
+                    edtCategoryName.setText(fullName);
+                }
+            }
             if (type != null) selectedType = type;
             btnCreateCategoryBottom.setText("Cập nhật danh mục");
         } else {
@@ -121,38 +133,47 @@ public class AddCategoryActivity extends AppCompatActivity {
             return;
         }
 
-        // Mẹo nhỏ: Ghép icon trực tiếp vào tên danh mục để không phải thêm cột icon vào CSDL
-        // Ví dụ: "🍔 Ăn uống"
-        String finalCategoryName = selectedIcon + " " + categoryName;
-
+        String finalCategoryName = selectedIcon + " " + selectedColorHex + " " + categoryName;
         btnCreateCategoryBottom.setEnabled(false);
 
         executorService.execute(() -> {
-            CategoryDao categoryDao = db.categoryDao();
-            SharedPreferences prefs = getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
-            long currentUserId = -1;
-            UserEntity user = db.userDao().getUserByEmail(prefs.getString("USER_EMAIL", ""));
-            if (user != null) currentUserId = user.userId;
+            try {
+                CategoryDao categoryDao = db.categoryDao();
+                SharedPreferences prefs = getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
+                long currentUserId = -1;
+                UserEntity user = db.userDao().getUserByEmail(prefs.getString("USER_EMAIL", ""));
+                if (user != null) currentUserId = user.userId;
 
-            if (editCategoryId > 0) {
-                // Sửa danh mục
-                CategoryEntity cat = categoryDao.getCategoryById(editCategoryId);
-                if (cat != null) {
-                    cat.categoryName = finalCategoryName;
-                    cat.type = selectedType;
-                    categoryDao.updateCategory(cat);
+                if (editCategoryId > 0) {
+                    CategoryEntity cat = categoryDao.getCategoryById(editCategoryId);
+                    if (cat != null) {
+                        cat.categoryName = finalCategoryName;
+                        cat.type = selectedType;
+                        categoryDao.updateCategory(cat);
+                    }
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+                } else {
+                    CategoryEntity category = new CategoryEntity(currentUserId, finalCategoryName, selectedType);
+                    categoryDao.insertCategory(category);
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Thêm danh mục thành công!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
                 }
+            } catch (android.database.sqlite.SQLiteException e) {
+                // Xử lý ngoại lệ Room/SQLite
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
-                    finish();
+                    Toast.makeText(this, "Lỗi cơ sở dữ liệu: Không thể lưu danh mục. Vui lòng thử lại!", Toast.LENGTH_LONG).show();
+                    btnCreateCategoryBottom.setEnabled(true);
                 });
-            } else {
-                // Thêm mới
-                CategoryEntity category = new CategoryEntity(currentUserId, finalCategoryName, selectedType);
-                categoryDao.insertCategory(category);
+            } catch (Exception e) {
+                // Xử lý các lỗi bất ngờ khác
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "Thêm danh mục thành công!", Toast.LENGTH_SHORT).show();
-                    finish();
+                    Toast.makeText(this, "Đã xảy ra lỗi hệ thống bất ngờ!", Toast.LENGTH_LONG).show();
+                    btnCreateCategoryBottom.setEnabled(true);
                 });
             }
         });

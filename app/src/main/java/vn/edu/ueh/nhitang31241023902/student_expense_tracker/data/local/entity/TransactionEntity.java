@@ -1,10 +1,21 @@
 package vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity;
 
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import java.math.BigDecimal;
 
-@Entity(tableName = "transactions")
+@Entity(
+        tableName = "transactions",
+        foreignKeys = @ForeignKey(
+                entity = CategoryEntity.class,
+                parentColumns = "categoryId",
+                childColumns = "categoryID",
+                onDelete = ForeignKey.RESTRICT // TỪ CHỐI XÓA nếu danh mục đang có giao dịch
+        ),
+        indices = {@Index("categoryID")}
+)
 public class TransactionEntity {
     @PrimaryKey(autoGenerate = true)
     public long transactionID;

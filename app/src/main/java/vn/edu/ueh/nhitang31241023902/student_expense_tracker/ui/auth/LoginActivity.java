@@ -47,6 +47,11 @@ public class LoginActivity extends AppCompatActivity {
         TextView tvGoToRegister = findViewById(R.id.tvGoToRegister);
         TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
+        String savedEmail = prefs.getString("USER_EMAIL", "");
+        if (!savedEmail.isEmpty()) {
+            edtLoginEmail.setText(savedEmail);
+            cbRememberMe.setChecked(true);
+        }
         // 3. Xử lý sự kiện CHUYỂN SANG MÀN HÌNH ĐĂNG KÝ
         tvGoToRegister.setOnClickListener(v -> {
             // Sử dụng Intent để chuyển từ LoginActivity sang RegisterActivity

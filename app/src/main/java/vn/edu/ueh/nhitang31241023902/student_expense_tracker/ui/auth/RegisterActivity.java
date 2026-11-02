@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +25,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText edtEmail;
     private EditText edtPassword;
     private EditText edtConfirmPassword;
-
+    private CheckBox cbTerms;
     private Button btnRegister;
     private AppDatabase db;
 
@@ -41,7 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
-
+        cbTerms = findViewById(R.id.cbTerms);
         btnRegister = findViewById(R.id.btnRegister);
         TextView tvLoginNow = findViewById(R.id.tvLoginNow);
 
@@ -96,7 +97,12 @@ public class RegisterActivity extends AppCompatActivity {
             edtConfirmPassword.requestFocus();
             return;
         }
-
+        // 5. Kiểm tra trạng thái CheckBox điều khoản sử dụng
+        if (!cbTerms.isChecked()) {
+            Toast.makeText(this, "Bạn phải đồng ý với Điều khoản sử dụng và Chính sách bảo mật để tiếp tục!", Toast.LENGTH_LONG).show();
+            cbTerms.requestFocus();
+            return;
+        }
         // Đăng ký tài khoản trên luồng nền
         executeRegistration(fullName, email, password);
     }

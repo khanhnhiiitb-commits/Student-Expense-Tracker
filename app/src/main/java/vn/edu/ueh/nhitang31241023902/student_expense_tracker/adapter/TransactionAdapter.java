@@ -77,22 +77,39 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (category != null) {
 
-                    // --- XỬ LÝ ICON VÀ TÊN DANH MỤC ---
+                    // --- BẮT ĐẦU: XỬ LÝ ICON, MÀU VÀ TÊN DANH MỤC ---
                     String fullName = category.categoryName != null ? category.categoryName : "";
-                    String displayName = fullName;
-                    int firstSpaceIndex = fullName.indexOf(" ");
+                    String displayName = fullName; // Lưu tên thuần túy để hiển thị ở TextView
 
-                    // Kiểm tra xem đây có phải danh mục tự tạo có chứa icon ghép ở đầu không
-                    if (category.userId != null && category.userId > 0 && firstSpaceIndex != -1 && firstSpaceIndex <= 2) {
-                        String iconPart = fullName.substring(0, firstSpaceIndex);
-                        displayName = fullName.substring(firstSpaceIndex + 1); // Bỏ icon khỏi tên
+                    if (category.userId != null && category.userId > 0) {
+                        String[] parts = fullName.split(" ", 3);
 
-                        holder.tvIcon.setText(iconPart);
-                        holder.tvIcon.setBackgroundColor(Color.parseColor("#F1F5F9")); // Nền xám cho danh mục tự tạo
+                        // Trường hợp dữ liệu lưu chuẩn mới: Icon + Mã màu + Tên
+                        if (parts.length == 3 && parts[1].startsWith("#")) {
+                            holder.tvIcon.setText(parts[0]);
+                            displayName = parts[2]; // Cắt bỏ hoàn toàn mã màu khỏi chuỗi hiển thị
+                            try {
+                                holder.tvIcon.setBackgroundColor(Color.parseColor(parts[1]));
+                            } catch (IllegalArgumentException e) {
+                                holder.tvIcon.setBackgroundColor(Color.parseColor("#F1F5F9"));
+                            }
+                        }
+                        // Trường hợp dữ liệu cũ (chỉ Icon + Tên)
+                        else if (parts.length >= 2) {
+                            holder.tvIcon.setText(parts[0]);
+                            displayName = fullName.substring(parts[0].length()).trim();
+                            holder.tvIcon.setBackgroundColor(Color.parseColor("#F1F5F9"));
+                        }
+                        // Trường hợp lỗi hoặc format lạ
+                        else {
+                            holder.tvIcon.setText("🏷️");
+                            holder.tvIcon.setBackgroundColor(Color.parseColor("#F1F5F9"));
+                        }
                     } else {
-                        // Nếu là danh mục mặc định của hệ thống
+                        // Danh mục mặc định của hệ thống
                         bindCategoryIcon(holder.tvIcon, fullName);
                     }
+                    // --- KẾT THÚC XỬ LÝ CHUỖI ---
 
                     // --- XỬ LÝ TIÊU ĐỀ & GHI CHÚ ---
                     if (item.note != null && !item.note.trim().isEmpty()) {

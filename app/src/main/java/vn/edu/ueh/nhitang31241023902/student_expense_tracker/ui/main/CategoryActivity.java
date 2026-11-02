@@ -142,22 +142,35 @@ public class CategoryActivity extends AppCompatActivity {
             AppDatabase db = AppDatabase.getDatabase(this);
             long catId = category.categoryId;
 
-            // Kiểm tra ràng buộc toàn vẹn: nếu đã có giao dịch gắn danh mục này thì chặn
+            // LỚP BẢO VỆ 1 (Tầng Ứng dụng - UX): Kiểm tra logic đếm số giao dịch
             int txCount = db.categoryDao().countTransactionsUsingCategory(catId);
             if (txCount > 0) {
                 runOnUiThread(() ->
                         Toast.makeText(this, "Danh mục đang có " + txCount + " giao dịch liên kết. Không thể xóa!", Toast.LENGTH_LONG).show()
                 );
-                return;
+                return; // Đã chặn thành công ở tầng UX!
             }
 
-            // Thực hiện xóa khỏi Room
-            db.categoryDao().deleteCategory(category);
+            // LỚP BẢO VỆ 2 (Tầng Cơ sở dữ liệu - Test Case 2.2): Bọc Try-Catch cho Khóa ngoại
+            try {
+                // Thực hiện xóa khỏi Room
+                db.categoryDao().deleteCategory(category);
 
-            runOnUiThread(() -> {
-                Toast.makeText(this, "Đã xóa danh mục thành công!", Toast.LENGTH_SHORT).show();
-                loadCategories(currentType); // Tải lại danh sách danh mục
-            });
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Đã xóa danh mục thành công!", Toast.LENGTH_SHORT).show();
+                    loadCategories(currentType); // Tải lại danh sách danh mục
+                });
+
+            } catch (android.database.sqlite.SQLiteConstraintException e) {
+                // NẾU LỚP 1 BỊ XUYÊN THỦNG HOẶC LỖI ĐỒNG BỘ: SQLite sẽ đứng ra chặn lệnh xóa
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Lỗi CSDL: Khóa ngoại từ chối xóa do có dữ liệu liên kết!", Toast.LENGTH_LONG).show();
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Đã xảy ra lỗi hệ thống khi xóa.", Toast.LENGTH_SHORT).show();
+                });
+            }
         }).start();
     }
 

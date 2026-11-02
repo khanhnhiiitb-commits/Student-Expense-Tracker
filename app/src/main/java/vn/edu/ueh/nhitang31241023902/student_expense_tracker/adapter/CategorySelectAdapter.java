@@ -20,7 +20,7 @@ import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.C
 public class CategorySelectAdapter extends RecyclerView.Adapter<CategorySelectAdapter.ViewHolder> {
 
     public interface OnCategorySelectedListener {
-        void onSelected(CategoryEntity category); // Đổi tên cho nhất quán
+        void onSelected(CategoryEntity category);
     }
 
     private Context context;
@@ -86,26 +86,44 @@ public class CategorySelectAdapter extends RecyclerView.Adapter<CategorySelectAd
         if (category == null) return;
 
         String fullName = category.categoryName != null ? category.categoryName : "";
-        int firstSpaceIndex = fullName.indexOf(" ");
 
-        if (category.userId != null && category.userId > 0 && firstSpaceIndex != -1 && firstSpaceIndex <= 2) {
-            String iconPart = fullName.substring(0, firstSpaceIndex);
-            String namePart = fullName.substring(firstSpaceIndex + 1);
+        // TÁCH CHUỖI ĐỂ LẤY MÀU CHO DANH MỤC TÙY CHỈNH
+        if (category.userId != null && category.userId > 0) {
+            String[] parts = fullName.split(" ", 3);
 
-            holder.tvIcon.setText(iconPart);
-            holder.tvName.setText(namePart);
-            holder.tvIcon.setBackgroundColor(Color.parseColor("#F1F5F9"));
+            if (parts.length == 3 && parts[1].startsWith("#")) {
+                // Đã lưu theo chuẩn: Icon + Màu + Tên
+                holder.tvIcon.setText(parts[0]);
+                holder.tvName.setText(parts[2]);
+                try {
+                    holder.tvIcon.setBackgroundColor(Color.parseColor(parts[1]));
+                } catch (IllegalArgumentException e) {
+                    holder.tvIcon.setBackgroundColor(Color.parseColor(getDynamicColor(category.categoryId)));
+                }
+            } else if (parts.length >= 2) {
+                // Form cũ (chỉ Icon + Tên)
+                holder.tvIcon.setText(parts[0]);
+                holder.tvName.setText(fullName.substring(parts[0].length()).trim());
+                holder.tvIcon.setBackgroundColor(Color.parseColor(getDynamicColor(category.categoryId)));
+            } else {
+                holder.tvIcon.setText("🏷️");
+                holder.tvName.setText(fullName);
+                holder.tvIcon.setBackgroundColor(Color.parseColor(getDynamicColor(category.categoryId)));
+            }
         } else {
+            // Danh mục mặc định của hệ thống
             holder.tvName.setText(fullName);
             bindCategoryIcon(holder.tvIcon, fullName);
         }
 
+        // Bôi màu nền để highlight nếu item đang được chọn
         if (selectedPosition == position) {
             holder.itemView.setBackgroundColor(Color.parseColor("#DBEAFE"));
         } else {
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
+        // Xử lý sự kiện click chọn danh mục
         holder.itemView.setOnClickListener(v -> {
             int oldPosition = selectedPosition;
             selectedPosition = holder.getAdapterPosition();
@@ -184,6 +202,23 @@ public class CategorySelectAdapter extends RecyclerView.Adapter<CategorySelectAd
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    private final String[] customColors = {
+            "#2563EB", // 1. Xanh dương đậm
+            "#16A34A", // 2. Xanh lá
+            "#EF4444", // 3. Đỏ
+            "#F59E0B", // 4. Cam vàng
+            "#8B5CF6", // 5. Tím
+            "#EC4899", // 6. Hồng
+            "#06B6D4", // 7. Xanh lơ (Cyan)
+            "#64748B"  // 8. Xám (Slate)
+    };
+
+    private String getDynamicColor(long categoryId) {
+        // Dùng phép chia lấy dư để chọn 1 màu trong mảng dựa vào ID
+        int index = (int) (Math.abs(categoryId) % customColors.length);
+        return customColors[index];
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
