@@ -14,7 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import android.content.res.ColorStateList;
 
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.BudgetWarningUtils;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.R;
 
 public class BudgetCategoryAdapter extends RecyclerView.Adapter<BudgetCategoryAdapter.ViewHolder> {
@@ -56,6 +58,47 @@ public class BudgetCategoryAdapter extends RecyclerView.Adapter<BudgetCategoryAd
 
         // 4. Cập nhật thanh Progress
         holder.pbCategoryProgress.setProgress(Math.min(percent, 100));
+
+        BudgetWarningUtils.WarningLevel level =
+                BudgetWarningUtils.checkBudget(
+                        model.targetAmount,
+                        model.spentAmount
+                );
+
+        int warningColor = BudgetWarningUtils.getColor(level);
+
+        holder.pbCategoryProgress.setProgressTintList(
+                ColorStateList.valueOf(warningColor)
+        );
+
+        holder.tvPercentage.setTextColor(warningColor);
+
+// Hiển thị mức cảnh báo trong phần trăm
+        switch (level) {
+            case WARNING:
+                holder.tvPercentage.setText(percent + "% ⚠");
+                break;
+
+            case DANGER:
+                holder.tvPercentage.setText(percent + "% ⚠");
+                break;
+
+            case EXHAUSTED:
+                holder.tvPercentage.setText(percent + "% - Hết ngân sách");
+                break;
+
+            case EXCEEDED:
+                holder.tvPercentage.setText(percent + "% - Vượt hạn mức");
+                break;
+
+            case NOT_SET:
+                holder.tvPercentage.setText("Chưa thiết lập");
+                break;
+
+            default:
+                holder.tvPercentage.setText(percent + "%");
+                break;
+        }
 
         // 5. Cập nhật Icon dựa trên tên danh mục
         holder.tvCategoryIcon.setText(getCategoryEmoji(model.categoryName));    }
