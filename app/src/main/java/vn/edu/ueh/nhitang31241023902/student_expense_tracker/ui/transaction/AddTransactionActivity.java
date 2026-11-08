@@ -115,66 +115,53 @@ public class AddTransactionActivity extends AppCompatActivity {
         }).start();
     }
 
-    private String checkBudgetAfterSaving(
-            AppDatabase db,
-            long userId,
-            long categoryId,
-            long transactionDate
-    ) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(transactionDate);
+    // Gọi trên background thread, TRƯỚC khi ghi giao dịch vào Room.
+    // Chỉ cảnh báo khi danh mục mới tăng qua một mức cảnh báo.
+    private String evaluateBudgetAlert(AppDatabase db, long userId,
+                                       long categoryId, long transactionDate, long newAmount,
+                                       TransactionEntity oldTransaction) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(transactionDate);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int year = cal.get(Calendar.YEAR);
+        BudgetEntity budget = db.budgetDao().getBudgetForCategoryAndMonth(userId, categoryId, month, year);
+        if (budget == null || budget.amount <= 0) return null;
 
-        int month = calendar.get(Calendar.MONTH) + 1;
-        int year = calendar.get(Calendar.YEAR);
-
-        BudgetEntity budget = db.budgetDao()
-                .getBudgetForCategoryAndMonth(
-                        userId, categoryId, month, year
-                );
-
-        // Không có ngân sách cho danh mục này
-        if (budget == null || budget.amount <= 0) {
-            return null;
-        }
-
-        List<TransactionEntity> transactions =
-                db.transactionDao()
-                        .getTransactionsByUserId(userId);
-
-        long totalSpent = 0;
-
+        long spentBefore = 0;
+        List<TransactionEntity> transactions = db.transactionDao().getTransactionsByUserId(userId);
         for (TransactionEntity tx : transactions) {
-            if (tx.categoryID != categoryId ||
-                    tx.amount == null) {
-                continue;
-            }
-
-            calendar.setTimeInMillis(tx.transactionDate);
-
-            int txMonth = calendar.get(Calendar.MONTH) + 1;
-            int txYear = calendar.get(Calendar.YEAR);
-
-            if (txMonth == month && txYear == year) {
-                totalSpent += tx.amount.longValue();
+            if (tx.categoryID != categoryId || tx.amount == null) continue;
+            cal.setTimeInMillis(tx.transactionDate);
+            if (cal.get(Calendar.MONTH) + 1 == month && cal.get(Calendar.YEAR) == year) {
+                spentBefore = Math.addExact(spentBefore, tx.amount.longValueExact());
             }
         }
 
-        BudgetWarningUtils.WarningLevel level =
-                BudgetWarningUtils.checkBudget(
-                        budget.amount, totalSpent
-                );
-
-        if (level == BudgetWarningUtils.WarningLevel.NORMAL) {
-            return null;
+        long spentAfter = spentBefore;
+        // Nếu đang sửa một giao dịch thuộc cùng danh mục/tháng, bỏ khoản cũ trước khi cộng khoản mới.
+        if (oldTransaction != null && oldTransaction.categoryID == categoryId && oldTransaction.amount != null) {
+            cal.setTimeInMillis(oldTransaction.transactionDate);
+            if (cal.get(Calendar.MONTH) + 1 == month && cal.get(Calendar.YEAR) == year) {
+                spentAfter = Math.subtractExact(spentAfter, oldTransaction.amount.longValueExact());
+            }
         }
+        spentAfter = Math.addExact(spentAfter, newAmount);
 
-        String message = BudgetWarningUtils.getMessage(level);
+        BudgetWarningUtils.WarningLevel before = BudgetWarningUtils.checkBudget(budget.amount, spentBefore);
+        BudgetWarningUtils.WarningLevel after = BudgetWarningUtils.checkBudget(budget.amount, spentAfter);
+        if (!BudgetWarningUtils.shouldAlert(before, after)) return null;
+        DecimalFormat fmt = new DecimalFormat("#,###");
+        return BudgetWarningUtils.getMessage(after) + "\nĐã chi: "
+                + fmt.format(spentAfter) + " / " + fmt.format(budget.amount) + " đ";
+    }
 
-        return message + "\nĐã chi: " +
-                new DecimalFormat("#,###").format(totalSpent)
-                + " / " +
-                new DecimalFormat("#,###").format(budget.amount)
-                + " đ";
+    private void showAlertIfNeeded(String warning) {
+        if (warning == null || isFinishing() || isDestroyed()) return;
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Cảnh báo ngân sách")
+                .setMessage(warning)
+                .setPositiveButton("Đã hiểu", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     private void initViews() {
@@ -446,64 +433,60 @@ public class AddTransactionActivity extends AppCompatActivity {
                     return;
                 }
 
-                // 11. Chỉ lưu khi tất cả kiểm tra đều hợp lệ
-                if (editTransactionId != -1 && existingTransaction != null) {
-                    // CHẾ ĐỘ CẬP NHẬT GIAO DỊCH
-                    existingTransaction.amount = amountDecimal;
-                    existingTransaction.categoryID = categoryIdToSave;
-                    existingTransaction.note = note;
-                    existingTransaction.transactionDate = dateToSave;
+                // 11. Lấy bản ghi cũ từ DB để tránh sửa nhầm người dùng hoặc dữ liệu lỗi thời.
+                TransactionEntity oldTx = null;
+                if (editTransactionId != -1) {
+                    oldTx = db.transactionDao().getTransactionById(editTransactionId);
+                    if (oldTx == null || oldTx.userID != user.userId) {
+                        runOnUiThread(() -> {
+                            btnSaveTransaction.setEnabled(true);
+                            Toast.makeText(this, "Giao dịch không tồn tại hoặc không thuộc tài khoản này", Toast.LENGTH_SHORT).show();
+                        });
+                        return;
+                    }
+                }
 
-                    db.transactionDao().updateTransaction(existingTransaction);
+                // Tính trạng thái trước/sau trên dữ liệu hiện tại, trước khi ghi.
+                String warning = null;
+                if ("Expense".equalsIgnoreCase(typeToSave)) {
+                    warning = evaluateBudgetAlert(db, user.userId, categoryIdToSave,
+                            dateToSave, amountDecimal.longValueExact(), oldTx);
+                }
+                final String finalWarning = warning;
 
+                if (oldTx != null) {
+                    oldTx.amount = amountDecimal;
+                    oldTx.categoryID = categoryIdToSave;
+                    oldTx.note = note;
+                    oldTx.transactionDate = dateToSave;
+                    int updated = db.transactionDao().updateTransaction(oldTx);
+                    if (updated != 1) throw new IllegalStateException("Không cập nhật được giao dịch");
                     runOnUiThread(() -> {
-                        Toast.makeText(AddTransactionActivity.this, "Đã cập nhật giao dịch thành công!", Toast.LENGTH_SHORT).show();
-                        finish(); // Sửa xong thì đóng màn hình về lại trang chủ
+                        Toast.makeText(this, "Đã cập nhật giao dịch thành công!", Toast.LENGTH_SHORT).show();
+                        if (finalWarning != null) {
+                            // Không đóng Activity cho tới khi người dùng đọc cảnh báo.
+                            new androidx.appcompat.app.AlertDialog.Builder(this)
+                                    .setTitle("Cảnh báo ngân sách")
+                                    .setMessage(finalWarning)
+                                    .setPositiveButton("Đã hiểu", (dialog, which) -> finish())
+                                    .setOnCancelListener(dialog -> finish())
+                                    .show();
+                        } else {
+                            finish();
+                        }
                     });
                 } else {
-                    // CHẾ ĐỘ THÊM MỚI GIAO DỊCH
                     TransactionEntity transaction = new TransactionEntity(
-                            user.userId,
-                            categoryIdToSave,
-                            amountDecimal,
-                            note,
-                            dateToSave,
-                            System.currentTimeMillis()
-                    );
-
+                            user.userId, categoryIdToSave, amountDecimal, note,
+                            dateToSave, System.currentTimeMillis());
                     db.transactionDao().insertTransaction(transaction);
-                    String warningMessage = null;
-
-                    if ("Expense".equalsIgnoreCase(typeToSave)) {
-                        warningMessage = checkBudgetAfterSaving(
-                                db,
-                                user.userId,
-                                categoryIdToSave,
-                                dateToSave
-                        );
-                    }
-
-                    final String finalWarningMessage = warningMessage;
                     runOnUiThread(() -> {
-                        String message = typeToSave.equals("Income")
-                                ? "Đã lưu thu nhập thành công!"
-                                : "Đã lưu chi tiêu thành công!";
-                        Toast.makeText(AddTransactionActivity.this, message, Toast.LENGTH_SHORT).show();
-
-                        if (finalWarningMessage != null) {
-                            new androidx.appcompat.app.AlertDialog.Builder(
-                                    AddTransactionActivity.this
-                            )
-                                    .setTitle("Cảnh báo ngân sách")
-                                    .setMessage(finalWarningMessage)
-                                    .setPositiveButton("Đã hiểu", (dialog, which) -> {
-                                        dialog.dismiss();
-                                    })
-                                    .show();
-                        }
-
+                        String message = "Income".equalsIgnoreCase(typeToSave)
+                                ? "Đã lưu thu nhập thành công!" : "Đã lưu chi tiêu thành công!";
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                         resetInputFields();
                         btnSaveTransaction.setEnabled(true);
+                        showAlertIfNeeded(finalWarning);
                     });
                 }
 

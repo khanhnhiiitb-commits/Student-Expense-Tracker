@@ -1,6 +1,7 @@
 package vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.main;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -97,9 +98,10 @@ public class BudgetFragment extends Fragment {
         String message = BudgetWarningUtils.getMessage(level);
 
         tvBudgetWarning.setText(message);
-        tvBudgetWarning.setTextColor(
-                BudgetWarningUtils.getColor(level)
-        );
+        int color = BudgetWarningUtils.getColor(level);
+        tvBudgetWarning.setTextColor(color);
+        tvTotalPercentage.setTextColor(color);
+        pbTotalBudget.setProgressTintList(ColorStateList.valueOf(color));
 
         if (level == BudgetWarningUtils.WarningLevel.NORMAL) {
             tvBudgetWarning.setVisibility(View.GONE);
@@ -164,19 +166,22 @@ public class BudgetFragment extends Fragment {
 
     private void loadBudgetData() {
         if (getContext() == null) return;
+        final Context appContext = requireContext().getApplicationContext();
+        final int monthToLoad = currentMonth;
+        final int yearToLoad = currentYear;
 
         SharedPreferences prefs = requireContext().getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
         String userEmail = prefs.getString("USER_EMAIL", "");
 
         new Thread(() -> {
-            AppDatabase db = AppDatabase.getDatabase(requireContext().getApplicationContext());
+            AppDatabase db = AppDatabase.getDatabase(appContext);
             UserEntity user = db.userDao().getUserByEmail(userEmail);
 
             if (user == null) return;
             currentUserId = user.userId;
 
             // 1. Lấy danh sách ngân sách đã thiết lập trong tháng
-            List<BudgetEntity> budgets = db.budgetDao().getAllBudgetsForMonth(currentUserId, currentMonth, currentYear);
+            List<BudgetEntity> budgets = db.budgetDao().getAllBudgetsForMonth(currentUserId, monthToLoad, yearToLoad);
 
             // 2. Lấy tất cả giao dịch của người dùng
             List<TransactionEntity> allTransactions = db.transactionDao().getTransactionsByUserId(currentUserId);
@@ -194,7 +199,7 @@ public class BudgetFragment extends Fragment {
                     int txYear = cal.get(Calendar.YEAR);
 
                     // Chỉ lọc các giao dịch nằm trong tháng/năm đang xem trên màn hình Ngân sách
-                    if (txMonth == currentMonth && txYear == currentYear) {
+                    if (txMonth == monthToLoad && txYear == yearToLoad) {
                         CategoryEntity cat = db.categoryDao().getCategoryById(tx.categoryID);
 
                         // Chỉ cộng dồn tiền nếu danh mục đó là CHI TIÊU (Expense)
@@ -220,11 +225,6 @@ public class BudgetFragment extends Fragment {
                 // Lấy số tiền đã tiêu từ Map (nếu tháng này chưa tiêu đồng nào thì = 0)
                 long spent = spentMap.containsKey(budget.categoryID) ? spentMap.get(budget.categoryID) : 0L;
                 totalSpent += spent;
-                BudgetWarningUtils.WarningLevel level =
-                        BudgetWarningUtils.checkBudget(
-                                budget.amount,
-                                spent
-                        );
                 displayList.add(new BudgetCategoryAdapter.BudgetDisplayModel(budget.categoryID, catName, budget.amount, spent));
             }
 
@@ -236,26 +236,18 @@ public class BudgetFragment extends Fragment {
             final int finalTotalPercent = finalTotalTarget > 0 ? (int) ((double) finalTotalSpent / finalTotalTarget * 100) : 0;
             final DecimalFormat formatter = new DecimalFormat("#,###");
 
-            getActivity().runOnUiThread(() -> {
-                adapter.setData(displayList);
-
-                tvTotalPercentage.setText(finalTotalPercent + "%");
-
-                tvTotalAmountSpent.setText(
-                        formatter.format(finalTotalSpent) + " đ"
-                );
-
-                pbTotalBudget.setProgress(
-                        Math.max(0, Math.min(finalTotalPercent, 100))
-                );
-
-                tvTotalBudgetDetail.setText(
-                        "Hạn mức " + formatter.format(finalTotalTarget)
-                                + " đ · Còn " + formatter.format(remaining) + " đ"
-                );
-
-                showBudgetWarning(finalTotalTarget, finalTotalSpent);
-            });
+            if (getActivity() != null) {
+                requireActivity().runOnUiThread(() -> {
+                    if (!isAdded() || monthToLoad != currentMonth || yearToLoad != currentYear) return;
+                    // Cập nhật lên giao diện
+                    adapter.setData(displayList);
+                    tvTotalPercentage.setText(finalTotalPercent + "%");
+                    tvTotalAmountSpent.setText(formatter.format(finalTotalSpent) + " đ");
+                    pbTotalBudget.setProgress(Math.min(finalTotalPercent, 100));
+                    tvTotalBudgetDetail.setText("Hạn mức " + formatter.format(finalTotalTarget) + " đ · Còn " + formatter.format(remaining) + " đ");
+                    showBudgetWarning(finalTotalTarget, finalTotalSpent);
+                });
+            }
         }).start();
     }
 }
