@@ -472,12 +472,36 @@ public class AddTransactionActivity extends AppCompatActivity {
                     );
 
                     db.transactionDao().insertTransaction(transaction);
+                    String warningMessage = null;
 
+                    if ("Expense".equalsIgnoreCase(typeToSave)) {
+                        warningMessage = checkBudgetAfterSaving(
+                                db,
+                                user.userId,
+                                categoryIdToSave,
+                                dateToSave
+                        );
+                    }
+
+                    final String finalWarningMessage = warningMessage;
                     runOnUiThread(() -> {
                         String message = typeToSave.equals("Income")
                                 ? "Đã lưu thu nhập thành công!"
                                 : "Đã lưu chi tiêu thành công!";
                         Toast.makeText(AddTransactionActivity.this, message, Toast.LENGTH_SHORT).show();
+
+                        if (finalWarningMessage != null) {
+                            new androidx.appcompat.app.AlertDialog.Builder(
+                                    AddTransactionActivity.this
+                            )
+                                    .setTitle("Cảnh báo ngân sách")
+                                    .setMessage(finalWarningMessage)
+                                    .setPositiveButton("Đã hiểu", (dialog, which) -> {
+                                        dialog.dismiss();
+                                    })
+                                    .show();
+                        }
+
                         resetInputFields();
                         btnSaveTransaction.setEnabled(true);
                     });
