@@ -167,6 +167,20 @@
                         tools:text="Hạn mức 2.500.000 đ · Còn 850.000 đ"
                         android:textSize="12sp"
                         android:textColor="#757575"/>
+
+                    <TextView
+                        android:id="@+id/tvBudgetWarning"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:padding="12dp"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:gravity="center_vertical"
+                        android:visibility="gone"
+                        tools:text="⚠ Bạn sắp vượt ngân sách!"
+                        tools:visibility="visible" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
