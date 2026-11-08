@@ -236,17 +236,26 @@ public class BudgetFragment extends Fragment {
             final int finalTotalPercent = finalTotalTarget > 0 ? (int) ((double) finalTotalSpent / finalTotalTarget * 100) : 0;
             final DecimalFormat formatter = new DecimalFormat("#,###");
 
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    // Cập nhật lên giao diện
-                    adapter.setData(displayList);
-                    tvTotalPercentage.setText(finalTotalPercent + "%");
-                    tvTotalAmountSpent.setText(formatter.format(finalTotalSpent) + " đ");
-                    pbTotalBudget.setProgress(Math.min(finalTotalPercent, 100));
-                    tvTotalBudgetDetail.setText("Hạn mức " + formatter.format(finalTotalTarget) + " đ · Còn " + formatter.format(remaining) + " đ");
-                });
+            getActivity().runOnUiThread(() -> {
+                adapter.setData(displayList);
+
+                tvTotalPercentage.setText(finalTotalPercent + "%");
+
+                tvTotalAmountSpent.setText(
+                        formatter.format(finalTotalSpent) + " đ"
+                );
+
+                pbTotalBudget.setProgress(
+                        Math.max(0, Math.min(finalTotalPercent, 100))
+                );
+
+                tvTotalBudgetDetail.setText(
+                        "Hạn mức " + formatter.format(finalTotalTarget)
+                                + " đ · Còn " + formatter.format(remaining) + " đ"
+                );
+
                 showBudgetWarning(finalTotalTarget, finalTotalSpent);
-            }
+            });
         }).start();
     }
 }
