@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.BudgetWarningUtils;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.DecimalFormat;
@@ -46,7 +46,7 @@ public class BudgetFragment extends Fragment {
     private BudgetCategoryAdapter adapter;
     private int currentMonth, currentYear;
     private long currentUserId = -1;
-
+    private TextView tvBudgetWarning;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -79,6 +79,7 @@ public class BudgetFragment extends Fragment {
         rvBudgetCategories = view.findViewById(R.id.rvBudgetCategories);
         btnSetupLimit = view.findViewById(R.id.btnSetupLimit);
         btnEditLimit = view.findViewById(R.id.btnEditLimit);
+        tvBudgetWarning = view.findViewById(R.id.tvBudgetWarning);
     }
 
     private void setupCurrentMonth() {
@@ -86,6 +87,25 @@ public class BudgetFragment extends Fragment {
         currentMonth = cal.get(Calendar.MONTH) + 1;
         currentYear = cal.get(Calendar.YEAR);
         updateMonthDisplay();
+    }
+
+    private void showBudgetWarning(long budget, long spent) {
+
+        BudgetWarningUtils.WarningLevel level =
+                BudgetWarningUtils.checkBudget(budget, spent);
+
+        String message = BudgetWarningUtils.getMessage(level);
+
+        tvBudgetWarning.setText(message);
+        tvBudgetWarning.setTextColor(
+                BudgetWarningUtils.getColor(level)
+        );
+
+        if (level == BudgetWarningUtils.WarningLevel.NORMAL) {
+            tvBudgetWarning.setVisibility(View.GONE);
+        } else {
+            tvBudgetWarning.setVisibility(View.VISIBLE);
+        }
     }
 
     private void updateMonthDisplay() {
@@ -200,7 +220,11 @@ public class BudgetFragment extends Fragment {
                 // Lấy số tiền đã tiêu từ Map (nếu tháng này chưa tiêu đồng nào thì = 0)
                 long spent = spentMap.containsKey(budget.categoryID) ? spentMap.get(budget.categoryID) : 0L;
                 totalSpent += spent;
-
+                BudgetWarningUtils.WarningLevel level =
+                        BudgetWarningUtils.checkBudget(
+                                budget.amount,
+                                spent
+                        );
                 displayList.add(new BudgetCategoryAdapter.BudgetDisplayModel(budget.categoryID, catName, budget.amount, spent));
             }
 
@@ -221,6 +245,7 @@ public class BudgetFragment extends Fragment {
                     pbTotalBudget.setProgress(Math.min(finalTotalPercent, 100));
                     tvTotalBudgetDetail.setText("Hạn mức " + formatter.format(finalTotalTarget) + " đ · Còn " + formatter.format(remaining) + " đ");
                 });
+                showBudgetWarning(finalTotalTarget, finalTotalSpent);
             }
         }).start();
     }
