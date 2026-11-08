@@ -29,7 +29,10 @@ import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.AppDatab
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.CategoryEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.TransactionEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.UserEntity;
+import java.util.ArrayList;
 
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.BudgetEntity;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.BudgetWarningUtils;
 public class AddTransactionActivity extends AppCompatActivity {
 
     private TextView btnClose;
@@ -110,6 +113,68 @@ public class AddTransactionActivity extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+
+    private String checkBudgetAfterSaving(
+            AppDatabase db,
+            long userId,
+            long categoryId,
+            long transactionDate
+    ) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(transactionDate);
+
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int year = calendar.get(Calendar.YEAR);
+
+        BudgetEntity budget = db.budgetDao()
+                .getBudgetForCategoryAndMonth(
+                        userId, categoryId, month, year
+                );
+
+        // Không có ngân sách cho danh mục này
+        if (budget == null || budget.amount <= 0) {
+            return null;
+        }
+
+        List<TransactionEntity> transactions =
+                db.transactionDao()
+                        .getTransactionsByUserId(userId);
+
+        long totalSpent = 0;
+
+        for (TransactionEntity tx : transactions) {
+            if (tx.categoryID != categoryId ||
+                    tx.amount == null) {
+                continue;
+            }
+
+            calendar.setTimeInMillis(tx.transactionDate);
+
+            int txMonth = calendar.get(Calendar.MONTH) + 1;
+            int txYear = calendar.get(Calendar.YEAR);
+
+            if (txMonth == month && txYear == year) {
+                totalSpent += tx.amount.longValue();
+            }
+        }
+
+        BudgetWarningUtils.WarningLevel level =
+                BudgetWarningUtils.checkBudget(
+                        budget.amount, totalSpent
+                );
+
+        if (level == BudgetWarningUtils.WarningLevel.NORMAL) {
+            return null;
+        }
+
+        String message = BudgetWarningUtils.getMessage(level);
+
+        return message + "\nĐã chi: " +
+                new DecimalFormat("#,###").format(totalSpent)
+                + " / " +
+                new DecimalFormat("#,###").format(budget.amount)
+                + " đ";
     }
 
     private void initViews() {
