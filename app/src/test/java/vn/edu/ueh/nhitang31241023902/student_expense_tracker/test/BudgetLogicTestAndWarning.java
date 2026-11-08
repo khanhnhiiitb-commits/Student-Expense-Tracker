@@ -5,74 +5,72 @@ import static org.junit.Assert.assertEquals;
 
 public class BudgetLogicTestAndWarning {
 
-    // ==========================================
-    // PHẦN 1: MÔ PHỎNG LOGIC TÍNH TOÁN NGÂN SÁCH
-    // ==========================================
-
     public double tinhTienConLai(double tongNganSach, double daChi) {
         return tongNganSach - daChi;
     }
 
     public double tinhPhanTramSuDung(double tongNganSach, double daChi) {
-        if (tongNganSach <= 0) return 0; // Tránh lỗi chia cho 0
+        if (tongNganSach <= 0) return 0;
         return (daChi / tongNganSach) * 100;
     }
 
-    // ==========================================
-    // PHẦN 2: MÔ PHỎNG LOGIC CẢNH BÁO NGÂN SÁCH
-    // ==========================================
     public String kiemTraCanhBao(double tongNganSach, double daChi) {
-        if (tongNganSach <= 0) return "LỖI_NGÂN_SÁCH";
+        if (tongNganSach <= 0) return "Ngân sách không hợp lệ";
 
         double phanTram = tinhPhanTramSuDung(tongNganSach, daChi);
 
         if (phanTram > 100) {
-            return "VƯỢT_NGƯỠNG";
-        } else if (phanTram >= 80) {
-            return "ĐẠT_NGƯỠNG_80";
+            return "Vượt ngân sách";
+        } else if (phanTram > 80 && phanTram <= 100) {
+            return "Cảnh báo đã đạt ngưỡng";
+        } else if (phanTram == 80) {
+            return "Đạt ngưỡng 80%";
         } else {
-            return "CHƯA_ĐẠT_NGƯỠNG";
+            return "Chưa đạt ngưỡng";
         }
     }
 
-
-    // ==========================================
-    // CÁC KỊCH BẢN TEST (TEST CASES) BÊN DƯỚI
-    // (Lỗi initializationError xảy ra vì bạn đã xóa mất phần này)
-    // ==========================================
-
+    // --- 8 TEST CASES ---
     @Test
-    public void testTinhTienConLai() {
-        // Ngân sách 10tr, tiêu 3tr -> Còn lại 7tr
-        double conLai = tinhTienConLai(10000000, 3000000);
-        assertEquals(7000000, conLai, 0.001);
+    public void testNganSachKhongHopLe() {
+        assertEquals("Ngân sách không hợp lệ", kiemTraCanhBao(0, 500000));
+        assertEquals("Ngân sách không hợp lệ", kiemTraCanhBao(-1000000, 500000));
     }
 
     @Test
-    public void testTinhPhanTramSuDung() {
-        // Ngân sách 10tr, tiêu 5tr -> Sử dụng 50%
-        double phanTram = tinhPhanTramSuDung(10000000, 5000000);
-        assertEquals(50.0, phanTram, 0.001);
+    public void testDaChiBangKhong() {
+        assertEquals("Chưa đạt ngưỡng", kiemTraCanhBao(10000000, 0));
     }
 
     @Test
-    public void testCanhBao_ChuaDatNguong() {
-        // Tiêu 2tr/10tr (20%) -> Không cảnh báo
-        String ketQua = kiemTraCanhBao(10000000, 2000000);
-        assertEquals("CHƯA_ĐẠT_NGƯỠNG", ketQua);
+    public void testDuoi80PhanTram() {
+        assertEquals("Chưa đạt ngưỡng", kiemTraCanhBao(10000000, 5000000));
     }
 
     @Test
-    public void testCanhBao_DatNguong80() {
-        // Tiêu 8tr/10tr (80%) -> Cảnh báo sắp hết
-        String ketQua = kiemTraCanhBao(10000000, 8000000);
-        assertEquals("ĐẠT_NGƯỠNG_80", ketQua);
+    public void testDung80PhanTram() {
+        assertEquals("Đạt ngưỡng 80%", kiemTraCanhBao(10000000, 8000000));
     }
 
     @Test
-    public void testCanhBao_VuotNguong() {
-        // Tiêu 12tr/10tr (120%) -> Cảnh báo vượt mức
-        String ketQua = kiemTraCanhBao(10000000, 12000000);
-        assertEquals("VƯỢT_NGƯỠNG", ketQua);
+    public void testTren80DenDuoi100PhanTram() {
+        assertEquals("Cảnh báo đã đạt ngưỡng", kiemTraCanhBao(10000000, 9000000));
+    }
+
+    @Test
+    public void testDung100PhanTram() {
+        assertEquals("Cảnh báo đã đạt ngưỡng", kiemTraCanhBao(10000000, 10000000));
+    }
+
+    @Test
+    public void testVuotMotLuongNho() {
+        assertEquals("Vượt ngân sách", kiemTraCanhBao(10000000, 10000001));
+    }
+
+    @Test
+    public void testPhanTramKhiVuotNganSach() {
+        double phanTram = tinhPhanTramSuDung(10000000, 15000000);
+        assertEquals(150.0, phanTram, 0.001);
+        assertEquals("Vượt ngân sách", kiemTraCanhBao(10000000, 15000000));
     }
 }
