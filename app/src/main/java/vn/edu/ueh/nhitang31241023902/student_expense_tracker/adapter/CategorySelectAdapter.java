@@ -25,7 +25,8 @@ public class CategorySelectAdapter extends RecyclerView.Adapter<CategorySelectAd
 
     private Context context;
     private List<CategoryEntity> list = new ArrayList<>();
-    private int selectedPosition = 0; // Mặc định chọn item đầu tiên
+    private int selectedPosition = RecyclerView.NO_POSITION;
+    private long selectedCategoryId = -1;
     private OnCategorySelectedListener listener;
 
     public CategorySelectAdapter(Context context, OnCategorySelectedListener listener) {
@@ -34,18 +35,34 @@ public class CategorySelectAdapter extends RecyclerView.Adapter<CategorySelectAd
     }
 
     public void setData(List<CategoryEntity> newList) {
-        this.list.clear();
+        list.clear();
+
         if (newList != null) {
-            this.list.addAll(newList);
+            list.addAll(newList);
         }
-        // Giữ nguyên vị trí được chọn nếu có, ngược lại chọn 0
-        if (selectedPosition >= this.list.size()) {
+
+        selectedPosition = RecyclerView.NO_POSITION;
+
+        // Ưu tiên khôi phục danh mục theo ID.
+        if (selectedCategoryId > 0) {
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).categoryId == selectedCategoryId) {
+                    selectedPosition = i;
+                    break;
+                }
+            }
+        } else if (!list.isEmpty()) {
+            // Giữ nghiệp vụ: tự chọn danh mục đầu tiên khi thêm mới.
             selectedPosition = 0;
+            selectedCategoryId = list.get(0).categoryId;
         }
-        if (!this.list.isEmpty() && listener != null) {
-            listener.onSelected(this.list.get(selectedPosition));
-        }
+
         notifyDataSetChanged();
+
+        CategoryEntity selected = getSelectedCategory();
+        if (listener != null) {
+            listener.onSelected(selected);
+        }
     }
 
     // Hàm tự động tìm và bôi đậm danh mục dựa vào ID (Dùng khi Chỉnh sửa giao dịch cũ)
