@@ -149,14 +149,25 @@ public class CategorySelectAdapter extends RecyclerView.Adapter<CategorySelectAd
 
         // Xử lý sự kiện click chọn danh mục
         holder.itemView.setOnClickListener(v -> {
-            int oldPosition = selectedPosition;
-            selectedPosition = holder.getAdapterPosition();
+            int newPosition = holder.getBindingAdapterPosition();
 
-            notifyItemChanged(oldPosition);
-            notifyItemChanged(selectedPosition);
+            if (newPosition == RecyclerView.NO_POSITION) {
+                return;
+            }
+
+            int oldPosition = selectedPosition;
+
+            selectedPosition = newPosition;
+            selectedCategoryId = list.get(newPosition).categoryId;
+
+            if (oldPosition != RecyclerView.NO_POSITION) {
+                notifyItemChanged(oldPosition);
+            }
+
+            notifyItemChanged(newPosition);
 
             if (listener != null) {
-                listener.onSelected(category);
+                listener.onSelected(list.get(newPosition));
             }
         });
     }
