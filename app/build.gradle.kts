@@ -46,6 +46,8 @@ dependencies {
     implementation("org.mindrot:jbcrypt:0.4")
     testImplementation("junit:junit:4.13.2")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.hamcrest:hamcrest:2.2")
 }
 configurations.all {
     resolutionStrategy {
