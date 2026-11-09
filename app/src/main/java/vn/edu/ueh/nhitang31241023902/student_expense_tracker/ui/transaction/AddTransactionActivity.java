@@ -218,17 +218,29 @@ public class AddTransactionActivity extends AppCompatActivity {
         });
     }
 
+
     private void updateAmountDisplay() {
         if (rawAmountBuilder.length() == 0) {
             tvAmount.setText("0 đ");
             return;
         }
+
         try {
-            double value = Double.parseDouble(rawAmountBuilder.toString());
-            DecimalFormat formatter = new DecimalFormat("#,###");
-            tvAmount.setText(formatter.format(value) + " đ");
-        } catch (NumberFormatException ignored) {}
+            BigDecimal value =
+                    new BigDecimal(rawAmountBuilder.toString());
+
+            DecimalFormat formatter =
+                    new DecimalFormat("#,###");
+
+            tvAmount.setText(
+                    formatter.format(value) + " đ"
+            );
+
+        } catch (NumberFormatException e) {
+            tvAmount.setText("0 đ");
+        }
     }
+
 
     // 2. Chuyển Tab Chi tiêu / Thu nhập
     private void setupTabs() {
