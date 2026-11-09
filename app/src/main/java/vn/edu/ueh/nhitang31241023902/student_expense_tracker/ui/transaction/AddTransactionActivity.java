@@ -18,10 +18,8 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.R;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.adapter.CategorySelectAdapter;
@@ -96,7 +94,7 @@ public class AddTransactionActivity extends AppCompatActivity {
                 String email = prefs.getString("USER_EMAIL", "");
 
                 if (email == null || email.trim().isEmpty()) {
-                    showCategoryLoadError("Không thể chỉnh sửa giao dịch");
+                    showEditLoadError("Không thể chỉnh sửa giao dịch");
                     return;
                 }
 
@@ -451,7 +449,7 @@ public class AddTransactionActivity extends AppCompatActivity {
 
                 String email = prefs.getString("USER_EMAIL", "");
                 if (email == null || email.trim().isEmpty()) {
-                    showEditLoadError("Vui lòng đăng nhập lại");
+                    showCategoryLoadError("Vui lòng đăng nhập lại");
                     return;
                 }
 
@@ -459,7 +457,7 @@ public class AddTransactionActivity extends AppCompatActivity {
                         db.userDao().getUserByEmail(email);
 
                 if (user == null) {
-                    showEditLoadError("Không tìm thấy tài khoản");
+                    showCategoryLoadError("Không tìm thấy tài khoản");
                     return;
                 }
 
@@ -477,23 +475,9 @@ public class AddTransactionActivity extends AppCompatActivity {
                         return;
                     }
 
-                    Map<String, CategoryEntity> uniqueMap =
-                            new LinkedHashMap<>();
-
-                    if (categories != null) {
-                        for (CategoryEntity cat : categories) {
-                            if (cat.categoryName != null) {
-                                String key = cat.categoryName.trim();
-
-                                if (!uniqueMap.containsKey(key)) {
-                                    uniqueMap.put(key, cat);
-                                }
-                            }
-                        }
-                    }
-
+                    // Không khử trùng theo tên: các danh mục có ID khác nhau đều hợp lệ.
                     categorySelectAdapter.setData(
-                            new ArrayList<>(uniqueMap.values())
+                            categories != null ? categories : new ArrayList<>()
                     );
 
                     CategoryEntity selected =
@@ -622,9 +606,8 @@ public class AddTransactionActivity extends AppCompatActivity {
         btnSaveTransaction.setEnabled(false);
 
         new Thread(() -> {
-            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-
             try {
+                AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
                 // 7. Kiểm tra người dùng
                 SharedPreferences prefs = getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
                 String userEmail = prefs.getString("USER_EMAIL", "");
