@@ -67,19 +67,20 @@ public class CategorySelectAdapter extends RecyclerView.Adapter<CategorySelectAd
 
     // Hàm tự động tìm và bôi đậm danh mục dựa vào ID (Dùng khi Chỉnh sửa giao dịch cũ)
     public void setSelectedCategoryId(long categoryId) {
+        selectedCategoryId = categoryId;
+        selectedPosition = RecyclerView.NO_POSITION;
+
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).categoryId == categoryId) {
-                int oldPosition = selectedPosition;
                 selectedPosition = i;
-                notifyItemChanged(oldPosition);
-                notifyItemChanged(selectedPosition);
-
-                // Kích hoạt listener để Activity nhận dữ liệu
-                if (listener != null) {
-                    listener.onSelected(list.get(selectedPosition));
-                }
                 break;
             }
+        }
+
+        notifyDataSetChanged();
+
+        if (listener != null) {
+            listener.onSelected(getSelectedCategory());
         }
     }
 
