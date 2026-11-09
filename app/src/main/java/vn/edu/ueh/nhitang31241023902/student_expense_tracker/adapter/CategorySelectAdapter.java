@@ -83,11 +83,17 @@ public class CategorySelectAdapter extends RecyclerView.Adapter<CategorySelectAd
             listener.onSelected(getSelectedCategory());
         }
     }
+    public void clearSelection() {
+        selectedCategoryId = -1;
+        selectedPosition = RecyclerView.NO_POSITION;
+    }
 
     public CategoryEntity getSelectedCategory() {
-        if (!list.isEmpty() && selectedPosition >= 0 && selectedPosition < list.size()) {
+        if (selectedPosition >= 0
+                && selectedPosition < list.size()) {
             return list.get(selectedPosition);
         }
+
         return null;
     }
 
