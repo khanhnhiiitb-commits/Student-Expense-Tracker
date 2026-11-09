@@ -39,15 +39,16 @@ dependencies {
     implementation(libs.room.common)
     implementation(libs.room.runtime)
     implementation(libs.testng)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(libs.ext.junit)
     annotationProcessor(libs.room.compiler)
     implementation("org.mindrot:jbcrypt:0.4")
-    testImplementation("junit:junit:4.13.2")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
+
+    // Các thư viện Test chuẩn
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.hamcrest:hamcrest:2.2")
+
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.ext.junit)
 }
 configurations.all {
     resolutionStrategy {
