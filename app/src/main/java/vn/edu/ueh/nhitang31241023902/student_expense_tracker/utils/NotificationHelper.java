@@ -46,6 +46,11 @@ public class NotificationHelper {
             Context context,
             String message
     ) {
+        if (message == null || message.trim().isEmpty()) {
+            return;
+        }
+        createNotificationChannel(context);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                 && ContextCompat.checkSelfPermission(
                 context,
