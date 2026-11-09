@@ -448,10 +448,18 @@ public class AddTransactionActivity extends AppCompatActivity {
 
                 // Tính trạng thái trước/sau trên dữ liệu hiện tại, trước khi ghi.
                 String warning = null;
+
                 if ("Expense".equalsIgnoreCase(typeToSave)) {
-                    warning = evaluateBudgetAlert(db, user.userId, categoryIdToSave,
-                            dateToSave, amountDecimal.longValueExact(), oldTx);
+                    warning = getBudgetWarningSafely(
+                            db,
+                            user.userId,
+                            categoryIdToSave,
+                            dateToSave,
+                            amountDecimal,
+                            oldTx
+                    );
                 }
+
                 final String finalWarning = warning;
 
                 if (oldTx != null) {
@@ -504,6 +512,33 @@ public class AddTransactionActivity extends AppCompatActivity {
         }).start();
     }
 
+
+    private String getBudgetWarningSafely(
+            AppDatabase db,
+            long userId,
+            long categoryId,
+            long date,
+            BigDecimal amount,
+            TransactionEntity oldTx
+    ) {
+        try {
+            return evaluateBudgetAlert(
+                    db,
+                    userId,
+                    categoryId,
+                    date,
+                    amount.longValueExact(),
+                    oldTx
+            );
+        } catch (Exception e) {
+            android.util.Log.e(
+                    "BudgetWarning",
+                    "Không thể tính cảnh báo ngân sách",
+                    e
+            );
+            return null;
+        }
+    }
 
     // 6. Đưa các ô nhập liệu về trạng thái ban đầu
     private void resetInputFields() {
