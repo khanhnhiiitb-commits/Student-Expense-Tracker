@@ -11,15 +11,21 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.R;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.transaction.AddTransactionActivity;
-// Nếu CategoryActivity nằm ở thư mục khác, hãy import nó tại đây
 
+import android.Manifest;
+import android.os.Build;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import android.content.pm.PackageManager;
+import androidx.core.content.ContextCompat;
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        requestNotificationPermission();
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
         // Mặc định hiển thị HomeFragment khi mở app
@@ -59,6 +65,35 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
     }
+
+    private final ActivityResultLauncher<String>
+            notificationPermissionLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.RequestPermission(),
+                    isGranted -> {
+                        if (!isGranted) {
+                            android.util.Log.d(
+                                    "NotificationPermission",
+                                    "Người dùng chưa cấp quyền thông báo"
+                            );
+                        }
+                    }
+            );
+
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+        ) != PackageManager.PERMISSION_GRANTED) {
+
+            notificationPermissionLauncher.launch(
+                    Manifest.permission.POST_NOTIFICATIONS
+            );
+        }
+    }
+
 
     // Hàm hiển thị hộp thoại lựa chọn
     private void showAddOptions() {

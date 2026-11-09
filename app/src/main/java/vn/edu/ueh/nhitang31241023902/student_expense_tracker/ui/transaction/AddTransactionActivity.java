@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.NotificationHelper;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
@@ -63,8 +63,6 @@ public class AddTransactionActivity extends AppCompatActivity {
         setupDatePicker();
         setupCategoryList();
 
-        // Mặc định tải danh mục cho tab hiện tại
-        loadCategories(currentType);
 
         // --- BẮT ĐẦU ĐOẠN CODE THÊM MỚI ---
         editTransactionId = getIntent()
@@ -712,6 +710,14 @@ public class AddTransactionActivity extends AppCompatActivity {
                     oldTx.transactionDate = dateToSave;
                     int updated = db.transactionDao().updateTransaction(oldTx);
                     if (updated != 1) throw new IllegalStateException("Không cập nhật được giao dịch");
+
+                    if (finalWarning != null) {
+                        NotificationHelper.showBudgetNotification(
+                                getApplicationContext(),
+                                finalWarning
+                        );
+                    }
+
                     runOnUiThread(() -> {
                         Toast.makeText(this, "Đã cập nhật giao dịch thành công!", Toast.LENGTH_SHORT).show();
                         if (finalWarning != null) {
@@ -737,7 +743,16 @@ public class AddTransactionActivity extends AppCompatActivity {
                         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                         resetInputFields();
                         btnSaveTransaction.setEnabled(true);
+
+                        if (finalWarning != null) {
+                            NotificationHelper.showBudgetNotification(
+                                    getApplicationContext(),
+                                    finalWarning
+                            );
+                        }
+
                         showAlertIfNeeded(finalWarning);
+
                     });
                 }
 
