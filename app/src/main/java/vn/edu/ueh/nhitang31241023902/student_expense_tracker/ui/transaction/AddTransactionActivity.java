@@ -64,6 +64,7 @@ public class AddTransactionActivity extends AppCompatActivity {
         setupCategoryList();
 
 
+        // --- BẮT ĐẦU ĐOẠN CODE THÊM MỚI ---
         editTransactionId = getIntent()
                 .getLongExtra("EDIT_TRANSACTION_ID", -1);
 
