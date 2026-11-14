@@ -48,8 +48,7 @@ dependencies {
 
     // Mã hóa mật khẩu
     implementation("org.mindrot:jbcrypt:0.4")
-    implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
-
+    implementation("androidx.concurrent:concurrent-futures:1.2.0")
     // Biểu đồ
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 

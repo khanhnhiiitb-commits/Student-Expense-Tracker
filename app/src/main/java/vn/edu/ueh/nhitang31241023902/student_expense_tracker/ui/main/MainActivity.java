@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_budget) {
                 selectedFragment = new BudgetFragment();
             } else if (itemId == R.id.nav_statistics) {
-                selectedFragment = new StatisticsFragment();
+                selectedFragment = new ReportFragment();
             } else if (itemId == R.id.nav_profile) {
                 selectedFragment = new ProfileFragment();
             }
