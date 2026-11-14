@@ -7,4 +7,12 @@
     <color name="textColorDark">#1A1A1A</color>
     <color name="textColorGray">#757575</color>
     <color name="borderColor">#E0E0E0</color>
+    <color name="primary">#1E88E5</color>
+    <color name="screen_bg">#F5F6FA</color>
+    <color name="text_main">#1F2937</color>
+    <color name="text_sub">#6B7280</color>
+    <color name="income_green">#16A34A</color>
+    <color name="expense_red">#DC2626</color>
+    <color name="border">#E5E7EB</color>
+    <color name="info_bg">#E8F1FC</color>
 </resources>

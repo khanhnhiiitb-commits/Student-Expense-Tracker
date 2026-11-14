@@ -18,6 +18,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     buildTypes {
         release {
             optimization {
@@ -36,20 +40,26 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
+
+    // Room (Java)
     implementation(libs.room.common)
     implementation(libs.room.runtime)
-    implementation(libs.testng)
     annotationProcessor(libs.room.compiler)
+
+    // Mã hóa mật khẩu
     implementation("org.mindrot:jbcrypt:0.4")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
 
-    // Các thư viện Test chuẩn
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.hamcrest:hamcrest:2.2")
+    // Biểu đồ
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
+    // Test
+    testImplementation(libs.junit)
+    testImplementation("org.hamcrest:hamcrest:3.0")
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
 }
+
 configurations.all {
     resolutionStrategy {
         exclude(group = "org.hamcrest", module = "hamcrest-core")
