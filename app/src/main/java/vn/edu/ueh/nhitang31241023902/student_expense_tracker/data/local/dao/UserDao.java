@@ -14,4 +14,8 @@ public interface UserDao {
 
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
     UserEntity getUserByEmail(String email);
+
+    // Đặt lại mật khẩu (Quên mật khẩu)
+    @Query("UPDATE users SET passwordHash = :passwordHash WHERE email = :email")
+    int updatePassword(String email, String passwordHash);
 }
