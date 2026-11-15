@@ -3,6 +3,8 @@ package vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.main;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.graphics.Typeface;
 import androidx.core.content.ContextCompat;
@@ -231,15 +233,38 @@ public class ReportFragment extends Fragment {
         tvEmpty.setVisibility(hasExpense ? View.GONE : View.VISIBLE);
         pieChart.setVisibility(hasExpense ? View.VISIBLE : View.GONE);
         legend.setAdapter(new LegendAdapter(legendLines));
+
         if (hasExpense) {
             PieDataSet set = new PieDataSet(slices, "Danh mục");
-            set.setColors(ColorTemplate.MATERIAL_COLORS);
+
+            int[] chartColors = {
+                    Color.rgb(46, 204, 113),   // Xanh lá
+                    Color.rgb(52, 152, 219),   // Xanh dương
+                    Color.rgb(241, 196, 15),   // Vàng
+                    Color.rgb(231, 76, 60),    // Đỏ
+                    Color.rgb(155, 89, 182),   // Tím
+                    Color.rgb(230, 126, 34),   // Cam
+                    Color.rgb(26, 188, 156),   // Xanh ngọc
+                    Color.rgb(127, 140, 141)   // Xám
+            };
+
+            set.setColors(chartColors);
             set.setSliceSpace(2f);
-            PieData data = new PieData(set); data.setDrawValues(false);
-            pieChart.setData(data); pieChart.getDescription().setEnabled(false);
-            pieChart.getLegend().setEnabled(false); pieChart.setDrawEntryLabels(false);
-            pieChart.setUsePercentValues(false); pieChart.invalidate();
-        } else pieChart.clear();
+
+            PieData data = new PieData(set);
+            data.setDrawValues(false);
+
+            pieChart.setData(data);
+            pieChart.getDescription().setEnabled(false);
+            pieChart.getLegend().setEnabled(false);
+            pieChart.setDrawEntryLabels(false);
+            pieChart.setUsePercentValues(false);
+            pieChart.invalidate();
+
+        } else {
+            pieChart.clear();
+        }
+
         // BUG-FR08-02: luôn cập nhật biểu đồ cùng lần tải với tổng thu/chi.
         if (incomes.isEmpty() && expenses.isEmpty()) {
             barChart.clear();
