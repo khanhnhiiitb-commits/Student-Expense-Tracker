@@ -199,6 +199,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_marginTop="8dp"/>
+
+            <!-- Thông tin danh mục khi chạm vào biểu đồ -->
+            <LinearLayout
+                android:id="@+id/layoutSelectedCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvSelectedCategoryName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_main"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvSelectedCategoryAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/text_main"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tvSelectedCategoryPercent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/text_sub"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCategoryLegend"
                 android:layout_width="match_parent"
