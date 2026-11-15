@@ -4,13 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA"> <!-- Màu nền xám nhạt giống thiết kế -->
+    android:background="@color/screen_bg">
 
     <!-- Thanh Toolbar (Custom) -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/clToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -21,8 +18,10 @@
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:gravity="center"
+            android:orientation="vertical"
+            android:padding="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -31,21 +30,22 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_arrow_back" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Quay lại"
-                android:textSize="10sp"
-                android:textColor="#757575"/>
+                android:textColor="@color/text_sub"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ngân sách tháng"
+            android:textColor="@color/text_main"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -57,7 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/clToolbar">
 
         <LinearLayout
@@ -71,21 +71,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="14dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#E0E0E0"
+                app:strokeColor="@color/border"
                 app:strokeWidth="1dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="12dp">
+                    android:padding="8dp">
 
                     <ImageView
                         android:id="@+id/btnPreviousMonth"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="8dp"
                         android:src="@drawable/ic_arrow_left" />
 
                     <TextView
@@ -94,14 +98,18 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:text="Tháng 10/2026"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_main"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <ImageView
                         android:id="@+id/btnNextMonth"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="8dp"
                         android:src="@drawable/ic_arrow_right" />
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -111,8 +119,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/border"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -123,60 +134,64 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ngân sách tháng"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/black"/>
+                            android:text="Đã chi trong tháng"
+                            android:textColor="@color/text_sub"
+                            android:textSize="13sp" />
+
                         <TextView
                             android:id="@+id/tvTotalPercentage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            tools:text="66%"
+                            android:textColor="@color/primary"
+                            android:textSize="15sp"
                             android:textStyle="bold"
-                            android:textColor="#1976D2"/>
+                            tools:text="66%" />
                     </RelativeLayout>
 
                     <TextView
                         android:id="@+id/tvTotalAmountSpent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        tools:text="1.650.000 đ"
-                        android:textSize="24sp"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/text_main"
+                        android:textSize="26sp"
                         android:textStyle="bold"
-                        android:textColor="@android:color/black"/>
+                        tools:text="1.650.000 đ" />
 
                     <ProgressBar
                         android:id="@+id/pbTotalBudget"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="8dp"
+                        android:layout_height="10dp"
                         android:layout_marginTop="16dp"
                         android:max="100"
-                        tools:progress="66"
-                        android:progressTint="#1976D2" />
+                        android:progressDrawable="@drawable/custom_progress_bar"
+                        tools:progress="66" />
 
                     <TextView
                         android:id="@+id/tvTotalBudgetDetail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        tools:text="Hạn mức 2.500.000 đ · Còn 850.000 đ"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/text_sub"
                         android:textSize="12sp"
-                        android:textColor="#757575"/>
+                        tools:text="Hạn mức 2.500.000 đ · Còn 850.000 đ" />
 
                     <TextView
                         android:id="@+id/tvBudgetWarning"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:padding="12dp"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/bg_soft_neutral"
                         android:gravity="center_vertical"
+                        android:padding="12dp"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
                         android:visibility="gone"
                         tools:text="⚠ Bạn sắp vượt ngân sách!"
                         tools:visibility="visible" />
@@ -188,26 +203,33 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="12dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:text="Theo danh mục"
+                    android:textColor="@color/text_main"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/btnEditLimit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/bg_chip_primary_soft"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
                     android:text="Sửa hạn mức"
-                    android:textColor="#1976D2"
-                    android:textSize="14sp"/>
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
             </RelativeLayout>
 
-            <!-- RECYCLER VIEW - Không dùng thẻ cứng -->
+            <!-- RECYCLER VIEW -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvBudgetCategories"
                 android:layout_width="match_parent"
@@ -222,16 +244,17 @@
                 android:id="@+id/btnSetupLimit"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="54dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="20dp"
                 android:text="Thiết lập / Sửa hạn mức"
-                android:textColor="#1976D2"
-                app:strokeColor="#1976D2"
-                app:cornerRadius="8dp" />
+                android:textAllCaps="false"
+                android:textColor="@color/primary"
+                android:textStyle="bold"
+                app:cornerRadius="14dp"
+                app:strokeColor="@color/primary" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

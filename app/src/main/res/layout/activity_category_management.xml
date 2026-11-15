@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC">
+    android:background="@color/screen_bg">
 
     <!-- Header Bar -->
     <LinearLayout
@@ -19,20 +19,20 @@
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="Quay lại"
-            android:padding="4dp"
-            android:src="@android:drawable/ic_menu_revert"
-            app:tint="#1E293B" />
+            android:padding="6dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/text_main" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="10dp"
             android:text="Quản lý danh mục"
-            android:textColor="#0F172A"
+            android:textColor="@color/text_main"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -41,10 +41,10 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnCreateCategory"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="24dp"
-        android:background="#2563EB"
+        android:background="@drawable/bg_button"
         android:stateListAnimator="@null"
         android:text="+ Tạo danh mục mới"
         android:textAllCaps="false"
@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingBottom="24dp"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toTopOf="@id/btnCreateCategory"
         app:layout_constraintTop_toBottomOf="@id/layoutHeader">
 
@@ -68,14 +68,14 @@
             android:orientation="vertical"
             android:paddingHorizontal="20dp">
 
-            <!-- Tab Chi tiêu / Thu nhập -->
+            <!-- Tab Chi tiêu / Thu nhập (Java đổi nền bằng setBackgroundColor) -->
             <LinearLayout
                 android:id="@+id/layoutTabs"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:background="#E2E8F0"
-                android:orientation="horizontal"
-                android:padding="4dp">
+                android:background="@drawable/bg_tab_container"
+                android:clipToOutline="true"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tabExpense"
@@ -84,9 +84,9 @@
                     android:layout_weight="1"
                     android:background="#FFFFFF"
                     android:gravity="center"
-                    android:text="↗ Chi tiêu (Expense)"
+                    android:text="↗ Chi tiêu"
                     android:textColor="#2563EB"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -95,18 +95,18 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="↙ Thu nhập (Income)"
+                    android:text="↙ Thu nhập"
                     android:textColor="#64748B"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <!-- Ô tìm kiếm -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="46dp"
+                android:layout_height="48dp"
                 android:layout_marginTop="14dp"
-                android:background="#FFFFFF"
+                android:background="@drawable/bg_card"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="14dp">
 
@@ -114,7 +114,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@android:drawable/ic_menu_search"
-                    app:tint="#94A3B8" />
+                    app:tint="@color/text_hint" />
 
                 <EditText
                     android:id="@+id/edtSearchCategory"
@@ -124,41 +124,28 @@
                     android:background="@null"
                     android:hint="Tìm tên danh mục..."
                     android:inputType="text"
-                    android:textColor="#0F172A"
-                    android:textColorHint="#94A3B8"
+                    android:textColor="@color/text_main"
+                    android:textColorHint="@color/text_hint"
                     android:textSize="14sp" />
             </LinearLayout>
 
             <!-- Tiêu đề danh sách -->
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:layout_marginBottom="8dp">
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:text="Danh sách danh mục"
+                android:textColor="@color/text_main"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="| DANH SÁCH DANH MỤC"
-                    android:textColor="#2563EB"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="Room Database"
-                    android:textColor="#94A3B8"
-                    android:textSize="11sp" />
-            </RelativeLayout>
-
+            <!-- Mỗi item_category đã là một thẻ riêng nên list không cần nền -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcvCategories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:background="#FFFFFF" />
+                android:nestedScrollingEnabled="false" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

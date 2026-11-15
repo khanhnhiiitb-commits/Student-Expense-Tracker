@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC">
+    android:background="@color/screen_bg">
 
     <!-- 1. Header -->
     <LinearLayout
@@ -20,9 +20,9 @@
 
         <TextView
             android:id="@+id/btnClose"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="#E2E8F0"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_circle_gray"
             android:gravity="center"
             android:text="✕"
             android:textColor="#475569"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="14dp"
             android:text="Thêm giao dịch"
-            android:textColor="#0F172A"
+            android:textColor="@color/text_main"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -43,10 +43,11 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSaveTransaction"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="24dp"
-        android:background="#2563EB"
+        android:background="@drawable/bg_button"
+        android:stateListAnimator="@null"
         android:text="Lưu giao dịch"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
@@ -60,7 +61,9 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         android:fillViewport="true"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toTopOf="@id/btnSaveTransaction"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,16 +74,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="20dp"
-            android:paddingBottom="20dp">
+            android:paddingBottom="12dp">
 
-            <!-- Tabs -->
+            <!-- Tabs (Java đổi nền bằng setBackgroundColor nên bo góc nằm ở khung ngoài) -->
             <LinearLayout
                 android:id="@+id/layoutTabs"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:background="#E2E8F0"
-                android:orientation="horizontal"
-                android:padding="4dp">
+                android:background="@drawable/bg_tab_container"
+                android:clipToOutline="true"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tabExpense"
@@ -106,58 +109,204 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Tiền -->
-            <TextView
-                android:id="@+id/tvAmount"
+            <!-- Số tiền -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:text="0 đ"
-                android:textColor="#2563EB"
-                android:textSize="36sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_card"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Số tiền"
+                    android:textColor="@color/text_sub"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:text="0 đ"
+                    android:textColor="#2563EB"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <!-- Bàn phím số -->
-            <GridLayout
-                android:id="@+id/layoutKeypad"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:columnCount="3">
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-                <TextView android:id="@+id/btnNum1" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="1" android:textColor="#0F172A" android:textSize="22sp"/>
-                <TextView android:id="@+id/btnNum2" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="2" android:textColor="#0F172A" android:textSize="22sp"/>
-                <TextView android:id="@+id/btnNum3" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="3" android:textColor="#0F172A" android:textSize="22sp"/>
+                <GridLayout
+                    android:id="@+id/layoutKeypad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="3">
 
-                <TextView android:id="@+id/btnNum4" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="4" android:textColor="#0F172A" android:textSize="22sp"/>
-                <TextView android:id="@+id/btnNum5" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="5" android:textColor="#0F172A" android:textSize="22sp"/>
-                <TextView android:id="@+id/btnNum6" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="6" android:textColor="#0F172A" android:textSize="22sp"/>
+                    <TextView
+                        android:id="@+id/btnNum1"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="1"
+                        android:textColor="@color/text_main"
+                        android:textSize="22sp" />
 
-                <TextView android:id="@+id/btnNum7" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="7" android:textColor="#0F172A" android:textSize="22sp"/>
-                <TextView android:id="@+id/btnNum8" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="8" android:textColor="#0F172A" android:textSize="22sp"/>
-                <TextView android:id="@+id/btnNum9" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="9" android:textColor="#0F172A" android:textSize="22sp"/>
+                    <TextView
+                        android:id="@+id/btnNum2"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="2"
+                        android:textColor="@color/text_main"
+                        android:textSize="22sp" />
 
-                <TextView android:id="@+id/btnNum000" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="000" android:textColor="#0F172A" android:textSize="18sp"/>
-                <TextView android:id="@+id/btnNum0" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="0" android:textColor="#0F172A" android:textSize="22sp"/>
-                <TextView android:id="@+id/btnBackspace" android:layout_width="0dp" android:layout_height="44dp" android:layout_columnWeight="1" android:background="?android:attr/selectableItemBackground" android:gravity="center" android:text="⌫" android:textColor="#0F172A" android:textSize="22sp" android:textStyle="bold" />
-            </GridLayout>
+                    <TextView
+                        android:id="@+id/btnNum3"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="3"
+                        android:textColor="@color/text_main"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/btnNum4"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="4"
+                        android:textColor="@color/text_main"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/btnNum5"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="5"
+                        android:textColor="@color/text_main"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/btnNum6"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="6"
+                        android:textColor="@color/text_main"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/btnNum7"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="7"
+                        android:textColor="@color/text_main"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/btnNum8"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="8"
+                        android:textColor="@color/text_main"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/btnNum9"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="9"
+                        android:textColor="@color/text_main"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/btnNum000"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="000"
+                        android:textColor="@color/text_main"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/btnNum0"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="@color/text_main"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/btnBackspace"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_columnWeight="1"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="⌫"
+                        android:textColor="@color/text_main"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+                </GridLayout>
+            </LinearLayout>
 
             <!-- Chọn danh mục -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="8dp"
                 android:text="Danh mục"
-                android:textColor="#0F172A"
+                android:textColor="@color/text_main"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
-            <!-- RecyclerView cho chọn danh mục -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcvTransactionCategories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_card"
+                android:clipToPadding="false"
+                android:padding="8dp"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="4" />
 
@@ -166,20 +315,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="#FFFFFF"
+                android:background="@drawable/bg_card"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/btnSelectDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="14dp">
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/ic_calendar" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Ngày giao dịch"
-                        android:textColor="#64748B" />
+                        android:textColor="@color/text_sub"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/tvTransactionDate"
@@ -188,13 +346,15 @@
                         android:layout_weight="1"
                         android:gravity="end"
                         android:text="Hôm nay"
-                        android:textColor="#0F172A" />
+                        android:textColor="@color/text_main"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#F1F5F9" />
+                    android:background="@color/border" />
 
                 <EditText
                     android:id="@+id/edtTransactionNote"
@@ -202,9 +362,10 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:hint="Nhập ghi chú"
-                    android:padding="14dp"
-                    android:textColor="#0F172A"
-                    android:textColorHint="#94A3B8" />
+                    android:padding="16dp"
+                    android:textColor="@color/text_main"
+                    android:textColorHint="@color/text_hint"
+                    android:textSize="14sp" />
             </LinearLayout>
 
         </LinearLayout>
