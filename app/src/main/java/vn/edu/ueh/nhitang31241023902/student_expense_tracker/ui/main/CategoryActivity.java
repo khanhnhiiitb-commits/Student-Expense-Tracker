@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.DefaultCategorySeeder;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.R;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.adapter.CategoryAdapter;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.AppDatabase;
@@ -214,7 +215,7 @@ public class CategoryActivity extends AppCompatActivity {
             AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
 
             // Tự động seed dữ liệu mặc định nếu database trống
-            seedDefaultCategoriesIfNeeded(db);
+            DefaultCategorySeeder.ensureDefaults(db);
 
             SharedPreferences prefs = getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
             String userEmail = prefs.getString("USER_EMAIL", "");
@@ -246,37 +247,4 @@ public class CategoryActivity extends AppCompatActivity {
         }).start();
     }
 
-    private synchronized void seedDefaultCategoriesIfNeeded(AppDatabase db) {
-        List<CategoryEntity> existing = db.categoryDao().getCategoriesByType("Expense", -1);
-        if (existing != null && !existing.isEmpty()) {
-            return;
-        }
-
-        List<CategoryEntity> defaults = new ArrayList<>();
-
-        // 9 Danh mục Chi tiêu mặc định
-        defaults.add(createCategory("Ăn uống", "Expense"));
-        defaults.add(createCategory("Học tập", "Expense"));
-        defaults.add(createCategory("Đi lại", "Expense"));
-        defaults.add(createCategory("Nhà ở", "Expense"));
-        defaults.add(createCategory("Mua sắm", "Expense"));
-        defaults.add(createCategory("Giải trí", "Expense"));
-        defaults.add(createCategory("Sức khỏe", "Expense"));
-        defaults.add(createCategory("Hóa đơn và dịch vụ", "Expense"));
-        defaults.add(createCategory("Chi tiêu khác", "Expense"));
-
-        // 4 Danh mục Thu nhập mặc định
-        defaults.add(createCategory("Lương / Làm thêm", "Income"));
-        defaults.add(createCategory("Trợ cấp gia đình", "Income"));
-        defaults.add(createCategory("Học bổng", "Income"));
-        defaults.add(createCategory("Thu nhập khác", "Income"));
-
-        for (CategoryEntity cat : defaults) {
-            db.categoryDao().insertCategory(cat);
-        }
-    }
-
-    private CategoryEntity createCategory(String name, String type) {
-        return new CategoryEntity(null, name, type);
-    }
 }

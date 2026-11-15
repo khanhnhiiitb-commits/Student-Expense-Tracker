@@ -24,6 +24,9 @@ public interface CategoryDao {
     CategoryEntity getCategoryById(long id);
     @Query("SELECT COUNT(*) FROM categories WHERE categoryName = :name AND type = :type AND (userId = :userId OR userId IS NULL OR userId <= 0)")
     int countCategoryByName(String name, String type, int userId);
+    @Query("SELECT COUNT(*) FROM categories WHERE categoryName = :name AND type = :type AND (userId IS NULL OR userId <= 0)")
+    int countSystemCategoryByName(String name, String type);
+
     // Kiểm tra số lượng giao dịch đang gắn với danh mục này
     @Query("SELECT COUNT(*) FROM transactions WHERE categoryID = :categoryId")
     int countTransactionsUsingCategory(long categoryId);
