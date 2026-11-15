@@ -3,7 +3,11 @@ package vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.main;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.graphics.Typeface;
+import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -85,7 +89,17 @@ public class ReportFragment extends Fragment {
         view.findViewById(R.id.btnPrevPeriod).setOnClickListener(v -> shift(-1));
         view.findViewById(R.id.btnNextPeriod).setOnClickListener(v -> shift(1));
         view.findViewById(R.id.btnDateRange).setOnClickListener(v -> chooseRange());
-        refresh();
+        // Dữ liệu được tải trong onResume để luôn cập nhật sau khi quay lại từ màn hình thêm/sửa giao dịch.
+    }
+
+    @Override public void onResume() {
+        super.onResume();
+        if (getView() != null) refresh();
+    }
+
+    @Override public void onDestroyView() {
+        ++requestVersion; // Hủy hiệu lực của kết quả truy vấn đang chờ.
+        super.onDestroyView();
     }
 
     private void select(Period next) { period = next; cursor.setTimeInMillis(System.currentTimeMillis()); refresh(); }
@@ -137,13 +151,27 @@ public class ReportFragment extends Fragment {
         if (period == Period.YEAR) return "Năm " + start.get(Calendar.YEAR);
         return df.format(start.getTime()) + " - " + df.format(last.getTime());
     }
+    // BUG_FR08_01: đổi nền và màu chữ thật sự, không chỉ thay đổi selected state.
+    private void updatePeriodTabs() {
+        styleTab(tabWeek, period == Period.WEEK);
+        styleTab(tabMonth, period == Period.MONTH);
+        styleTab(tabYear, period == Period.YEAR);
+    }
+
+    private void styleTab(TextView tab, boolean active) {
+        tab.setSelected(active);
+        tab.setBackground(active ? ContextCompat.getDrawable(requireContext(), R.drawable.bg_tab_selected) : null);
+        tab.setTextColor(ContextCompat.getColor(requireContext(), active ? R.color.primary : R.color.text_sub));
+        tab.setTypeface(null, active ? Typeface.BOLD : Typeface.NORMAL);
+    }
+
     private void refresh() {
         if (!isAdded() || getView() == null) return;
         Calendar[] range = bounds();
         long start = range[0].getTimeInMillis(), end = range[1].getTimeInMillis();
         String periodLabel = label(range[0], range[1]);
         tvPeriod.setText(periodLabel); tvSubtitle.setText(periodLabel + " · Tất cả nguồn tiền");
-        tabWeek.setSelected(period == Period.WEEK); tabMonth.setSelected(period == Period.MONTH); tabYear.setSelected(period == Period.YEAR);
+        updatePeriodTabs();
         int currentRequest = ++requestVersion;
         Context appContext = requireContext().getApplicationContext();
         new Thread(() -> {
@@ -205,16 +233,46 @@ public class ReportFragment extends Fragment {
         tvEmpty.setVisibility(hasExpense ? View.GONE : View.VISIBLE);
         pieChart.setVisibility(hasExpense ? View.VISIBLE : View.GONE);
         legend.setAdapter(new LegendAdapter(legendLines));
+
         if (hasExpense) {
             PieDataSet set = new PieDataSet(slices, "Danh mục");
-            set.setColors(ColorTemplate.MATERIAL_COLORS);
+
+            int[] chartColors = {
+                    Color.rgb(46, 204, 113),   // Xanh lá
+                    Color.rgb(52, 152, 219),   // Xanh dương
+                    Color.rgb(241, 196, 15),   // Vàng
+                    Color.rgb(231, 76, 60),    // Đỏ
+                    Color.rgb(155, 89, 182),   // Tím
+                    Color.rgb(230, 126, 34),   // Cam
+                    Color.rgb(26, 188, 156),   // Xanh ngọc
+                    Color.rgb(127, 140, 141)   // Xám
+            };
+
+            set.setColors(chartColors);
             set.setSliceSpace(2f);
-            PieData data = new PieData(set); data.setDrawValues(false);
-            pieChart.setData(data); pieChart.getDescription().setEnabled(false);
-            pieChart.getLegend().setEnabled(false); pieChart.setDrawEntryLabels(false);
-            pieChart.setUsePercentValues(false); pieChart.invalidate();
-        } else pieChart.clear();
-        drawBars(incomes, expenses, start, end);
+
+            PieData data = new PieData(set);
+            data.setDrawValues(false);
+
+            pieChart.setData(data);
+            pieChart.getDescription().setEnabled(false);
+            pieChart.getLegend().setEnabled(false);
+            pieChart.setDrawEntryLabels(false);
+            pieChart.setUsePercentValues(false);
+            pieChart.invalidate();
+
+        } else {
+            pieChart.clear();
+        }
+
+        // BUG-FR08-02: luôn cập nhật biểu đồ cùng lần tải với tổng thu/chi.
+        if (incomes.isEmpty() && expenses.isEmpty()) {
+            barChart.clear();
+            barChart.setVisibility(View.GONE);
+        } else {
+            barChart.setVisibility(View.VISIBLE);
+            drawBars(incomes, expenses, start, end);
+        }
     }
     private void drawBars(List<TransactionEntity> incomes, List<TransactionEntity> expenses, long start, long end) {
         Calendar c = Calendar.getInstance(); c.setTimeInMillis(start);
@@ -249,7 +307,7 @@ public class ReportFragment extends Fragment {
         barChart.getAxisLeft().setAxisMinimum(0f);
         barChart.getXAxis().setAxisMinimum(-0.5f);
         barChart.getXAxis().setAxisMaximum(labels.size() - 0.5f);
-        barChart.groupBars(-0.5f, 0.08f, 0.04f);
+        barChart.groupBars(-0.5f, 0.12f, 0.02f); // 2 * (0.42 + 0.02) + 0.12 = 1
         barChart.setVisibleXRangeMaximum(Math.min(8, labels.size()));
         barChart.moveViewToX(Math.max(0, labels.size() - 8));
         barChart.invalidate();
