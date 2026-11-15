@@ -3,41 +3,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA"
-    android:gravity="center_horizontal"
+    android:background="@color/screen_bg"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="20dp">
 
-    <!-- Avatar mặc định -->
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="48dp"
-        android:src="@android:drawable/ic_menu_myplaces"
-        app:tint="#757575" />
-
-    <!-- Tên người dùng -->
-    <TextView
-        android:id="@+id/tvProfileName"
-        android:layout_width="wrap_content"
+    <!-- Thẻ thông tin người dùng -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Tên người dùng"
-        android:textColor="@android:color/black"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="32dp"
+        android:background="@drawable/bg_card"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="28dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="28dp">
 
-    <!-- Email người dùng -->
-    <TextView
-        android:id="@+id/tvProfileEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="email@example.com"
-        android:textColor="#757575"
-        android:textSize="14sp" />
+        <!-- Avatar mặc định -->
+        <ImageView
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:background="@drawable/bg_avatar_circle"
+            android:padding="24dp"
+            android:src="@drawable/ic_person"
+            app:tint="@color/primary" />
 
-    <!-- Khoảng trống đẩy nút Đăng xuất xuống cuối màn hình -->
+        <!-- Tên người dùng -->
+        <TextView
+            android:id="@+id/tvProfileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Tên người dùng"
+            android:textColor="@color/text_main"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <!-- Email người dùng -->
+        <TextView
+            android:id="@+id/tvProfileEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="email@example.com"
+            android:textColor="@color/text_sub"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Đẩy nút Đăng xuất xuống cuối màn hình -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -47,13 +61,16 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginBottom="32dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="16dp"
         android:text="Đăng xuất"
-        android:textColor="#D32F2F"
-        app:backgroundTint="#FFEBEE"
-        app:cornerRadius="8dp"
-        app:strokeColor="#D32F2F"
+        android:textAllCaps="false"
+        android:textColor="#EF4444"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:backgroundTint="#FEF2F2"
+        app:cornerRadius="14dp"
+        app:strokeColor="#FCA5A5"
         app:strokeWidth="1dp" />
 
 </LinearLayout>

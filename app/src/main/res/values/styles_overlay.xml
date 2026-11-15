@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Đổi màu "viên thuốc" của tab đang chọn trong BottomNavigationView sang xanh nhạt -->
+    <style name="ThemeOverlay.App.BottomNav" parent="">
+        <item name="colorSecondaryContainer">@color/info_bg</item>
+    </style>
+</resources>

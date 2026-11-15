@@ -6,14 +6,14 @@
     android:orientation="vertical"
     android:padding="6dp">
 
-    <!-- Container nền icon có viền khi chọn -->
+    <!-- Khung bo góc: Java tô màu nền tvGridIcon, khung này cắt theo bo góc -->
     <LinearLayout
         android:id="@+id/layoutIconBorder"
         android:layout_width="52dp"
         android:layout_height="52dp"
-        android:background="#E2E8F0"
-        android:gravity="center"
-        android:padding="2dp">
+        android:background="@drawable/bg_icon_clip"
+        android:clipToOutline="true"
+        android:gravity="center">
 
         <TextView
             android:id="@+id/tvGridIcon"
