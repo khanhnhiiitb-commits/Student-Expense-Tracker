@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.DefaultCategorySeeder;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.R;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.AppDatabase;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.UserEntity;
@@ -162,6 +163,8 @@ public class RegisterActivity extends AppCompatActivity {
 
                     return;
                 }
+
+                DefaultCategorySeeder.ensureDefaults(db);
 
                 // 5. Lưu thông tin người dùng sau khi đăng ký thành công
                 SharedPreferences prefs = getSharedPreferences(
