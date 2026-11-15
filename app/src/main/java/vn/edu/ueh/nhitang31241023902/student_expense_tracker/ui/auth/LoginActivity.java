@@ -32,6 +32,7 @@ import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.U
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.admin.AdminMainActivity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.main.MainActivity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.AdminSeeder;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.DefaultCategorySeeder;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.BCryptUtils;
 
 public class LoginActivity extends AppCompatActivity {
@@ -125,6 +126,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         final boolean isAdmin = UserEntity.ROLE_ADMIN.equals(user.role);
+        if (!isAdmin) DefaultCategorySeeder.ensureDefaults(db);
 
         SharedPreferences.Editor editor = getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE).edit();
         editor.putBoolean("IS_LOGGED_IN", remember);
