@@ -15,7 +15,7 @@ import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.C
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.TransactionEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.UserEntity;
 
-@Database(entities = {UserEntity.class, CategoryEntity.class, TransactionEntity.class, BudgetEntity.class}, version = 2, exportSchema = false)
+@Database(entities = {UserEntity.class, CategoryEntity.class, TransactionEntity.class, BudgetEntity.class}, version = 3, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
