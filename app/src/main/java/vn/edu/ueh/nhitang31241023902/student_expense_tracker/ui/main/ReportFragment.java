@@ -177,6 +177,7 @@ public class ReportFragment extends Fragment {
             }
         }).start();
     }
+
     private static BigDecimal total(List<TransactionEntity> txs) {
         BigDecimal sum = BigDecimal.ZERO;
         for (TransactionEntity tx : txs) if (tx.amount != null) sum = sum.add(tx.amount);
