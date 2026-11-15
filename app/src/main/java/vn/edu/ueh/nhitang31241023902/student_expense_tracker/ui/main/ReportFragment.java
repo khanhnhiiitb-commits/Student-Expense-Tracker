@@ -1,12 +1,13 @@
 package vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.main;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,437 +21,259 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.R;
-import vn.edu.ueh.nhitang31241023902.student_expense_tracker.adapter.CategoryStat;
-import vn.edu.ueh.nhitang31241023902.student_expense_tracker.adapter.ReportCategoryAdapter;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.AppDatabase;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.CategoryEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.TransactionEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.UserEntity;
 
 public class ReportFragment extends Fragment {
-
-    private static final int PERIOD_WEEK = 0;
-    private static final int PERIOD_MONTH = 1;
-    private static final int PERIOD_YEAR = 2;
-
-    private static final int[] CHART_COLORS = {
-            Color.parseColor("#1E88E5"), Color.parseColor("#F59E0B"),
-            Color.parseColor("#16A34A"), Color.parseColor("#DC2626"),
-            Color.parseColor("#8B5CF6"), Color.parseColor("#EC4899"),
-            Color.parseColor("#14B8A6"), Color.parseColor("#F97316"),
-            Color.parseColor("#64748B")
-    };
-
-    private final DecimalFormat moneyFormat =
-            new DecimalFormat("#,###", DecimalFormatSymbols.getInstance(new Locale("vi", "VN")));
-
-    // Kỳ đang xem: mặc định là tháng hiện tại
-    private int periodType = PERIOD_MONTH;
-    private final Calendar anchor = Calendar.getInstance();
-
-    private TextView tabWeek, tabMonth, tabYear, tvPeriod, tvSummarySubtitle;
-    private TextView tvTotalIncome, tvTotalExpense, tvNetResult, tvEmptyExpense;
+    private enum Period { WEEK, MONTH, YEAR, CUSTOM }
+    private Period period = Period.MONTH;
+    private final Calendar cursor = Calendar.getInstance();
+    private Calendar customStart, customEnd;
+    private TextView tvPeriod, tvSubtitle, tvIncome, tvExpense, tvNet, tvEmpty;
+    private TextView tabWeek, tabMonth, tabYear;
     private PieChart pieChart;
     private BarChart barChart;
-    private RecyclerView rvCategoryLegend;
-    private ReportCategoryAdapter categoryAdapter;
+    private RecyclerView legend;
+    private final DecimalFormat money = new DecimalFormat("#,##0");
+    private int requestVersion = 0;
 
-    public ReportFragment() {
-        super(R.layout.fragment_report);
-    }
+    public ReportFragment() { super(R.layout.fragment_report); }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        ImageView btnBack = view.findViewById(R.id.btnBack);
-        ImageView btnPrev = view.findViewById(R.id.btnPrevPeriod);
-        ImageView btnNext = view.findViewById(R.id.btnNextPeriod);
+    @Override public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
+        super.onViewCreated(view, state);
+        tvPeriod = view.findViewById(R.id.tvPeriod);
+        tvSubtitle = view.findViewById(R.id.tvSummarySubtitle);
+        tvIncome = view.findViewById(R.id.tvTotalIncome);
+        tvExpense = view.findViewById(R.id.tvTotalExpense);
+        tvNet = view.findViewById(R.id.tvNetResult);
+        tvEmpty = view.findViewById(R.id.tvEmptyExpense);
         tabWeek = view.findViewById(R.id.tabWeek);
         tabMonth = view.findViewById(R.id.tabMonth);
         tabYear = view.findViewById(R.id.tabYear);
-        tvPeriod = view.findViewById(R.id.tvPeriod);
-        tvSummarySubtitle = view.findViewById(R.id.tvSummarySubtitle);
-        tvTotalIncome = view.findViewById(R.id.tvTotalIncome);
-        tvTotalExpense = view.findViewById(R.id.tvTotalExpense);
-        tvNetResult = view.findViewById(R.id.tvNetResult);
-        tvEmptyExpense = view.findViewById(R.id.tvEmptyExpense);
         pieChart = view.findViewById(R.id.pieChart);
         barChart = view.findViewById(R.id.barChart);
-        rvCategoryLegend = view.findViewById(R.id.rvCategoryLegend);
-
-        categoryAdapter = new ReportCategoryAdapter();
-        rvCategoryLegend.setLayoutManager(new LinearLayoutManager(requireContext()));
-        rvCategoryLegend.setAdapter(categoryAdapter);
-        setupPieChart();
-        setupBarChart();
-
-        btnBack.setOnClickListener(v -> {
-            com.google.android.material.bottomnavigation.BottomNavigationView bottomNav =
-                    requireActivity().findViewById(R.id.bottom_navigation);
-            if (bottomNav != null) {
-                bottomNav.setSelectedItemId(R.id.nav_home);
-            }
+        legend = view.findViewById(R.id.rvCategoryLegend);
+        legend.setLayoutManager(new LinearLayoutManager(requireContext()));
+        legend.setNestedScrollingEnabled(false);
+        view.<ImageView>findViewById(R.id.btnBack).setOnClickListener(v -> {
+            BottomNavigationView nav = requireActivity().findViewById(R.id.bottom_navigation);
+            if (nav != null) nav.setSelectedItemId(R.id.nav_home);
         });
-
-        tabWeek.setOnClickListener(v -> selectPeriodType(PERIOD_WEEK));
-        tabMonth.setOnClickListener(v -> selectPeriodType(PERIOD_MONTH));
-        tabYear.setOnClickListener(v -> selectPeriodType(PERIOD_YEAR));
-        btnPrev.setOnClickListener(v -> shiftPeriod(-1));
-        btnNext.setOnClickListener(v -> shiftPeriod(1));
-
-        updateTabsUi();
-        loadReport();
+        tabWeek.setOnClickListener(v -> select(Period.WEEK));
+        tabMonth.setOnClickListener(v -> select(Period.MONTH));
+        tabYear.setOnClickListener(v -> select(Period.YEAR));
+        view.findViewById(R.id.btnPrevPeriod).setOnClickListener(v -> shift(-1));
+        view.findViewById(R.id.btnNextPeriod).setOnClickListener(v -> shift(1));
+        view.findViewById(R.id.btnDateRange).setOnClickListener(v -> chooseRange());
+        refresh();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Quay lại tab thống kê sau khi thêm/sửa/xóa giao dịch thì tải lại số liệu
-        if (tvTotalIncome != null) loadReport();
+    private void select(Period next) { period = next; cursor.setTimeInMillis(System.currentTimeMillis()); refresh(); }
+    private void shift(int delta) {
+        if (period == Period.CUSTOM) { Toast.makeText(requireContext(), "Chọn khoảng ngày mới để thay đổi", Toast.LENGTH_SHORT).show(); return; }
+        cursor.add(period == Period.WEEK ? Calendar.WEEK_OF_YEAR : period == Period.MONTH ? Calendar.MONTH : Calendar.YEAR, delta);
+        refresh();
     }
-
-    // ===================== Chọn kỳ =====================
-
-    private void selectPeriodType(int type) {
-        if (periodType == type) return;
-        periodType = type;
-        updateTabsUi();
-        loadReport();
+    private void chooseRange() {
+        Calendar now = Calendar.getInstance();
+        new DatePickerDialog(requireContext(), (picker, y, m, d) -> {
+            Calendar start = Calendar.getInstance(); start.clear(); start.set(y, m, d);
+            new DatePickerDialog(requireContext(), (picker2, y2, m2, d2) -> {
+                Calendar end = Calendar.getInstance(); end.clear(); end.set(y2, m2, d2);
+                if (end.before(start)) { Toast.makeText(requireContext(), "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu", Toast.LENGTH_SHORT).show(); return; }
+                customStart = start; customEnd = end; period = Period.CUSTOM; refresh();
+            }, y, m, d).show();
+        }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH)).show();
     }
-
-    private void shiftPeriod(int step) {
-        switch (periodType) {
-            case PERIOD_WEEK:  anchor.add(Calendar.WEEK_OF_YEAR, step); break;
-            case PERIOD_YEAR:  anchor.add(Calendar.YEAR, step); break;
-            default:           anchor.add(Calendar.MONTH, step); break;
-        }
-        loadReport();
+    private static Calendar startOfDay(Calendar c) {
+        Calendar result = (Calendar) c.clone();
+        result.set(Calendar.HOUR_OF_DAY, 0); result.set(Calendar.MINUTE, 0);
+        result.set(Calendar.SECOND, 0); result.set(Calendar.MILLISECOND, 0);
+        return result;
     }
-
-    private void updateTabsUi() {
-        styleTab(tabWeek, periodType == PERIOD_WEEK);
-        styleTab(tabMonth, periodType == PERIOD_MONTH);
-        styleTab(tabYear, periodType == PERIOD_YEAR);
-    }
-
-    private void styleTab(TextView tab, boolean selected) {
-        tab.setBackgroundResource(selected ? R.drawable.bg_tab_selected : 0);
-        tab.setTextColor(requireContext().getColor(selected ? R.color.primary : R.color.text_sub));
-        tab.setTypeface(null, selected ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
-    }
-
-    /** Trả về [start, endExclusive) theo millis của kỳ đang chọn. */
-    private long[] getRange() {
-        Calendar start = (Calendar) anchor.clone();
-        start.setFirstDayOfWeek(Calendar.MONDAY);
-        start.set(Calendar.HOUR_OF_DAY, 0);
-        start.set(Calendar.MINUTE, 0);
-        start.set(Calendar.SECOND, 0);
-        start.set(Calendar.MILLISECOND, 0);
-
-        Calendar end;
-        switch (periodType) {
-            case PERIOD_WEEK:
-                start.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-                end = (Calendar) start.clone();
-                end.add(Calendar.DAY_OF_YEAR, 7);
-                break;
-            case PERIOD_YEAR:
-                start.set(Calendar.DAY_OF_YEAR, 1);
-                end = (Calendar) start.clone();
-                end.add(Calendar.YEAR, 1);
-                break;
-            default:
+    private Calendar[] bounds() {
+        Calendar start = startOfDay(cursor), end;
+        if (period == Period.CUSTOM && customStart != null && customEnd != null) {
+            start = startOfDay(customStart); end = startOfDay(customEnd); end.add(Calendar.DAY_OF_MONTH, 1);
+        } else {
+            if (period == Period.WEEK) {
+                int offset = (start.get(Calendar.DAY_OF_WEEK) + 5) % 7; // Monday first
+                start.add(Calendar.DAY_OF_MONTH, -offset);
+                end = (Calendar) start.clone(); end.add(Calendar.DAY_OF_MONTH, 7);
+            } else if (period == Period.MONTH) {
                 start.set(Calendar.DAY_OF_MONTH, 1);
-                end = (Calendar) start.clone();
-                end.add(Calendar.MONTH, 1);
-                break;
+                end = (Calendar) start.clone(); end.add(Calendar.MONTH, 1);
+            } else {
+                start.set(Calendar.DAY_OF_YEAR, 1);
+                end = (Calendar) start.clone(); end.add(Calendar.YEAR, 1);
+            }
         }
-        return new long[]{start.getTimeInMillis(), end.getTimeInMillis()};
+        return new Calendar[]{start, end};
     }
-
-    private String getPeriodLabel(long startMillis, long endExclusiveMillis) {
-        Calendar s = Calendar.getInstance();
-        s.setTimeInMillis(startMillis);
-        switch (periodType) {
-            case PERIOD_WEEK:
-                Calendar e = Calendar.getInstance();
-                e.setTimeInMillis(endExclusiveMillis - 1);
-                return String.format(Locale.getDefault(), "%02d/%02d - %02d/%02d/%d",
-                        s.get(Calendar.DAY_OF_MONTH), s.get(Calendar.MONTH) + 1,
-                        e.get(Calendar.DAY_OF_MONTH), e.get(Calendar.MONTH) + 1, e.get(Calendar.YEAR));
-            case PERIOD_YEAR:
-                return "Năm " + s.get(Calendar.YEAR);
-            default:
-                return String.format(Locale.getDefault(), "Tháng %02d/%d",
-                        s.get(Calendar.MONTH) + 1, s.get(Calendar.YEAR));
-        }
+    private String label(Calendar start, Calendar end) {
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", new Locale("vi", "VN"));
+        Calendar last = (Calendar) end.clone(); last.add(Calendar.MILLISECOND, -1);
+        if (period == Period.MONTH) return "Tháng " + (start.get(Calendar.MONTH) + 1) + "/" + start.get(Calendar.YEAR);
+        if (period == Period.YEAR) return "Năm " + start.get(Calendar.YEAR);
+        return df.format(start.getTime()) + " - " + df.format(last.getTime());
     }
-
-    // ===================== 6.1.3 + 6.1.4: Tải & tính toán =====================
-
-    private void loadReport() {
-        if (getContext() == null) return;
-
-        final long[] range = getRange();
-        final String label = getPeriodLabel(range[0], range[1]);
-        tvPeriod.setText(label);
-        tvSummarySubtitle.setText(label + " · Tất cả nguồn tiền");
-
-        final Context appContext = requireContext().getApplicationContext();
-
+    private void refresh() {
+        if (!isAdded() || getView() == null) return;
+        Calendar[] range = bounds();
+        long start = range[0].getTimeInMillis(), end = range[1].getTimeInMillis();
+        String periodLabel = label(range[0], range[1]);
+        tvPeriod.setText(periodLabel); tvSubtitle.setText(periodLabel + " · Tất cả nguồn tiền");
+        tabWeek.setSelected(period == Period.WEEK); tabMonth.setSelected(period == Period.MONTH); tabYear.setSelected(period == Period.YEAR);
+        int currentRequest = ++requestVersion;
+        Context appContext = requireContext().getApplicationContext();
         new Thread(() -> {
-            AppDatabase db = AppDatabase.getDatabase(appContext);
-
-            SharedPreferences prefs = appContext.getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
-            String email = prefs.getString("USER_EMAIL", "");
-            UserEntity user = db.userDao().getUserByEmail(email);
-            long userId = user != null ? user.userId : -1;
-
-            List<TransactionEntity> incomes = db.transactionDao().getIncomeByDateRange(userId, range[0], range[1]);
-            List<TransactionEntity> expenses = db.transactionDao().getExpenseByDateRange(userId, range[0], range[1]);
-
-            // 6.1.3 – Tổng thu, tổng chi, số dư (BigDecimal để không sai số)
-            BigDecimal totalIncome = sum(incomes);
-            BigDecimal totalExpense = sum(expenses);
-            BigDecimal balance = totalIncome.subtract(totalExpense);
-
-            // 6.1.4 – Gom chi tiêu theo danh mục
-            Map<Long, BigDecimal> byCategory = new HashMap<>();
-            for (TransactionEntity tx : expenses) {
-                if (tx.amount == null) continue;
-                BigDecimal old = byCategory.get(tx.categoryID);
-                byCategory.put(tx.categoryID, old == null ? tx.amount : old.add(tx.amount));
+            try {
+                AppDatabase db = AppDatabase.getDatabase(appContext);
+                SharedPreferences prefs = appContext.getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
+                String email = prefs.getString("USER_EMAIL", "");
+                UserEntity user = email.isEmpty() ? null : db.userDao().getUserByEmail(email);
+                if (user == null) {
+                    if (isAdded()) requireActivity().runOnUiThread(() -> {
+                        if (isAdded() && currentRequest == requestVersion) Toast.makeText(requireContext(), "Không tìm thấy tài khoản đăng nhập", Toast.LENGTH_SHORT).show();
+                    });
+                    return;
+                }
+                List<TransactionEntity> incomes = db.transactionDao().getIncomeByDateRange(user.userId, start, end);
+                List<TransactionEntity> expenses = db.transactionDao().getExpenseByDateRange(user.userId, start, end);
+                Map<Long, String> categoryNames = new LinkedHashMap<>();
+                for (TransactionEntity tx : expenses) if (!categoryNames.containsKey(tx.categoryID)) {
+                    CategoryEntity cat = db.categoryDao().getCategoryById(tx.categoryID);
+                    categoryNames.put(tx.categoryID, cat == null ? "Khác" : cat.categoryName);
+                }
+                if (isAdded()) requireActivity().runOnUiThread(() -> {
+                    if (isAdded() && getView() != null && currentRequest == requestVersion)
+                        render(incomes, expenses, categoryNames, start, end);
+                });
+            } catch (Exception ex) {
+                android.util.Log.e("ReportFragment", "Load report failed", ex);
+                if (isAdded()) requireActivity().runOnUiThread(() -> {
+                    if (isAdded() && currentRequest == requestVersion) Toast.makeText(requireContext(), "Không thể tải báo cáo", Toast.LENGTH_SHORT).show();
+                });
             }
-
-            List<CategoryStat> stats = new ArrayList<>();
-            for (Map.Entry<Long, BigDecimal> e : byCategory.entrySet()) {
-                CategoryEntity cat = db.categoryDao().getCategoryById(e.getKey());
-                String name = cat != null ? cat.categoryName : "Khác";
-                double percent = totalExpense.signum() > 0
-                        ? e.getValue().multiply(BigDecimal.valueOf(100))
-                        .divide(totalExpense, 4, java.math.RoundingMode.HALF_UP).doubleValue()
-                        : 0;
-                stats.add(new CategoryStat(e.getKey(), name, e.getValue(), percent, 0));
-            }
-            // Sắp xếp giảm dần theo số tiền, rồi gán màu theo thứ tự
-            Collections.sort(stats, (a, b) -> b.totalAmount.compareTo(a.totalAmount));
-            List<CategoryStat> colored = new ArrayList<>();
-            for (int i = 0; i < stats.size(); i++) {
-                CategoryStat s = stats.get(i);
-                colored.add(new CategoryStat(s.categoryId, s.categoryName, s.totalAmount,
-                        s.percent, CHART_COLORS[i % CHART_COLORS.length]));
-            }
-
-            // Dòng tiền theo thời gian (biểu đồ cột)
-            final String[] labels = getBucketLabels();
-            final float[] incomeBuckets = new float[labels.length];
-            final float[] expenseBuckets = new float[labels.length];
-            fillBuckets(incomes, range[0], incomeBuckets);
-            fillBuckets(expenses, range[0], expenseBuckets);
-
-            if (getActivity() == null) return;
-            getActivity().runOnUiThread(() -> {
-                if (!isAdded()) return;
-                showSummary(totalIncome, totalExpense, balance);
-                showCategoryStats(colored);
-                showCashFlow(labels, incomeBuckets, expenseBuckets);
-            });
         }).start();
     }
 
-    private BigDecimal sum(List<TransactionEntity> list) {
-        BigDecimal total = BigDecimal.ZERO;
-        if (list != null) {
-            for (TransactionEntity tx : list) {
-                if (tx.amount != null) total = total.add(tx.amount);
-            }
-        }
-        return total;
+    private static BigDecimal total(List<TransactionEntity> txs) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (TransactionEntity tx : txs) if (tx.amount != null) sum = sum.add(tx.amount);
+        return sum;
     }
-
-    // ===================== Dòng tiền theo thời gian =====================
-
-    /** Tuần: 7 ngày. Tháng: 5 cụm tuần (1-7, 8-14...). Năm: 12 tháng. */
-    private String[] getBucketLabels() {
-        switch (periodType) {
-            case PERIOD_WEEK:
-                return new String[]{"T2", "T3", "T4", "T5", "T6", "T7", "CN"};
-            case PERIOD_YEAR:
-                String[] m = new String[12];
-                for (int i = 0; i < 12; i++) m[i] = "T" + (i + 1);
-                return m;
-            default:
-                return new String[]{"1-7", "8-14", "15-21", "22-28", "29+"};
+    private void render(List<TransactionEntity> incomes, List<TransactionEntity> expenses,
+                        Map<Long, String> names, long start, long end) {
+        BigDecimal income = total(incomes), expense = total(expenses), net = income.subtract(expense);
+        tvIncome.setText(money.format(income) + " đ");
+        tvExpense.setText(money.format(expense) + " đ");
+        tvNet.setText("Thu - Chi: " + money.format(net) + " đ");
+        tvNet.setTextColor(requireContext().getColor(net.signum() < 0 ? R.color.expense_red : R.color.income_green));
+        Map<Long, BigDecimal> categoryTotals = new LinkedHashMap<>();
+        for (TransactionEntity tx : expenses) if (tx.amount != null)
+            categoryTotals.put(tx.categoryID, categoryTotals.getOrDefault(tx.categoryID, BigDecimal.ZERO).add(tx.amount));
+        ArrayList<PieEntry> slices = new ArrayList<>();
+        ArrayList<String> legendLines = new ArrayList<>();
+        for (Map.Entry<Long, BigDecimal> item : categoryTotals.entrySet()) {
+            if (item.getValue().signum() <= 0) continue;
+            String name = names.getOrDefault(item.getKey(), "Khác");
+            slices.add(new PieEntry(item.getValue().floatValue(), name));
+            legendLines.add(name + ": " + money.format(item.getValue()) + " đ");
         }
+        boolean hasExpense = !slices.isEmpty();
+        tvEmpty.setVisibility(hasExpense ? View.GONE : View.VISIBLE);
+        pieChart.setVisibility(hasExpense ? View.VISIBLE : View.GONE);
+        legend.setAdapter(new LegendAdapter(legendLines));
+        if (hasExpense) {
+            PieDataSet set = new PieDataSet(slices, "Danh mục");
+            set.setColors(ColorTemplate.MATERIAL_COLORS);
+            set.setSliceSpace(2f);
+            PieData data = new PieData(set); data.setDrawValues(false);
+            pieChart.setData(data); pieChart.getDescription().setEnabled(false);
+            pieChart.getLegend().setEnabled(false); pieChart.setDrawEntryLabels(false);
+            pieChart.setUsePercentValues(false); pieChart.invalidate();
+        } else pieChart.clear();
+        drawBars(incomes, expenses, start, end);
     }
-
-    private void fillBuckets(List<TransactionEntity> list, long rangeStart, float[] out) {
-        if (list == null) return;
-        Calendar c = Calendar.getInstance();
-        for (TransactionEntity tx : list) {
-            if (tx.amount == null) continue;
-            c.setTimeInMillis(tx.transactionDate);
-            int idx;
-            switch (periodType) {
-                case PERIOD_WEEK:
-                    idx = (c.get(Calendar.DAY_OF_WEEK) + 5) % 7; // T2=0 ... CN=6
-                    break;
-                case PERIOD_YEAR:
-                    idx = c.get(Calendar.MONTH);
-                    break;
-                default:
-                    idx = (c.get(Calendar.DAY_OF_MONTH) - 1) / 7;
-                    break;
-            }
-            if (idx >= 0 && idx < out.length) out[idx] += tx.amount.floatValue();
+    private void drawBars(List<TransactionEntity> incomes, List<TransactionEntity> expenses, long start, long end) {
+        Calendar c = Calendar.getInstance(); c.setTimeInMillis(start);
+        ArrayList<String> labels = new ArrayList<>();
+        ArrayList<Long> boundaries = new ArrayList<>();
+        boolean byMonth = period == Period.YEAR;
+        boolean byDay = period == Period.WEEK || period == Period.CUSTOM;
+        // Custom ranges longer than 60 days aggregate by month to avoid an unreadable chart.
+        if (period == Period.CUSTOM && (end - start) > 60L * 86400000L) { byMonth = true; byDay = false; }
+        SimpleDateFormat df = new SimpleDateFormat(byMonth ? "MM/yy" : byDay ? "dd/MM" : "dd/MM", Locale.getDefault());
+        while (c.getTimeInMillis() < end && labels.size() < 370) {
+            boundaries.add(c.getTimeInMillis()); labels.add(df.format(c.getTime()));
+            if (byMonth) c.add(Calendar.MONTH, 1);
+            else if (byDay) c.add(Calendar.DAY_OF_MONTH, 1);
+            else c.add(Calendar.DAY_OF_MONTH, 1);
         }
-    }
-
-    private void setupBarChart() {
-        barChart.getDescription().setEnabled(false);
-        barChart.setNoDataText("Chưa có dữ liệu trong kỳ này");
-        barChart.setNoDataTextColor(Color.GRAY);
-        barChart.setDrawGridBackground(false);
-        barChart.setScaleEnabled(false);
-        barChart.setPinchZoom(false);
+        boundaries.add(end);
+        ArrayList<BarEntry> inBars = new ArrayList<>(), outBars = new ArrayList<>();
+        for (int i = 0; i < labels.size(); i++) {
+            long a = boundaries.get(i), b = boundaries.get(i + 1);
+            inBars.add(new BarEntry(i, sumBetween(incomes, a, b)));
+            outBars.add(new BarEntry(i, sumBetween(expenses, a, b)));
+        }
+        BarDataSet inSet = new BarDataSet(inBars, "Thu"); inSet.setColor(requireContext().getColor(R.color.income_green));
+        BarDataSet outSet = new BarDataSet(outBars, "Chi"); outSet.setColor(requireContext().getColor(R.color.expense_red));
+        BarData data = new BarData(inSet, outSet); data.setBarWidth(0.42f); data.setDrawValues(false);
+        barChart.setData(data); barChart.getDescription().setEnabled(false);
         barChart.getAxisRight().setEnabled(false);
+        XAxis axis = barChart.getXAxis(); axis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        axis.setValueFormatter(new IndexAxisValueFormatter(labels)); axis.setGranularity(1f);
+        axis.setLabelRotationAngle(-45f);
         barChart.getAxisLeft().setAxisMinimum(0f);
-        barChart.getAxisLeft().setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float v) {
-                if (v >= 1_000_000f) return trimZero(v / 1_000_000f) + "tr";
-                if (v >= 1_000f) return trimZero(v / 1_000f) + "k";
-                return String.valueOf((int) v);
-            }
-        });
-        barChart.getLegend().setEnabled(true);
-    }
-
-    private String trimZero(float v) {
-        return v == (int) v ? String.valueOf((int) v) : String.format(Locale.US, "%.1f", v);
-    }
-
-    private void showCashFlow(String[] labels, float[] income, float[] expense) {
-        boolean hasData = false;
-        for (int i = 0; i < labels.length; i++) {
-            if (income[i] > 0 || expense[i] > 0) { hasData = true; break; }
-        }
-        if (!hasData) {
-            barChart.clear();
-            barChart.invalidate();
-            return;
-        }
-
-        List<BarEntry> incomeEntries = new ArrayList<>();
-        List<BarEntry> expenseEntries = new ArrayList<>();
-        for (int i = 0; i < labels.length; i++) {
-            incomeEntries.add(new BarEntry(i, income[i]));
-            expenseEntries.add(new BarEntry(i, expense[i]));
-        }
-
-        BarDataSet incomeSet = new BarDataSet(incomeEntries, "Thu");
-        incomeSet.setColor(requireContext().getColor(R.color.income_green));
-        incomeSet.setDrawValues(false);
-        BarDataSet expenseSet = new BarDataSet(expenseEntries, "Chi");
-        expenseSet.setColor(requireContext().getColor(R.color.expense_red));
-        expenseSet.setDrawValues(false);
-
-        BarData data = new BarData(incomeSet, expenseSet);
-        // (barWidth + barSpace) * 2 + groupSpace = 1
-        float groupSpace = 0.1f, barSpace = 0.05f, barWidth = 0.4f;
-        data.setBarWidth(barWidth);
-
-        XAxis x = barChart.getXAxis();
-        x.setPosition(XAxis.XAxisPosition.BOTTOM);
-        x.setDrawGridLines(false);
-        x.setGranularity(1f);
-        x.setCenterAxisLabels(true);
-        x.setLabelCount(labels.length);
-        x.setValueFormatter(new IndexAxisValueFormatter(labels));
-        x.setAxisMinimum(0f);
-        x.setAxisMaximum(labels.length);
-
-        barChart.setData(data);
-        barChart.groupBars(0f, groupSpace, barSpace);
+        barChart.getXAxis().setAxisMinimum(-0.5f);
+        barChart.getXAxis().setAxisMaximum(labels.size() - 0.5f);
+        barChart.groupBars(-0.5f, 0.08f, 0.04f);
+        barChart.setVisibleXRangeMaximum(Math.min(8, labels.size()));
+        barChart.moveViewToX(Math.max(0, labels.size() - 8));
         barChart.invalidate();
-        barChart.animateY(500);
     }
-
-    // ===================== Hiển thị =====================
-
-    private void showSummary(BigDecimal income, BigDecimal expense, BigDecimal balance) {
-        tvTotalIncome.setText(moneyFormat.format(income) + " đ");
-        tvTotalExpense.setText(moneyFormat.format(expense) + " đ");
-
-        String sign = balance.signum() > 0 ? "+" : "";
-        tvNetResult.setText("Thu - Chi: " + sign + moneyFormat.format(balance) + " đ");
-        tvNetResult.setTextColor(requireContext().getColor(
-                balance.signum() >= 0 ? R.color.income_green : R.color.expense_red));
+    private static float sumBetween(List<TransactionEntity> list, long a, long b) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (TransactionEntity tx : list) if (tx.transactionDate >= a && tx.transactionDate < b && tx.amount != null)
+            sum = sum.add(tx.amount);
+        return sum.floatValue();
     }
-
-    private void showCategoryStats(List<CategoryStat> stats) {
-        categoryAdapter.setData(stats);
-
-        if (stats.isEmpty()) {
-            tvEmptyExpense.setVisibility(View.VISIBLE);
-            pieChart.setVisibility(View.GONE);
-            rvCategoryLegend.setVisibility(View.GONE);
-            return;
+    private static class LegendAdapter extends RecyclerView.Adapter<LegendAdapter.Holder> {
+        private final List<String> lines;
+        LegendAdapter(List<String> lines) { this.lines = lines; }
+        @NonNull @Override public Holder onCreateViewHolder(@NonNull android.view.ViewGroup parent, int type) {
+            TextView text = new TextView(parent.getContext());
+            int padding = (int) (8 * parent.getResources().getDisplayMetrics().density);
+            text.setPadding(padding, padding, padding, padding);
+            return new Holder(text);
         }
-        tvEmptyExpense.setVisibility(View.GONE);
-        pieChart.setVisibility(View.VISIBLE);
-        rvCategoryLegend.setVisibility(View.VISIBLE);
-
-        List<PieEntry> entries = new ArrayList<>();
-        List<Integer> colors = new ArrayList<>();
-        for (CategoryStat s : stats) {
-            entries.add(new PieEntry(s.totalAmount.floatValue(), s.categoryName));
-            colors.add(s.color);
+        @Override public void onBindViewHolder(@NonNull Holder holder, int position) { holder.text.setText(lines.get(position)); }
+        @Override public int getItemCount() { return lines.size(); }
+        static class Holder extends RecyclerView.ViewHolder {
+            final TextView text;
+            Holder(TextView text) { super(text); this.text = text; }
         }
-
-        PieDataSet dataSet = new PieDataSet(entries, "");
-        dataSet.setColors(colors);
-        dataSet.setSliceSpace(2f);
-
-        PieData data = new PieData(dataSet);
-        data.setValueFormatter(new PercentFormatter(pieChart));
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.WHITE);
-
-        pieChart.setData(data);
-        pieChart.invalidate();
-        pieChart.animateY(600);
-    }
-
-    private void setupPieChart() {
-        pieChart.setUsePercentValues(true);
-        pieChart.getDescription().setEnabled(false);
-        pieChart.getLegend().setEnabled(false); // đã có danh sách chú thích bên dưới
-        pieChart.setDrawEntryLabels(false);
-        pieChart.setDrawHoleEnabled(true);
-        pieChart.setHoleRadius(55f);
-        pieChart.setTransparentCircleRadius(60f);
-        pieChart.setNoDataText("Chưa có khoản chi trong kỳ này");
     }
 }
