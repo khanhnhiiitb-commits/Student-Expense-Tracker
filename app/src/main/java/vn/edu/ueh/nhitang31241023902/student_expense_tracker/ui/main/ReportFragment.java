@@ -47,7 +47,11 @@ import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.AppDatab
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.CategoryEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.TransactionEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.UserEntity;
+import android.widget.LinearLayout;
 
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 public class ReportFragment extends Fragment {
     private enum Period { WEEK, MONTH, YEAR, CUSTOM }
     private Period period = Period.MONTH;
@@ -60,7 +64,10 @@ public class ReportFragment extends Fragment {
     private RecyclerView legend;
     private final DecimalFormat money = new DecimalFormat("#,##0");
     private int requestVersion = 0;
-
+    private LinearLayout layoutSelectedCategory;
+    private TextView tvSelectedCategoryName;
+    private TextView tvSelectedCategoryAmount;
+    private TextView tvSelectedCategoryPercent;
     public ReportFragment() { super(R.layout.fragment_report); }
 
     @Override public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
@@ -76,6 +83,17 @@ public class ReportFragment extends Fragment {
         tabYear = view.findViewById(R.id.tabYear);
         pieChart = view.findViewById(R.id.pieChart);
         barChart = view.findViewById(R.id.barChart);
+        layoutSelectedCategory =
+                view.findViewById(R.id.layoutSelectedCategory);
+
+        tvSelectedCategoryName =
+                view.findViewById(R.id.tvSelectedCategoryName);
+
+        tvSelectedCategoryAmount =
+                view.findViewById(R.id.tvSelectedCategoryAmount);
+
+        tvSelectedCategoryPercent =
+                view.findViewById(R.id.tvSelectedCategoryPercent);
         legend = view.findViewById(R.id.rvCategoryLegend);
         legend.setLayoutManager(new LinearLayoutManager(requireContext()));
         legend.setNestedScrollingEnabled(false);
@@ -229,6 +247,7 @@ public class ReportFragment extends Fragment {
             slices.add(new PieEntry(item.getValue().floatValue(), name));
             legendLines.add(name + ": " + money.format(item.getValue()) + " đ");
         }
+        layoutSelectedCategory.setVisibility(View.GONE);
         boolean hasExpense = !slices.isEmpty();
         tvEmpty.setVisibility(hasExpense ? View.GONE : View.VISIBLE);
         pieChart.setVisibility(hasExpense ? View.VISIBLE : View.GONE);
@@ -255,6 +274,52 @@ public class ReportFragment extends Fragment {
             data.setDrawValues(false);
 
             pieChart.setData(data);
+
+            pieChart.setHighlightPerTapEnabled(true);
+            pieChart.setRotationEnabled(false);
+
+// Ẩn thông tin lựa chọn cũ khi dữ liệu được tải lại
+            layoutSelectedCategory.setVisibility(View.GONE);
+
+            pieChart.setOnChartValueSelectedListener(
+                    new OnChartValueSelectedListener() {
+
+                        @Override
+                        public void onValueSelected(Entry e, Highlight h) {
+                            if (!(e instanceof PieEntry)) return;
+
+                            PieEntry selected = (PieEntry) e;
+
+                            String categoryName = selected.getLabel();
+                            float amount = selected.getValue();
+
+                            float percentage = expense.signum() > 0
+                                    ? selected.getValue() * 100f / expense.floatValue()
+                                    : 0f;
+
+                            tvSelectedCategoryName.setText(categoryName);
+
+                            tvSelectedCategoryAmount.setText(
+                                    "Số tiền: " + money.format(amount) + " đ"
+                            );
+
+                            tvSelectedCategoryPercent.setText(
+                                    String.format(
+                                            new Locale("vi", "VN"),
+                                            "Tỷ lệ: %.1f%%",
+                                            percentage
+                                    )
+                            );
+
+                            layoutSelectedCategory.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onNothingSelected() {
+                            layoutSelectedCategory.setVisibility(View.GONE);
+                        }
+                    });
+
             pieChart.getDescription().setEnabled(false);
             pieChart.getLegend().setEnabled(false);
             pieChart.setDrawEntryLabels(false);
