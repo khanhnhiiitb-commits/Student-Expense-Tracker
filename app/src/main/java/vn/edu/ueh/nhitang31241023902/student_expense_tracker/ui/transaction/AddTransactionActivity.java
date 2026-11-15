@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.DefaultCategorySeeder;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.NotificationHelper;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -460,6 +461,9 @@ public class AddTransactionActivity extends AppCompatActivity {
                     showCategoryLoadError("Không tìm thấy tài khoản");
                     return;
                 }
+
+                // Also handles existing sessions that bypass LoginActivity.
+                DefaultCategorySeeder.ensureDefaults(db);
 
                 List<CategoryEntity> categories =
                         db.categoryDao().getCategoriesByType(
