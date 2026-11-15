@@ -52,6 +52,11 @@ dependencies {
     // Biểu đồ
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
+    // Đăng nhập Google (Credential Manager)
+    implementation("androidx.credentials:credentials:1.5.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
     // Test
     testImplementation(libs.junit)
     testImplementation("org.hamcrest:hamcrest:3.0")
