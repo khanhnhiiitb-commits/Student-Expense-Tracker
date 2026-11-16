@@ -2,28 +2,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_card_rounded"
+    android:foreground="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:paddingVertical="12dp"
-    android:paddingHorizontal="16dp"
-    android:background="?android:attr/selectableItemBackground">
+    android:orientation="horizontal"
+    android:paddingHorizontal="14dp"
+    android:paddingVertical="12dp">
 
-    <!-- Icon nền tròn chứa Emoji danh mục -->
-    <TextView
-        android:id="@+id/tvTransactionIcon"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:background="#F1F5F9"
-        android:gravity="center"
-        android:text="💸"
-        android:textSize="20sp" />
+    <!-- Khung bo góc: Java tô màu nền tvTransactionIcon, khung này cắt theo bo góc -->
+    <FrameLayout
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:background="@drawable/bg_icon_clip"
+        android:clipToOutline="true">
 
-    <!-- Thông tin tên danh mục / ghi chú và ngày -->
+        <TextView
+            android:id="@+id/tvTransactionIcon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#F1F5F9"
+            android:gravity="center"
+            android:text="💸"
+            android:textSize="20sp" />
+    </FrameLayout>
+
+    <!-- Tên danh mục / ghi chú và ngày -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_marginStart="14dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
@@ -31,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ăn uống"
-            android:textColor="#0F172A"
+            android:textColor="@color/text_main"
             android:textSize="15sp"
             android:textStyle="bold" />
 
@@ -41,15 +50,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="25/10/2026 · Cơm trưa"
-            android:textColor="#64748B"
+            android:textColor="@color/text_sub"
             android:textSize="12sp" />
     </LinearLayout>
 
-    <!-- Số tiền hiển thị (+ hoặc - kèm màu xanh lá / đỏ) -->
+    <!-- Số tiền (+/- kèm màu xanh lá / đỏ do Java đặt) -->
     <TextView
         android:id="@+id/tvTransactionAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:text="- 35.000 đ"
         android:textColor="#EF4444"
         android:textSize="15sp"

@@ -2,27 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_card_rounded"
     android:gravity="center_vertical"
-    android:padding="12dp"
-    android:layout_marginBottom="8dp"
-    android:background="@drawable/bg_card_rounded">
+    android:orientation="horizontal"
+    android:padding="12dp">
 
-    <!-- Icon danh mục dạng Emoji với viền tròn bo cong -->
-    <TextView
-        android:id="@+id/tvCategoryIcon"
+    <!-- Khung bo góc: Java tô màu nền tvCategoryIcon, khung này cắt theo bo góc -->
+    <FrameLayout
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:gravity="center"
-        android:textSize="22sp"
-        android:text="📦" />
+        android:background="@drawable/bg_icon_clip"
+        android:clipToOutline="true">
+
+        <TextView
+            android:id="@+id/tvCategoryIcon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="📦"
+            android:textSize="22sp" />
+    </FrameLayout>
 
     <!-- Tên và phân loại danh mục -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_marginStart="12dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
@@ -30,8 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ăn uống"
-            android:textColor="#0F172A"
-            android:textSize="16sp"
+            android:textColor="@color/text_main"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextView
@@ -40,29 +47,28 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="Mặc định · Cố định hệ thống"
-            android:textColor="#64748B"
+            android:textColor="@color/text_sub"
             android:textSize="12sp" />
     </LinearLayout>
 
-    <!-- Nút Sửa (Icon hoặc chữ) -->
+    <!-- Nút Sửa -->
     <TextView
         android:id="@+id/btnEditCategory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:gravity="center"
         android:text="✏️"
-        android:textSize="16sp"
-        android:background="?attr/selectableItemBackgroundBorderless" />
+        android:textSize="16sp" />
 
-    <!-- Nút Xóa (Icon hoặc chữ) -->
+    <!-- Nút Xóa -->
     <TextView
         android:id="@+id/btnDeleteCategory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:layout_marginStart="4dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:gravity="center"
         android:text="🗑️"
-        android:textSize="16sp"
-        android:background="?attr/selectableItemBackgroundBorderless" />
+        android:textSize="16sp" />
 
 </LinearLayout>

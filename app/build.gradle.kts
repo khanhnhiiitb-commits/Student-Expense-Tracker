@@ -69,3 +69,6 @@ configurations.all {
         exclude(group = "org.hamcrest", module = "hamcrest-core")
     }
 }
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-Xlint:deprecation")
+}
