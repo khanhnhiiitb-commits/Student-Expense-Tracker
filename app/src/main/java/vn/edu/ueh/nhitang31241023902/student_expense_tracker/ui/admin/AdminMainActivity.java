@@ -37,10 +37,24 @@ public class AdminMainActivity extends AppCompatActivity {
         tvAdminWelcome.setText("Xin chào, " + prefs.getString("USER_NAME", "Quản trị viên"));
 
         findViewById(R.id.cardManageUsers).setOnClickListener(v ->
-                Toast.makeText(this, "Chức năng quản lý tài khoản đang phát triển!", Toast.LENGTH_SHORT).show());
-        findViewById(R.id.cardSystemMonitor).setOnClickListener(v ->
-                Toast.makeText(this, "Chức năng theo dõi hệ thống đang phát triển!", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, AdminUserActivity.class)));
+        findViewById(R.id.cardSystemMonitor).setOnClickListener(v -> showSystemOverview());
         findViewById(R.id.btnAdminLogout).setOnClickListener(v -> logout());
+    }
+
+    /** UC15 - Tổng quan hệ thống: số người dùng, số giao dịch. */
+    private void showSystemOverview() {
+        new Thread(() -> {
+            vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.AppDatabase db =
+                    vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.AppDatabase.getDatabase(getApplicationContext());
+            final int users = db.userDao().countStudents();
+            final int tx = db.transactionDao().countAll();
+            runOnUiThread(() -> new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Tổng quan hệ thống")
+                    .setMessage("Số tài khoản sinh viên: " + users + "\nTổng số giao dịch đã ghi nhận: " + tx)
+                    .setPositiveButton("Đóng", null)
+                    .show());
+        }).start();
     }
 
     private void logout() {

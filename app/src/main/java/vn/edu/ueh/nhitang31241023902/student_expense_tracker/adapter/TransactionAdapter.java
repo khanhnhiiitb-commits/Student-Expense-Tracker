@@ -2,8 +2,6 @@ package vn.edu.ueh.nhitang31241023902.student_expense_tracker.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,12 +31,17 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     private Context context;
     private List<TransactionEntity> transactionList = new ArrayList<>();
     private OnTransactionClickListener listener;
-    private AppDatabase db;
+    private final java.util.Map<Long, CategoryEntity> categoryMap = new java.util.HashMap<>();
 
     public TransactionAdapter(Context context, OnTransactionClickListener listener) {
         this.context = context;
         this.listener = listener;
-        this.db = AppDatabase.getDatabase(context); // Khởi tạo Database
+    }
+
+    public void setData(List<TransactionEntity> newList, java.util.Map<Long, CategoryEntity> categories) {
+        this.categoryMap.clear();
+        if (categories != null) this.categoryMap.putAll(categories);
+        setData(newList);
     }
 
     public void setData(List<TransactionEntity> newList) {
@@ -70,11 +73,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         String dateStr = sdf.format(new Date(item.transactionDate));
 
         // 3. Truy vấn Category để lấy Loại (Thu/Chi) và Tên danh mục
-        new Thread(() -> {
-            CategoryEntity category = db.categoryDao().getCategoryById(item.categoryID);
-
-            // Đẩy kết quả về lại luồng giao diện chính (UI Thread) để hiển thị
-            new Handler(Looper.getMainLooper()).post(() -> {
+        {
+            CategoryEntity category = categoryMap.get(item.categoryID);
+            {
                 if (category != null) {
 
                     // --- BẮT ĐẦU: XỬ LÝ ICON, MÀU VÀ TÊN DANH MỤC ---
@@ -123,10 +124,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                     // --- XỬ LÝ MÀU SẮC TIỀN (+/-) ---
                     if ("Income".equals(category.type)) {
                         holder.tvAmount.setText("+" + formattedAmount + " đ");
-                        holder.tvAmount.setTextColor(Color.parseColor("#16A34A")); // Xanh lá
+                        holder.tvAmount.setTextColor(Color.parseColor("#10B981")); // Xanh lá
                     } else {
                         holder.tvAmount.setText("-" + formattedAmount + " đ");
-                        holder.tvAmount.setTextColor(Color.parseColor("#EF4444")); // Đỏ
+                        holder.tvAmount.setTextColor(Color.parseColor("#F43F5E")); // Đỏ
                     }
 
                 } else {
@@ -138,8 +139,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                     holder.tvIcon.setText("🏷️");
                     holder.tvIcon.setBackgroundColor(Color.parseColor("#F1F5F9"));
                 }
-            });
-        }).start();
+            }
+        }
 
         // 4. Sự kiện click vào dòng giao dịch
         holder.itemView.setOnClickListener(v -> {

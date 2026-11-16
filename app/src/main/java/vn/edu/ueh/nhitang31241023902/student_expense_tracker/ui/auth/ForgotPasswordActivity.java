@@ -43,7 +43,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     private void validateAndReset() {
-        String email = edtEmail.getText().toString().trim();
+        String email = edtEmail.getText().toString().trim().toLowerCase(java.util.Locale.ROOT);
         String fullName = edtFullName.getText().toString().trim();
         String newPassword = edtNewPassword.getText().toString();
         String confirm = edtConfirmNewPassword.getText().toString();

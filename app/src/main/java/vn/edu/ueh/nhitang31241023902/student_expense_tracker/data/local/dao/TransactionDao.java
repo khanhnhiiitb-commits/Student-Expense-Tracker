@@ -67,6 +67,9 @@ public interface TransactionDao {
             long endExclusiveMillis
     );
 
+    @Query("SELECT COUNT(*) FROM transactions")
+    int countAll();
+
     @Update
     int updateTransaction(TransactionEntity transaction);
 }

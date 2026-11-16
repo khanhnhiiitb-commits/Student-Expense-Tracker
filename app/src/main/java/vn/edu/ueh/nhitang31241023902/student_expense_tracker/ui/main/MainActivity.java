@@ -24,7 +24,34 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Chưa đăng nhập (hoặc phiên đã bị xóa) -> về màn hình đăng nhập
+        final android.content.SharedPreferences sessionPrefs = getSharedPreferences("ExpenseAppPrefs", MODE_PRIVATE);
+        final String sessionEmail = sessionPrefs.getString("USER_EMAIL", "");
+        if (sessionEmail.isEmpty()) {
+            Intent i = new Intent(this, vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.auth.LoginActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_main);
+
+        // Tài khoản bị admin khóa trong lúc đang dùng -> đăng xuất
+        new Thread(() -> {
+            vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.UserEntity u =
+                    vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.AppDatabase
+                            .getDatabase(getApplicationContext()).userDao().getUserByEmail(sessionEmail);
+            if (u != null && !u.isActive) {
+                sessionPrefs.edit().clear().apply();
+                runOnUiThread(() -> {
+                    android.widget.Toast.makeText(this, "Tài khoản của bạn đã bị khóa!", android.widget.Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(this, vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.auth.LoginActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(i);
+                    finish();
+                });
+            }
+        }).start();
         requestNotificationPermission();
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
@@ -97,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Hàm hiển thị hộp thoại lựa chọn
     private void showAddOptions() {
-        String[] options = {"📝 Thêm giao dịch", "🏷️ Quản lý danh mục"};
+        String[] options = {"📝 Thêm giao dịch", "📋 Lịch sử giao dịch", "🏷️ Quản lý danh mục"};
 
         new AlertDialog.Builder(this)
                 .setTitle("Bạn muốn tùy chỉnh gì?")
@@ -106,6 +133,9 @@ public class MainActivity extends AppCompatActivity {
                         // Mở màn hình Thêm giao dịch
                         startActivity(new Intent(MainActivity.this, AddTransactionActivity.class));
                     } else if (which == 1) {
+                        startActivity(new Intent(MainActivity.this,
+                                vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.transaction.TransactionHistoryActivity.class));
+                    } else if (which == 2) {
                         // Mở màn hình Quản lý danh mục
                         startActivity(new Intent(MainActivity.this, CategoryActivity.class));
                     }

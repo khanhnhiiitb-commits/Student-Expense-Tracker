@@ -70,6 +70,12 @@ public class BudgetSetupActivity extends AppCompatActivity {
     }
 
     private void saveBudgets() {
+        if (currentUserId == -1) {
+            Toast.makeText(this,
+                    "Không tìm thấy thông tin người dùng!",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         Map<Long, Long> budgetMap = adapter.getBudgetMap();
         new Thread(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);

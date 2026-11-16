@@ -67,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void validateAndRegister() {
 
         String fullName = edtFullName.getText().toString().trim();
-        String email = edtEmail.getText().toString().trim();
+        String email = edtEmail.getText().toString().trim().toLowerCase(java.util.Locale.ROOT);
         String password = edtPassword.getText().toString();
         String confirmPassword = edtConfirmPassword.getText().toString();
 
@@ -177,6 +177,7 @@ public class RegisterActivity extends AppCompatActivity {
                 editor.putString("USER_EMAIL", email);
                 editor.putString("USER_NAME", fullName);
                 editor.putBoolean("IS_LOGGED_IN", true);
+                editor.putString("USER_ROLE", UserEntity.ROLE_STUDENT);
 
                 editor.apply();
 
