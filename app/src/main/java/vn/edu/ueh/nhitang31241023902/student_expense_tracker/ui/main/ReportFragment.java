@@ -257,14 +257,14 @@ public class ReportFragment extends Fragment {
             PieDataSet set = new PieDataSet(slices, "Danh mục");
 
             int[] chartColors = {
-                    Color.rgb(46, 204, 113),   // Xanh lá
-                    Color.rgb(52, 152, 219),   // Xanh dương
-                    Color.rgb(241, 196, 15),   // Vàng
-                    Color.rgb(231, 76, 60),    // Đỏ
-                    Color.rgb(155, 89, 182),   // Tím
-                    Color.rgb(230, 126, 34),   // Cam
-                    Color.rgb(26, 188, 156),   // Xanh ngọc
-                    Color.rgb(127, 140, 141)   // Xám
+                    Color.rgb(16, 185, 129),   // Xanh ngọc lục
+                    Color.rgb(37, 99, 235),    // Xanh dương
+                    Color.rgb(245, 158, 11),   // Vàng hổ phách
+                    Color.rgb(244, 63, 94),    // Hồng đỏ
+                    Color.rgb(139, 92, 246),   // Tím
+                    Color.rgb(249, 115, 22),   // Cam
+                    Color.rgb(6, 182, 212),     // Cyan
+                    Color.rgb(148, 163, 184)   // Xám xanh
             };
 
             set.setColors(chartColors);
