@@ -1,0 +1,555 @@
+# HƯỚNG DẪN SỬ DỤNG ỨNG DỤNG QUẢN LÝ CHI TIÊU SINH VIÊN
+
+## 1. Giới thiệu
+
+### 1.1. Mục đích tài liệu
+
+Tài liệu này hướng dẫn người dùng và nhóm kiểm thử chuẩn bị môi trường, cài đặt, khởi chạy và sử dụng ứng dụng Quản lý chi tiêu sinh viên.
+
+Tài liệu được xây dựng nhằm giúp người dùng có thể tự thực hiện các thao tác trên ứng dụng mà không cần sự hỗ trợ trực tiếp từ nhóm phát triển.
+
+### 1.2. Giới thiệu ứng dụng
+
+Ứng dụng Quản lý chi tiêu sinh viên hỗ trợ sinh viên quản lý tình hình tài chính cá nhân thông qua việc ghi nhận thu nhập, chi tiêu, phân loại giao dịch, thiết lập ngân sách và theo dõi thống kê thu chi.
+
+Ứng dụng có hai nhóm người dùng chính:
+
+- **Sinh viên (Student):** Sử dụng các chức năng quản lý thu nhập, chi tiêu, danh mục, ngân sách và thống kê tài chính cá nhân.
+- **Quản trị viên (Admin):** Quản lý tài khoản người dùng và theo dõi một số thông tin tổng quan của hệ thống.
+
+### 1.3. Phạm vi hướng dẫn
+
+Tài liệu bao gồm:
+
+- Yêu cầu về thiết bị và phần mềm.
+- Hướng dẫn cài đặt và cấu hình môi trường Android Emulator.
+- Hướng dẫn cài đặt và khởi chạy ứng dụng.
+- Hướng dẫn đăng nhập và sử dụng các chức năng dành cho sinh viên.
+- Hướng dẫn sử dụng các chức năng dành cho Admin.
+- Hướng dẫn xử lý một số lỗi thường gặp trong quá trình kiểm thử.
+
+## 2. Yêu cầu môi trường
+
+### 2.1. Yêu cầu phần cứng
+
+Người kiểm thử có thể sử dụng máy tính cá nhân để chạy ứng dụng thông qua Android Emulator. Cấu hình dưới đây là mức khuyến nghị để Emulator hoạt động ổn định, không phải yêu cầu cấu hình tối thiểu tuyệt đối của ứng dụng.
+
+| **Thành phần**   | **Cấu hình khuyến nghị**                                  |
+| ---------------- | --------------------------------------------------------- |
+| Hệ điều hành     | Windows 10/11 64-bit                                      |
+| CPU              | Intel Core i5 hoặc tương đương, hỗ trợ ảo hóa             |
+| RAM              | Tối thiểu 8 GB; khuyến nghị 16 GB                         |
+| Dung lượng trống | Khoảng 15–20 GB cho Android Studio, SDK và Emulator       |
+| Kết nối mạng     | Internet ổn định, đặc biệt khi đăng nhập bằng Google      |
+
+**Lưu ý:** Android Emulator sử dụng tài nguyên máy tính tương đối lớn. Nếu máy có RAM thấp, nên đóng các ứng dụng không cần thiết trước khi khởi chạy Emulator.
+
+### 2.2. Phần mềm cần cài đặt
+
+Phần mềm cần chuẩn bị tùy theo cách sử dụng ứng dụng:
+
+**Đối với người kiểm thử cài APK trên Android Emulator:**
+
+| **Phần mềm**               | **Mục đích**                                                | **Mức độ cần thiết** |
+| -------------------------- | ----------------------------------------------------------- | ------------------- |
+| Android Studio             | Tạo, cấu hình và khởi chạy Android Emulator                 | Cần thiết            |
+| Android SDK                | Cung cấp nền tảng và công cụ Android                         | Cần thiết            |
+| Android Emulator           | Mô phỏng thiết bị Android trên máy tính                      | Cần thiết            |
+| Android SDK Platform-Tools | Cung cấp ADB để cài APK bằng dòng lệnh                       | Tùy chọn             |
+
+**Đối với người phát triển hoặc người chạy ứng dụng từ mã nguồn:**
+
+| **Phần mềm** | **Mục đích** |
+| ------------ | ------------ |
+| JDK          | Hỗ trợ biên dịch và chạy project Android theo cấu hình Gradle |
+| Git          | Tải và cập nhật mã nguồn dự án từ GitHub                    |
+
+**Lưu ý:** Người kiểm thử chỉ tải APK từ GitHub Releases không cần cài Git, không cần tự biên dịch mã nguồn và không cần cài JDK riêng. Android Studio vẫn được sử dụng trong tài liệu này để tạo và chạy Emulator.
+
+**Khuyến nghị cho nhà phát triển:** Sử dụng JDK 17 nếu project được cấu hình với phiên bản Gradle/Android Gradle Plugin tương ứng. Nếu project có cấu hình JDK riêng, cần ưu tiên phiên bản được cấu hình trong project.
+
+### 2.3. Công nghệ sử dụng (tham khảo)
+
+Ứng dụng được xây dựng trên nền tảng Android với các công nghệ chính:
+
+| **Công nghệ**             | **Vai trò**                                      |
+| ------------------------- | ------------------------------------------------ |
+| Kotlin                    | Ngôn ngữ lập trình chính của ứng dụng Android    |
+| Android SDK               | Cung cấp nền tảng và các API Android             |
+| XML Layout                | Xây dựng giao diện người dùng                    |
+| Room Database             | Lưu trữ và quản lý dữ liệu cục bộ trên thiết bị  |
+| Google Credential Manager | Hỗ trợ quy trình đăng nhập bằng tài khoản Google |
+| Google Play Services      | Hỗ trợ các dịch vụ Google trên Android Emulator  |
+
+Các thư viện và phiên bản cụ thể được quản lý trong cấu hình Gradle của project. Đây là thông tin tham khảo; người kiểm thử cài APK không cần tự cài đặt riêng từng công nghệ trong bảng.
+
+## 3. Cài đặt và cấu hình môi trường
+
+### 3.1. Cài đặt Android Studio
+
+**Bước 1:** Truy cập trang tải Android Studio:
+
+[https://developer.android.com/studio](https://developer.android.com/studio)
+
+**Bước 2:** Tải phiên bản Android Studio phù hợp với hệ điều hành Windows.
+
+**Bước 3:** Chạy file cài đặt và thực hiện theo hướng dẫn trên màn hình.
+
+**Bước 4:** Khi mở Android Studio lần đầu, chọn Standard Setup để cài đặt các thành phần cần thiết.
+
+**Bước 5:** Chờ quá trình tải và cài đặt Android SDK hoàn tất.
+
+### 3.2. Cài đặt Android SDK và Emulator
+
+**Bước 1:** Mở Android Studio.
+
+**Bước 2:** Chọn Tools → SDK Manager.
+
+**Bước 3:** Tại tab SDK Platforms, cài đặt phiên bản Android SDK tương thích với cấu hình project.
+
+**Bước 4:** Chuyển sang tab SDK Tools và kiểm tra các thành phần:
+
+- Android SDK Build-Tools.
+- Android SDK Platform-Tools.
+- Android Emulator.
+- Android SDK Command-line Tools.
+
+**Bước 5:** Nhấn Apply để tải và cài đặt các thành phần còn thiếu.
+
+### 3.3. Tạo Android Emulator
+
+Để kiểm thử ứng dụng, người dùng cần tạo một thiết bị Android ảo.
+
+**Bước 1:** Trong Android Studio, chọn Tools → Device Manager.
+
+**Bước 2:** Chọn Create Virtual Device.
+
+**Bước 3:** Chọn một thiết bị điện thoại, khuyến nghị sử dụng dòng Pixel có kích thước màn hình phổ biến.
+
+**Bước 4:** Tại bước chọn System Image, chọn phiên bản Android tương thích với project.
+
+**Bước 5:** Chọn System Image có nhãn **Google Play**.
+
+Đây là yêu cầu quan trọng khi kiểm thử chức năng đăng nhập Google. Không nên chọn ảnh hệ thống AOSP hoặc chỉ có Google APIs nếu mục tiêu là kiểm thử quy trình Google Sign-In thông qua Google Play Services.
+
+**Bước 6:** Tải System Image nếu Android Studio yêu cầu.
+
+**Bước 7:** Chọn Next, kiểm tra cấu hình và nhấn Finish.
+
+### 3.4. Cấu hình Emulator khuyến nghị
+
+| **Thành phần**   | **Cấu hình đề xuất**                             |
+| ---------------- | ------------------------------------------------ |
+| Thiết bị ảo      | Pixel 2, Pixel 3 hoặc thiết bị Pixel tương đương |
+| System Image     | Android có Google Play                           |
+| RAM Emulator     | 2–4 GB                                           |
+| Internal Storage | 6 GB trở lên                                     |
+| Độ phân giải     | Thiết bị điện thoại tiêu chuẩn                   |
+| Kết nối mạng     | Có kết nối Internet                              |
+
+Phiên bản Android cụ thể cần tương thích với minSdk, targetSdk và các thư viện được khai báo trong project. Nếu chưa biết phiên bản phù hợp, người dùng nên mở project và kiểm tra cấu hình trong file app/build.gradle.kts.
+
+### 3.5. Kiểm tra Google Play Services
+
+Đối với chức năng đăng nhập Google, thực hiện các bước sau:
+
+1. Khởi động Emulator vừa tạo.
+2. Mở Google Play Store trên Emulator.
+3. Kiểm tra Google Play Store có thể hoạt động bình thường.
+4. Đăng nhập một tài khoản Google được phép sử dụng trong môi trường kiểm thử.
+5. Kiểm tra Google Play Services đã được cập nhật nếu hệ thống yêu cầu.
+6. Đảm bảo Emulator có kết nối Internet.
+
+**Lưu ý về tài khoản kiểm thử:** Tài khoản Google sử dụng phải được nhóm phát triển cho phép trong cấu hình OAuth Test Users (nếu ứng dụng đang ở chế độ kiểm thử). Việc sử dụng email UEH không đồng nghĩa mọi tài khoản UEH đều tự động được cấp quyền đăng nhập.
+
+## 4. Cài đặt và khởi chạy ứng dụng
+
+**Lựa chọn cách cài đặt:** Người kiểm thử theo hướng dẫn UAT nên sử dụng file APK tại mục 4.3. Mục 4.1 và 4.2 chỉ dành cho nhà phát triển hoặc trường hợp được yêu cầu chạy ứng dụng trực tiếp từ mã nguồn.
+
+### 4.1. Lấy mã nguồn dự án (dành cho nhà phát triển)
+
+Nếu cần lấy mã nguồn từ GitHub:
+
+**Bước 1:** Mở Terminal hoặc PowerShell.
+
+**Bước 2:** Di chuyển đến thư mục muốn lưu project.
+
+**Bước 3:** Thực hiện lệnh:
+
+```bash
+git clone https://github.com/khanhnhiiitb-commits/Student-Expense-Tracker.git
+```
+
+**Bước 4:** Mở Android Studio, chọn Open và chọn thư mục project vừa tải về.
+
+**Bước 5:** Chờ Android Studio đồng bộ Gradle và tải các thư viện cần thiết.
+
+Người kiểm thử chỉ cài APK không cần thực hiện mục này.
+
+### 4.2. Chạy ứng dụng từ Android Studio (dành cho nhà phát triển)
+
+**Bước 1:** Mở project trong Android Studio.
+
+**Bước 2:** Chờ quá trình Gradle Sync hoàn tất. Nếu xuất hiện yêu cầu tải SDK hoặc thư viện còn thiếu, thực hiện cài đặt.
+
+**Bước 3:** Khởi động Android Emulator đã tạo ở mục 3.
+
+**Bước 4:** Tại thanh công cụ Android Studio, chọn thiết bị Emulator đang hoạt động.
+
+**Bước 5:** Nhấn nút Run (biểu tượng tam giác màu xanh) để biên dịch và chạy ứng dụng.
+
+**Bước 6:** Chờ ứng dụng được cài đặt và tự động mở trên Emulator.
+
+### 4.3. Cài đặt ứng dụng bằng file APK
+
+Nhóm kiểm thử có thể tải trực tiếp file APK của phiên bản `v1.0.0-rc1` từ GitHub Releases.
+
+**Link tải ứng dụng:** [Student Expense Tracker – v1.0.0-rc1 (APK)](https://github.com/khanhnhiiitb-commits/Student-Expense-Tracker/releases/download/v1.0.0-rc1/app-debug.apk)
+
+**Các bước cài đặt:**
+
+1. Khởi động Android Emulator.
+2. Truy cập đường dẫn tải APK ở trên và tải file `app-debug.apk` về máy tính.
+3. Kéo thả file APK vào cửa sổ Android Emulator.
+4. Chờ quá trình cài đặt hoàn tất.
+5. Mở ứng dụng Student Expense Tracker từ danh sách ứng dụng trên Emulator.
+
+**Cài đặt bằng ADB (tùy chọn)**
+
+Nếu đã cài đặt Android SDK Platform-Tools, mở Terminal tại thư mục chứa file APK và thực hiện lệnh:
+
+```bash
+adb install app-debug.apk
+```
+
+Nếu ứng dụng đã được cài đặt và muốn cập nhật phiên bản mà không gỡ ứng dụng cũ, sử dụng:
+
+```bash
+adb install -r app-debug.apk
+```
+
+**Lưu ý:** Lệnh `adb install -r` chỉ cập nhật thành công khi APK mới có cùng chữ ký với phiên bản đã cài đặt và có `versionCode` phù hợp. Không gỡ ứng dụng cũ nếu muốn giữ dữ liệu kiểm thử đang lưu trên thiết bị.
+
+### 4.4. Lưu ý về dữ liệu kiểm thử
+
+Ứng dụng sử dụng cơ sở dữ liệu Room lưu trữ dữ liệu cục bộ trên thiết bị. Vì vậy:
+
+- Dữ liệu được tạo trên một Emulator không tự động xuất hiện trên Emulator khác.
+- Khi gỡ cài đặt ứng dụng hoặc xóa dữ liệu ứng dụng, dữ liệu kiểm thử cục bộ có thể bị mất.
+- Nhóm kiểm thử nên sử dụng một Emulator thống nhất trong quá trình thực hiện các kịch bản kiểm thử liên quan.
+
+## 5. Đăng nhập và phân quyền người dùng
+
+### 5.1. Đăng nhập với tài khoản sinh viên
+
+**Bước 1:** Mở ứng dụng.
+
+**Bước 2:** Tại màn hình đăng nhập, nhập email và mật khẩu của tài khoản sinh viên đã đăng ký.
+
+**Bước 3:** Nhấn Đăng nhập.
+
+**Bước 4:** Nếu thông tin hợp lệ, ứng dụng chuyển đến màn hình chính dành cho sinh viên.
+
+Ngoài đăng nhập bằng email và mật khẩu, người dùng có thể sử dụng chức năng đăng nhập Google nếu tài khoản và môi trường đã được cấu hình cho phép.
+
+### 5.2. Đăng nhập với tài khoản Admin
+
+**Bước 1:** Mở ứng dụng.
+
+**Bước 2:** Nhập thông tin tài khoản Admin được nhóm phát triển cung cấp.
+
+**Bước 3:** Nhấn Đăng nhập.
+
+**Bước 4:** Sau khi xác thực thành công, người dùng được chuyển đến giao diện quản trị viên.
+
+**Lưu ý:** Tài khoản Admin là tài khoản kiểm thử riêng do nhóm phát triển cung cấp. Không tự tạo tài khoản sinh viên để thay thế tài khoản Admin.
+
+### 5.3. Phân biệt quyền sử dụng
+
+| **Vai trò** | **Chức năng chính**                                                            |
+| ----------- | ------------------------------------------------------------------------------ |
+| Student     | Quản lý thu nhập, chi tiêu, danh mục, lịch sử giao dịch, ngân sách và thống kê |
+| Admin       | Quản lý tài khoản người dùng và xem thông tin tổng quan hệ thống               |
+
+## 6. Hướng dẫn sử dụng dành cho sinh viên
+
+Các chức năng trong phần này tập trung vào phạm vi MVP dành cho sinh viên.
+
+### 6.1. Đăng ký tài khoản (FR01 – US01 – UC01)
+
+**Mục đích:** Cho phép sinh viên tạo tài khoản cá nhân để sử dụng ứng dụng.
+
+**Các bước thực hiện:**
+
+1. Tại màn hình đăng nhập, chọn Đăng ký.
+2. Nhập các thông tin được yêu cầu trên biểu mẫu.
+3. Kiểm tra lại thông tin đã nhập.
+4. Nhấn Đăng ký để tạo tài khoản.
+5. Sau khi đăng ký thành công, thực hiện đăng nhập để sử dụng ứng dụng.
+
+**Kết quả mong đợi:** Tài khoản được tạo thành công và có thể sử dụng để đăng nhập.
+
+### 6.2. Đăng nhập/Đăng xuất (FR02 – US02 – UC02)
+
+**Mục đích:** Xác thực người dùng và kết thúc phiên sử dụng.
+
+**Đăng nhập:**
+
+1. Mở ứng dụng.
+2. Nhập email và mật khẩu.
+3. Nhấn Đăng nhập.
+4. Chờ ứng dụng xác thực và chuyển đến màn hình chính.
+
+**Đăng xuất:**
+
+1. Truy cập màn hình hồ sơ cá nhân hoặc khu vực tài khoản.
+2. Chọn Đăng xuất.
+3. Xác nhận nếu ứng dụng hiển thị yêu cầu xác nhận.
+
+**Kết quả mong đợi:** Người dùng đăng nhập được vào hệ thống và có thể đăng xuất để kết thúc phiên sử dụng.
+
+### 6.3. Quản lý danh mục thu/chi (FR03 – US06 – UC06)
+
+**Mục đích:** Quản lý các danh mục dùng để phân loại thu nhập và chi tiêu.
+
+**Các bước thực hiện:**
+
+1. Truy cập chức năng quản lý danh mục.
+2. Chọn tab Thu nhập hoặc Chi tiêu.
+3. Nhấn nút thêm danh mục.
+4. Nhập tên danh mục và chọn các thông tin hiển thị theo biểu mẫu.
+5. Nhấn Lưu.
+6. Để chỉnh sửa hoặc xóa, chọn danh mục tương ứng và thực hiện thao tác.
+
+**Kết quả mong đợi:** Danh mục mới được lưu và hiển thị trong danh sách tương ứng.
+
+**Lưu ý:** Danh mục mặc định của hệ thống không thể chỉnh sửa hoặc xóa. Danh mục đang được sử dụng trong giao dịch cũng có thể bị hạn chế xóa.
+
+### 6.4. Ghi nhận giao dịch (FR04 – US04, US05 – UC04, UC05)
+
+**Mục đích:** Ghi nhận các khoản thu nhập và chi tiêu phát sinh.
+
+**Các bước thực hiện:**
+
+1. Tại màn hình chính, chọn chức năng thêm giao dịch.
+2. Chọn loại giao dịch: Thu nhập hoặc Chi tiêu.
+3. Nhập số tiền.
+4. Chọn danh mục phù hợp.
+5. Nhập ngày giao dịch và ghi chú nếu biểu mẫu hỗ trợ.
+6. Nhấn Lưu để hoàn tất.
+
+**Kết quả mong đợi:** Giao dịch được lưu và xuất hiện trong danh sách giao dịch. Các số liệu thu nhập, chi tiêu liên quan được cập nhật.
+
+### 6.5. Quản lý lịch sử giao dịch (FR05 – US12 – UC12)
+
+**Mục đích:** Xem lại, tìm kiếm, lọc, chỉnh sửa và xóa giao dịch đã ghi nhận.
+
+**Các bước thực hiện:**
+
+1. Truy cập mục lịch sử giao dịch.
+2. Quan sát danh sách giao dịch.
+3. Nhập từ khóa vào ô tìm kiếm để tìm giao dịch.
+4. Sử dụng bộ lọc theo loại giao dịch hoặc tháng nếu cần.
+5. Chọn giao dịch cần chỉnh sửa hoặc xóa.
+6. Thực hiện thao tác tương ứng và xác nhận nếu được yêu cầu.
+
+**Kết quả mong đợi:** Danh sách được cập nhật theo điều kiện tìm kiếm hoặc lọc. Các thay đổi đối với giao dịch được lưu vào hệ thống.
+
+### 6.6. Thiết lập ngân sách tháng (FR06 – US07 – UC07)
+
+**Mục đích:** Thiết lập giới hạn chi tiêu theo tháng và theo dõi ngân sách cho các danh mục.
+
+**Các bước thực hiện:**
+
+1. Truy cập chức năng quản lý ngân sách.
+2. Chọn tháng cần thiết lập.
+3. Chọn chức năng thiết lập ngân sách.
+4. Nhập số tiền ngân sách cho các danh mục mong muốn.
+5. Nhấn Lưu để hoàn tất.
+6. Quay lại màn hình ngân sách để kiểm tra kết quả.
+
+**Kết quả mong đợi:** Ngân sách được lưu và hiển thị theo tháng đã chọn.
+
+### 6.7. Theo dõi ngân sách (FR06 – US08 – UC08)
+
+**Mục đích:** Giúp sinh viên theo dõi mức chi tiêu thực tế so với ngân sách đã đặt.
+
+**Các bước thực hiện:**
+
+1. Truy cập chức năng quản lý ngân sách.
+2. Chọn tháng muốn theo dõi.
+3. Quan sát số tiền ngân sách đã thiết lập.
+4. Kiểm tra số tiền đã chi tiêu.
+5. Quan sát tỷ lệ sử dụng ngân sách và trạng thái hiển thị.
+
+**Kết quả mong đợi:** Ứng dụng hiển thị mức độ sử dụng ngân sách dựa trên các giao dịch đã ghi nhận.
+
+### 6.8. Cảnh báo ngân sách (FR07 – US11 – UC11)
+
+**Mục đích:** Cảnh báo khi mức chi tiêu đạt hoặc vượt các ngưỡng ngân sách.
+
+**Các bước thực hiện:**
+
+1. Thiết lập ngân sách cho một danh mục.
+2. Tạo các giao dịch chi tiêu thuộc danh mục đó.
+3. Tăng tổng chi tiêu để đạt các ngưỡng cảnh báo.
+4. Quan sát thông báo hoặc trạng thái cảnh báo của ứng dụng.
+
+**Các ngưỡng cần kiểm tra:**
+
+- Dưới 70%: Chưa đạt ngưỡng cảnh báo đầu tiên.
+- Từ 70% đến dưới 90%: Đạt ngưỡng cảnh báo 70%.
+- Từ 90% đến dưới 100%: Đạt ngưỡng cảnh báo 90%.
+- Đạt 100%: Đã sử dụng hết ngân sách.
+- Trên 100%: Đã vượt ngân sách.
+
+**Kết quả mong đợi:** Ứng dụng hiển thị cảnh báo tương ứng với mức sử dụng ngân sách.
+
+### 6.9. Thống kê và trực quan hóa (FR08 – US09 – UC09)
+
+**Mục đích:** Giúp sinh viên theo dõi tình hình thu nhập và chi tiêu bằng số liệu và biểu đồ.
+
+**Các bước thực hiện:**
+
+1. Truy cập chức năng Báo cáo/Thống kê.
+2. Chọn khoảng thời gian muốn xem theo các lựa chọn được ứng dụng hỗ trợ.
+3. Quan sát tổng thu nhập và tổng chi tiêu.
+4. Quan sát biểu đồ cơ cấu chi tiêu theo danh mục.
+5. Quan sát biểu đồ so sánh thu nhập và chi tiêu.
+
+**Kết quả mong đợi:** Ứng dụng hiển thị số liệu và biểu đồ theo dữ liệu giao dịch trong khoảng thời gian đã chọn.
+
+**Lưu ý về US03 – Hồ sơ cá nhân:** Danh sách User Story của dự án có US03, tuy nhiên danh sách FR01–FR10 dùng để xác định phạm vi MVP hiện chưa thể hiện yêu cầu tương ứng. Vì vậy, tài liệu chưa mô tả các bước chỉnh sửa hồ sơ để tránh hướng dẫn một thao tác chưa được xác nhận trong bản bàn giao. Nhóm cần đối chiếu chức năng thực tế trên APK `v1.0.0-rc1` và đặc tả yêu cầu trước khi bổ sung hướng dẫn này.
+
+## 7. Hướng dẫn sử dụng dành cho Admin
+
+Các chức năng Admin được trình bày riêng để phục vụ kiểm thử tổng thể hệ thống. Đây không phải nhóm chức năng thuộc MVP dành cho sinh viên.
+
+### 7.1. Quản lý người dùng (US14 – UC14)
+
+**Mục đích:** Cho phép Admin xem danh sách tài khoản sinh viên, tìm kiếm và quản lý trạng thái tài khoản.
+
+**Các bước thực hiện:**
+
+1. Đăng nhập bằng tài khoản Admin.
+2. Truy cập màn hình Quản lý người dùng.
+3. Quan sát danh sách tài khoản sinh viên.
+4. Nhập tên hoặc email vào ô tìm kiếm để tìm tài khoản.
+5. Chọn tài khoản cần quản lý.
+6. Thực hiện thao tác khóa hoặc mở khóa tài khoản tùy theo trạng thái hiện tại.
+7. Kiểm tra lại trạng thái tài khoản sau khi thao tác.
+
+**Kết quả mong đợi:**
+
+- Danh sách người dùng được hiển thị.
+- Admin có thể tìm kiếm tài khoản theo tên hoặc email.
+- Trạng thái tài khoản được cập nhật sau khi khóa hoặc mở khóa.
+
+### 7.2. Giám sát hoạt động hệ thống (US15 – UC15)
+
+**Mục đích:** Cho phép Admin theo dõi các số liệu tổng quan về tình hình sử dụng hệ thống.
+
+**Các bước thực hiện:**
+
+1. Đăng nhập bằng tài khoản Admin.
+2. Truy cập màn hình tổng quan hoặc chức năng giám sát hệ thống.
+3. Quan sát các số liệu được hiển thị.
+4. Kiểm tra số lượng tài khoản sinh viên.
+5. Kiểm tra số lượng giao dịch.
+6. Đối chiếu với dữ liệu đã tạo trong quá trình kiểm thử nếu cần.
+
+**Kết quả mong đợi:** Màn hình Admin hiển thị các số liệu tổng quan tương ứng với dữ liệu hiện có.
+
+**Lưu ý:** Phiên bản hiện tại chủ yếu hiển thị số lượng người dùng và giao dịch. Không nên xem chức năng này là hệ thống nhật ký ghi nhận chi tiết mọi thao tác của người dùng.
+
+## 8. Các chức năng ngoài phạm vi MVP
+
+MVP của phiên bản đầu tập trung vào các chức năng dành cho sinh viên. Các chức năng dưới đây không thuộc phạm vi MVP:
+
+| **Mã** | **Chức năng**               | **User Story** | **Use Case** | **Phạm vi và trạng thái cần lưu ý** |
+| ------ | --------------------------- | -------------- | ------------ | ---------------------------------- |
+| FR09   | Quản lý mục tiêu tiết kiệm  | US10           | UC10         | Ngoài MVP; chưa xác nhận có luồng chức năng hoàn chỉnh trong APK `v1.0.0-rc1`. |
+| FR10   | Xuất báo cáo tài chính      | US13           | UC13         | Ngoài MVP; chưa xác nhận chức năng xuất PDF/Excel trong APK `v1.0.0-rc1`. |
+| Admin  | Quản lý người dùng          | US14           | UC14         | Chức năng quản trị, tách khỏi MVP dành cho sinh viên; vẫn được hướng dẫn kiểm thử ở mục 7.1. |
+| Admin  | Giám sát hoạt động hệ thống | US15           | UC15         | Chức năng quản trị, tách khỏi MVP dành cho sinh viên; phiên bản hiện tại chủ yếu hiển thị số lượng người dùng và giao dịch. |
+
+Việc không đưa một chức năng vào MVP không đồng nghĩa chức năng đó không thuộc phạm vi kiểm thử tổng thể. Các chức năng Admin đã được triển khai vẫn có thể được kiểm thử theo mục 7. Tuy nhiên, với FR09 và FR10, nhóm cần xác nhận trạng thái triển khai trên bản APK bàn giao trước khi đưa vào kịch bản UAT như các chức năng hoàn chỉnh.
+
+## 9. Xử lý lỗi thường gặp
+
+### 9.1. Không thể khởi động Emulator hoặc cài đặt APK
+
+**Nguyên nhân có thể:**
+
+- Emulator chưa được khởi động hoặc chưa hoàn tất quá trình khởi động.
+- Android Emulator hoặc System Image chưa được cài đặt đầy đủ.
+- Máy tính chưa bật hỗ trợ ảo hóa hoặc không đủ tài nguyên để chạy Emulator.
+- File APK tải về chưa hoàn tất hoặc không đúng file cài đặt.
+
+**Cách xử lý:**
+
+1. Kiểm tra trạng thái thiết bị ảo trong Android Studio → Device Manager.
+2. Kiểm tra Android Emulator và System Image trong SDK Manager.
+3. Đóng các ứng dụng không cần thiết rồi khởi động lại Emulator.
+4. Tải lại file APK từ link GitHub Releases ở mục 4.3 nếu quá trình cài đặt báo lỗi.
+5. Nếu đang chạy từ mã nguồn, kiểm tra thêm Gradle Sync và cấu hình SDK của project.
+
+### 9.2. Không thể đăng nhập bằng Google
+
+**Nguyên nhân có thể:**
+
+- Emulator không sử dụng Google Play System Image.
+- Google Play Services chưa được cập nhật.
+- Emulator chưa đăng nhập tài khoản Google.
+- Tài khoản chưa được thêm vào danh sách tài khoản kiểm thử OAuth.
+- Emulator không có kết nối Internet.
+
+**Cách xử lý:**
+
+1. Kiểm tra System Image của Emulator phải có nhãn Google Play.
+2. Mở Google Play Store và kiểm tra trạng thái đăng nhập.
+3. Cập nhật Google Play Services nếu có yêu cầu.
+4. Kiểm tra kết nối Internet.
+5. Liên hệ nhóm phát triển để xác nhận tài khoản Google đã được cấp quyền kiểm thử.
+
+### 9.3. Không thể đăng nhập bằng tài khoản Admin
+
+**Nguyên nhân có thể:**
+
+- Nhập sai email hoặc mật khẩu.
+- Sử dụng tài khoản sinh viên thay cho tài khoản Admin.
+- Tài khoản Admin kiểm thử chưa được nhóm phát triển cung cấp hoặc cấu hình đúng.
+
+**Cách xử lý:**
+
+1. Kiểm tra lại thông tin đăng nhập.
+2. Sử dụng đúng tài khoản Admin được nhóm phát triển cung cấp.
+3. Liên hệ nhóm phát triển nếu vẫn không thể đăng nhập.
+
+### 9.4. Dữ liệu không hiển thị như mong đợi
+
+**Nguyên nhân có thể:**
+
+- Chưa tạo giao dịch.
+- Đang chọn sai tháng hoặc khoảng thời gian.
+- Đang sử dụng Emulator khác với Emulator đã tạo dữ liệu.
+- Dữ liệu ứng dụng đã bị xóa.
+
+**Cách xử lý:**
+
+1. Kiểm tra lại bộ lọc thời gian.
+2. Kiểm tra danh sách giao dịch.
+3. Đảm bảo đang sử dụng đúng Emulator.
+4. Tạo dữ liệu kiểm thử mới nếu dữ liệu cũ đã bị mất.
+
+## 10. Lưu ý khi kiểm thử
+
+- Sử dụng đúng tài khoản theo vai trò Student hoặc Admin.
+- Sử dụng Emulator có Google Play khi kiểm thử đăng nhập Google.
+- Không sử dụng dữ liệu cá nhân hoặc thông tin tài chính thật trong quá trình kiểm thử.
+- Ghi nhận kết quả thực tế sau mỗi kịch bản kiểm thử.
+- Chụp ảnh màn hình khi phát hiện lỗi để cung cấp bằng chứng cho nhóm phát triển.
+- Không gỡ cài đặt hoặc xóa dữ liệu ứng dụng khi chưa sao lưu các thông tin cần thiết cho quá trình kiểm thử.
+- Phân biệt chức năng đã triển khai, triển khai một phần và chưa triển khai khi đánh giá kết quả UAT.
+
+**Kết thúc tài liệu User Guide.**
