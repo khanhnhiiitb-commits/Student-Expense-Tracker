@@ -70,7 +70,8 @@ public class LoginActivity extends AppCompatActivity {
         TextView tvGoToRegister = findViewById(R.id.tvGoToRegister);
         TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
-        String savedEmail = prefs.getString("USER_EMAIL", "");
+        // Chỉ điền sẵn email khi lần trước người dùng đã tick "Ghi nhớ"
+        String savedEmail = prefs.getString("REMEMBERED_EMAIL", "");
         if (!savedEmail.isEmpty()) {
             edtLoginEmail.setText(savedEmail);
             cbRememberMe.setChecked(true);
@@ -95,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
     // ===================== Đăng nhập email + mật khẩu =====================
 
     private void executeLogin() {
-        String email = edtLoginEmail.getText().toString().trim();
+        String email = edtLoginEmail.getText().toString().trim().toLowerCase(java.util.Locale.ROOT);
         String password = edtLoginPassword.getText().toString();
         boolean isRememberMeChecked = cbRememberMe.isChecked();
 
@@ -129,7 +130,10 @@ public class LoginActivity extends AppCompatActivity {
         if (!isAdmin) DefaultCategorySeeder.ensureDefaults(db);
 
         SharedPreferences.Editor editor = getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE).edit();
+        // IS_LOGGED_IN = tự động đăng nhập lần mở app sau (chỉ khi tick "Ghi nhớ")
         editor.putBoolean("IS_LOGGED_IN", remember);
+        if (remember) editor.putString("REMEMBERED_EMAIL", user.email);
+        else editor.remove("REMEMBERED_EMAIL");
         editor.putString("USER_EMAIL", user.email);
         editor.putString("USER_NAME", user.fullName);
         editor.putString("USER_ROLE", user.role);
@@ -190,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         GoogleIdTokenCredential google = GoogleIdTokenCredential.createFrom(credential.getData());
-        final String email = google.getId();
+        final String email = google.getId().trim().toLowerCase(java.util.Locale.ROOT);
         final String name = google.getDisplayName() != null ? google.getDisplayName() : email;
 
         new Thread(() -> {

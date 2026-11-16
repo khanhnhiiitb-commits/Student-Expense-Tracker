@@ -389,12 +389,12 @@ public class AddTransactionActivity extends AppCompatActivity {
             tvAmount.setTextColor(Color.parseColor("#2563EB"));
         } else {
             tabIncome.setBackgroundColor(Color.WHITE);
-            tabIncome.setTextColor(Color.parseColor("#16A34A"));
+            tabIncome.setTextColor(Color.parseColor("#10B981"));
 
             tabExpense.setBackgroundColor(Color.TRANSPARENT);
             tabExpense.setTextColor(Color.parseColor("#64748B"));
 
-            tvAmount.setTextColor(Color.parseColor("#16A34A"));
+            tvAmount.setTextColor(Color.parseColor("#10B981"));
         }
 
         loadCategories(currentType);
@@ -403,8 +403,9 @@ public class AddTransactionActivity extends AppCompatActivity {
 
     // 3. Chọn ngày giao dịch
     private void setupDatePicker() {
-        Calendar calendar = Calendar.getInstance();
         btnSelectDate.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(selectedDateMillis);
             DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth);
                 selectedDateMillis = calendar.getTimeInMillis();

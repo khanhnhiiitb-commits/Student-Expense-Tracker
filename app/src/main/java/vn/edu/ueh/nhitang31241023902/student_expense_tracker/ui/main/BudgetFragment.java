@@ -140,14 +140,6 @@ public class BudgetFragment extends Fragment {
             loadBudgetData();
         });
 
-        View.OnClickListener setupAction = v -> {
-            Toast.makeText(requireContext(), "Tính năng Cập nhật hạn mức đang phát triển", Toast.LENGTH_SHORT).show();
-            // Nếu bạn đã làm BudgetSetupActivity, hãy mở comment 3 dòng dưới đây:
-            // Intent intent = new Intent(requireContext(), BudgetSetupActivity.class);
-            // intent.putExtra("MONTH", currentMonth);
-            // intent.putExtra("YEAR", currentYear);
-            // startActivity(intent);
-        };
 
         btnSetupLimit.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), BudgetSetupActivity.class);
@@ -155,7 +147,7 @@ public class BudgetFragment extends Fragment {
             intent.putExtra("YEAR", currentYear);
             startActivity(intent);
         });
-        btnEditLimit.setOnClickListener(setupAction);
+        btnEditLimit.setOnClickListener(v -> btnSetupLimit.performClick());
     }
 
     private void setupRecyclerView() {
@@ -183,33 +175,22 @@ public class BudgetFragment extends Fragment {
             // 1. Lấy danh sách ngân sách đã thiết lập trong tháng
             List<BudgetEntity> budgets = db.budgetDao().getAllBudgetsForMonth(currentUserId, monthToLoad, yearToLoad);
 
-            // 2. Lấy tất cả giao dịch của người dùng
-            List<TransactionEntity> allTransactions = db.transactionDao().getTransactionsByUserId(currentUserId);
+            // 2. Chi tiêu của tháng đang xem (lọc ngay ở truy vấn theo khoảng ngày)
+            Calendar rangeCal = Calendar.getInstance();
+            rangeCal.clear();
+            rangeCal.set(yearToLoad, monthToLoad - 1, 1, 0, 0, 0);
+            long rangeStart = rangeCal.getTimeInMillis();
+            rangeCal.add(Calendar.MONTH, 1);
+            long rangeEnd = rangeCal.getTimeInMillis();
+            List<TransactionEntity> monthExpenses = db.transactionDao()
+                    .getExpenseByDateRange(currentUserId, rangeStart, rangeEnd);
 
-            // 3. Tính tổng tiền đã chi cho từng danh mục trong tháng hiện hành
+            // 3. Tổng chi theo danh mục
             Map<Long, Long> spentMap = new HashMap<>();
-            Calendar cal = Calendar.getInstance();
-
-            if (allTransactions != null) {
-                for (TransactionEntity tx : allTransactions) {
-                    if (tx.amount == null) continue;
-
-                    cal.setTimeInMillis(tx.transactionDate);
-                    int txMonth = cal.get(Calendar.MONTH) + 1;
-                    int txYear = cal.get(Calendar.YEAR);
-
-                    // Chỉ lọc các giao dịch nằm trong tháng/năm đang xem trên màn hình Ngân sách
-                    if (txMonth == monthToLoad && txYear == yearToLoad) {
-                        CategoryEntity cat = db.categoryDao().getCategoryById(tx.categoryID);
-
-                        // Chỉ cộng dồn tiền nếu danh mục đó là CHI TIÊU (Expense)
-                        if (cat != null && "Expense".equalsIgnoreCase(cat.type)) {
-                            long txAmount = tx.amount.longValue();
-                            long currentSpent = spentMap.containsKey(tx.categoryID) ? spentMap.get(tx.categoryID) : 0L;
-                            spentMap.put(tx.categoryID, currentSpent + txAmount);
-                        }
-                    }
-                }
+            for (TransactionEntity tx : monthExpenses) {
+                if (tx.amount == null) continue;
+                Long old = spentMap.get(tx.categoryID);
+                spentMap.put(tx.categoryID, (old != null ? old : 0L) + tx.amount.longValue());
             }
 
             long totalTarget = 0;
