@@ -30,12 +30,12 @@ public final class BudgetWarningUtils {
 
     public static int getColor(WarningLevel level) {
         switch (level) {
-            case WARNING: return 0xFFFFA000;
-            case DANGER: return 0xFFFF6D00;
+            case WARNING: return 0xFFF59E0B;
+            case DANGER: return 0xFFF97316;
             case EXHAUSTED:
-            case EXCEEDED: return 0xFFD32F2F;
-            case NOT_SET: return 0xFF757575;
-            default: return 0xFF388E3C;
+            case EXCEEDED: return 0xFFF43F5E;
+            case NOT_SET: return 0xFF94A3B8;
+            default: return 0xFF10B981;
         }
     }
 

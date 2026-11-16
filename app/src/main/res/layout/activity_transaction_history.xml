@@ -188,7 +188,6 @@
             android:background="@drawable/bg_tab_selector"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
-            android:selected="true"
             android:text="Tất cả"
             android:textColor="@drawable/tab_text_selector"
             android:textSize="13sp" />
