@@ -173,7 +173,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
-                        android:text="0 Tùy chỉnh sinh viên"
+                        android:text="0 Tùy chỉnh"
                         android:textColor="#E0F2FE"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -335,7 +335,7 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false" />
 
-            <!-- 8. Thẻ Mẹo tài chính UEH ở cuối danh sách -->
+            <!-- 8. Thẻ Mẹo tài chính ở cuối danh sách -->
             <LinearLayout
                 android:id="@+id/cardFinancialTip"
                 android:layout_width="match_parent"
@@ -368,7 +368,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mẹo tài chính UEH"
+                        android:text="Mẹo tài chính"
                         android:textColor="#0F172A"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -379,7 +379,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:lineSpacingExtra="2dp"
-                        android:text="Chia nhỏ chi tiêu &quot;Ăn uống&quot; và &quot;Trà sữa&quot; giúp sinh viên UEH dễ dàng nhận biết thói quen tiêu dùng vượt hạn mức mỗi tháng!"
+                        android:text="Chia nhỏ chi tiêu &quot;Ăn uống&quot; và &quot;Trà sữa&quot; giúp dễ dàng nhận biết thói quen tiêu dùng vượt hạn mức mỗi tháng!"
                         android:textColor="#64748B"
                         android:textSize="12sp" />
                 </LinearLayout>

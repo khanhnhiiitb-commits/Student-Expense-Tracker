@@ -94,11 +94,19 @@
                         android:layout_marginTop="3dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Chưa có email"
+                        android:text="sinhvien@gmail.com"
                         android:textColor="#E0F2FE"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
+                    <TextView
+                        android:id="@+id/tvStudentClassInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text=""
+                        android:textColor="#BAE6FD"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
 

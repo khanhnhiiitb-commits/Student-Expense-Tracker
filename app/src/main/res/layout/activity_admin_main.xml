@@ -222,7 +222,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
                             android:lineSpacingExtra="2dp"
-                            android:text="Xem danh sách, tra cứu sinh viên UEH, phân quyền tài chính hoặc khóa/mở khóa đăng nhập."
+                            android:text="Xem danh sách, tra cứu, phân quyền tài chính hoặc khóa/mở khóa đăng nhập."
                             android:textColor="#64748B"
                             android:textSize="12sp" />
                     </LinearLayout>

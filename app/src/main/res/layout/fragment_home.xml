@@ -17,6 +17,33 @@
         android:orientation="horizontal">
 
         <!-- Vòng tròn Avatar + Nhãn UEH -->
+        <FrameLayout
+            android:layout_width="54dp"
+            android:layout_height="56dp">
+
+            <TextView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@drawable/bg_chip_primary_soft"
+                android:gravity="center"
+                android:text=""
+                android:textColor="#1D4ED8"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:background="@drawable/bg_btn_pill_blue"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="1dp"
+                android:text=""
+                android:textColor="@android:color/white"
+                android:textSize="9sp"
+                android:textStyle="bold" />
+        </FrameLayout>
 
         <!-- Tên người dùng & Badge -->
         <LinearLayout
@@ -247,7 +274,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Tiêu đề Giao dịch gần đây -->
+    <!-- Tiêu đề giao dịch gần đây -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -255,6 +282,7 @@
         android:layout_marginBottom="12dp">
 
         <TextView
+            android:id="@+id/tvRecentTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -265,7 +293,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvRecentTitle"
+            android:id="@+id/tvViewAllTransactions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
