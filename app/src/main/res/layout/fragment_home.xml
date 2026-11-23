@@ -159,6 +159,7 @@
     <!-- Tiêu đề Giao dịch gần đây (bấm vào mở Lịch sử giao dịch) -->
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <!-- Lối tắt quản lý -->
     <LinearLayout
         android:layout_width="match_parent"
