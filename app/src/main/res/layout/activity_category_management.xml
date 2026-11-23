@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/screen_bg">
 
-    <!-- Header Bar -->
+    <!-- 1. Header Bar -->
     <LinearLayout
         android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
@@ -13,8 +13,8 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="20dp"
-        android:paddingTop="48dp"
-        android:paddingBottom="14dp"
+        android:paddingTop="44dp"
+        android:paddingBottom="12dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -28,28 +28,45 @@
             app:tint="@color/text_main" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="Quản lý danh mục"
+            android:layout_weight="1"
+            android:text="Quản Lý Danh Mục"
             android:textColor="@color/text_main"
-            android:textSize="20sp"
+            android:textSize="19sp"
             android:textStyle="bold" />
+
+        <!-- Nút nhanh sang Hồ sơ sinh viên -->
+        <FrameLayout
+            android:id="@+id/btnProfileShortcut"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_circle_primary_ueh"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_person"
+                app:tint="@android:color/white" />
+        </FrameLayout>
     </LinearLayout>
 
-    <!-- Nút Tạo danh mục mới ở đáy màn hình -->
+    <!-- Nút Tạo danh mục mới cố định dưới đáy (Giữ nguyên ID & kiểu AppCompatButton) -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnCreateCategory"
         android:layout_width="match_parent"
-        android:layout_height="54dp"
+        android:layout_height="52dp"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/bg_button"
         android:stateListAnimator="@null"
         android:text="+ Tạo danh mục mới"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -58,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingBottom="16dp"
+        android:paddingBottom="18dp"
         app:layout_constraintBottom_toTopOf="@id/btnCreateCategory"
         app:layout_constraintTop_toBottomOf="@id/layoutHeader">
 
@@ -68,51 +85,112 @@
             android:orientation="vertical"
             android:paddingHorizontal="20dp">
 
-            <!-- Tab Chi tiêu / Thu nhập (Java đổi nền bằng setBackgroundColor) -->
+            <!-- 2. Thẻ Tổng hợp Phân bố Ngân sách (Dữ liệu động từ Room DB) -->
             <LinearLayout
-                android:id="@+id/layoutTabs"
                 android:layout_width="match_parent"
-                android:layout_height="46dp"
-                android:background="@drawable/bg_tab_container"
-                android:clipToOutline="true"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/bg_balance_card"
+                android:elevation="5dp"
+                android:orientation="vertical"
+                android:padding="18dp">
 
                 <TextView
-                    android:id="@+id/tabExpense"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="#FFFFFF"
-                    android:gravity="center"
-                    android:text="↗ Chi tiêu"
-                    android:textColor="#2563EB"
-                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.06"
+                    android:text="PHÂN BỐ NGÂN SÁCH"
+                    android:textColor="#DBEAFE"
+                    android:textSize="11sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tabIncome"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="↙ Thu nhập"
-                    android:textColor="#64748B"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                <!-- Dòng số lượng Chi tiêu • Thu nhập -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvExpenseCountSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="9 Chi tiêu"
+                        android:textColor="@android:color/white"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="10dp"
+                        android:text="•"
+                        android:textColor="#93C5FD"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvIncomeCountSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4 Thu nhập"
+                        android:textColor="#E0F2FE"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Dòng phân loại Cố định hệ thống / Tùy chỉnh sinh viên -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/bg_dot_green" />
+
+                    <TextView
+                        android:id="@+id/tvSystemCategoryCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="13 Cố định hệ thống"
+                        android:textColor="#E0F2FE"
+                        android:textSize="12sp" />
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_marginStart="18dp"
+                        android:background="@drawable/bg_dot_amber" />
+
+                    <TextView
+                        android:id="@+id/tvCustomCategoryCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="0 Tùy chỉnh sinh viên"
+                        android:textColor="#E0F2FE"
+                        android:textSize="12sp" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- Ô tìm kiếm -->
+            <!-- 3. Thanh tìm kiếm nhanh -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="46dp"
                 android:layout_marginTop="14dp"
                 android:background="@drawable/bg_card"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="14dp">
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:src="@android:drawable/ic_menu_search"
                     app:tint="@color/text_hint" />
 
@@ -122,30 +200,190 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:background="@null"
-                    android:hint="Tìm tên danh mục..."
+                    android:hint="Tìm nhanh tên danh mục, từ khóa..."
+                    android:imeOptions="actionSearch"
                     android:inputType="text"
+                    android:singleLine="true"
                     android:textColor="@color/text_main"
                     android:textColorHint="@color/text_hint"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
             </LinearLayout>
 
-            <!-- Tiêu đề danh sách -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:text="Danh sách danh mục"
-                android:textColor="@color/text_main"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+            <!-- 4. Tab Khoản Chi tiêu / Khoản Thu nhập (Tương thích 100% logic switchTab trong Java) -->
+            <LinearLayout
+                android:id="@+id/layoutTabs"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_tab_container"
+                android:clipToOutline="true"
+                android:orientation="horizontal"
+                android:padding="3dp">
 
-            <!-- Mỗi item_category đã là một thẻ riêng nên list không cần nền -->
+                <TextView
+                    android:id="@+id/tabExpense"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="#FFFFFF"
+                    android:gravity="center"
+                    android:text="↗ Khoản Chi tiêu"
+                    android:textColor="#2563EB"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tabIncome"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="↙ Khoản Thu nhập"
+                    android:textColor="#64748B"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- 5. Hàng chip Lọc xem (Tất cả / Mặc định hệ thống / Sinh viên tự tạo) -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Lọc xem:"
+                        android:textColor="#64748B"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/chipFilterAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/bg_btn_pill_blue"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="5dp"
+                        android:text="Tất cả"
+                        android:textColor="@android:color/white"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/chipFilterSystem"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/bg_chip_gray"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="5dp"
+                        android:text="Mặc định hệ thống"
+                        android:textColor="#475569"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/chipFilterCustom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip_gray"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="5dp"
+                        android:text="Sinh viên tự tạo"
+                        android:textColor="#475569"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- 6. Tiêu đề nhóm danh sách -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_dot_primary" />
+
+                <TextView
+                    android:id="@+id/tvCategorySectionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Danh sách danh mục"
+                    android:textColor="@color/text_main"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- 7. RecyclerView hiển thị từng item_category -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcvCategories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false" />
+
+            <!-- 8. Thẻ Mẹo tài chính UEH ở cuối danh sách -->
+            <LinearLayout
+                android:id="@+id/cardFinancialTip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_card"
+                android:gravity="top"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <FrameLayout
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:background="@drawable/bg_pill_amber_tip">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_lightbulb_tip" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mẹo tài chính UEH"
+                        android:textColor="#0F172A"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvFinancialTipContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Chia nhỏ chi tiêu &quot;Ăn uống&quot; và &quot;Trà sữa&quot; giúp sinh viên UEH dễ dàng nhận biết thói quen tiêu dùng vượt hạn mức mỗi tháng!"
+                        android:textColor="#64748B"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

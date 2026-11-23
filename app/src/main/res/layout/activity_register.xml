@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Register"
+                android:text="Đăng Ký"
                 android:textColor="#0F172A"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -60,28 +60,8 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_chip_primary_soft"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
-                android:text="UEH FinTracker"
-                android:textColor="#1D4ED8"
-                android:textSize="11sp"
-                android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_pill_mint"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
-                android:text="● Sinh viên tiện ích"
-                android:textColor="#065F46"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+
         </LinearLayout>
 
         <TextView
@@ -141,7 +121,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        android:text="Nhận ngay cẩm nang Budget 50/30/20 thiết kế riêng cho sinh viên sau khi tạo tài khoản."
+                        android:text="Nhận ngay cẩm nang Budget 50/30/20 thiết kế ngay riêng cho bạn sau khi tạo tài khoản."
                         android:textColor="#1E3A8A"
                         android:textSize="12sp" />
                 </LinearLayout>
