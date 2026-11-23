@@ -167,14 +167,7 @@
                         android:textSize="13sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="Khuyên dùng @ueh.edu.vn"
-                        android:textColor="#1D4ED8"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
+
                 </RelativeLayout>
 
                 <EditText
@@ -185,7 +178,7 @@
                     android:background="@drawable/bg_input_soft"
                     android:drawableStart="@drawable/ic_mail_outline"
                     android:drawablePadding="10dp"
-                    android:hint="sinhvien@ueh.edu.vn"
+                    android:hint="sinhvien@gmail.com"
                     android:inputType="textEmailAddress"
                     android:paddingHorizontal="14dp"
                     android:textColor="#0F172A"
