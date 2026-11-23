@@ -8,14 +8,16 @@ import androidx.room.TypeConverters;
 
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.dao.BudgetDao;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.dao.CategoryDao;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.dao.RecurringExpenseDao;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.dao.TransactionDao;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.dao.UserDao;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.BudgetEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.CategoryEntity;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.RecurringExpenseEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.TransactionEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.UserEntity;
 
-@Database(entities = {UserEntity.class, CategoryEntity.class, TransactionEntity.class, BudgetEntity.class}, version = 3, exportSchema = false)
+@Database(entities = {UserEntity.class, CategoryEntity.class, TransactionEntity.class, BudgetEntity.class, RecurringExpenseEntity.class}, version = 4, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -26,6 +28,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
     // THÊM DÒNG NÀY:
     public abstract BudgetDao budgetDao();
+    public abstract RecurringExpenseDao recurringExpenseDao();
 
     private static volatile AppDatabase INSTANCE;
 
