@@ -156,9 +156,6 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-    <!-- Tiêu đề Giao dịch gần đây (bấm vào mở Lịch sử giao dịch) -->
-    <RelativeLayout
-        android:layout_width="match_parent"
     <!-- Lối tắt quản lý -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -168,6 +165,7 @@
         android:layout_marginEnd="2dp"
         android:orientation="horizontal">
 
+        <!-- Lối tắt Lịch sử -->
         <LinearLayout
             android:id="@+id/btnShortcutHistory"
             android:layout_width="0dp"
@@ -203,8 +201,11 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <Space android:layout_width="10dp" android:layout_height="match_parent" />
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="match_parent" />
 
+        <!-- Lối tắt Danh mục -->
         <LinearLayout
             android:id="@+id/btnShortcutCategory"
             android:layout_width="0dp"
@@ -241,8 +242,11 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <Space android:layout_width="10dp" android:layout_height="match_parent" />
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="match_parent" />
 
+        <!-- Lối tắt Chi phí cố định -->
         <LinearLayout
             android:id="@+id/btnShortcutFixed"
             android:layout_width="0dp"
@@ -280,9 +284,9 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvRecentTitle"
-        android:layout_width="wrap_content"
+    <!-- Tiêu đề Giao dịch gần đây -->
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
         android:layout_marginBottom="12dp">
