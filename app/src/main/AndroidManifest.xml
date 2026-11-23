@@ -14,6 +14,7 @@
         <activity android:name=".ui.main.AddCategoryActivity" android:exported="false" android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".ui.main.CategoryActivity" android:exported="false"/>
         <activity android:name=".ui.transaction.AddTransactionActivity" android:exported="false"/>
+        <activity android:name=".ui.main.RecurringExpenseActivity" android:exported="false"/>
         <activity android:name=".ui.main.BudgetSetupActivity" android:exported="false"/>
         <activity android:name=".ui.transaction.TransactionHistoryActivity" android:exported="false"/>
         <activity android:name=".ui.admin.AdminUserActivity" android:exported="false"/>

@@ -4,4 +4,36 @@
     <style name="ThemeOverlay.App.BottomNav" parent="">
         <item name="colorSecondaryContainer">@color/info_bg</item>
     </style>
+
+    <!-- Tiêu đề thứ trong lưới lịch -->
+    <style name="CalWeekday">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/text_sub</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Ép màu chủ đạo của nhóm cho switch, ô nhập, spinner và nút trong hộp thoại -->
+    <style name="ThemeOverlay.App.Fixed" parent="">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="colorControlActivated">@color/primary</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Dialog" parent="Theme.Material3.DayNight.Dialog.Alert">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/text_main</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogBtn</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogBtn</item>
+    </style>
+
+    <style name="DialogBtn" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/primary</item>
+    </style>
 </resources>

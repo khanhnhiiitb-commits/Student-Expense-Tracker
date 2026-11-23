@@ -55,6 +55,12 @@ public class HomeFragment extends Fragment {
         tvWelcome = view.findViewById(R.id.tvWelcome);
         tvTotalBalance = view.findViewById(R.id.tvTotalBalance);
         rcvRecentTransactions = view.findViewById(R.id.rcvRecentTransactions);
+        view.findViewById(R.id.btnShortcutHistory).setOnClickListener(v -> startActivity(new Intent(requireContext(),
+                vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.transaction.TransactionHistoryActivity.class)));
+        view.findViewById(R.id.btnShortcutCategory).setOnClickListener(v ->
+                startActivity(new Intent(requireContext(), CategoryActivity.class)));
+        view.findViewById(R.id.btnShortcutFixed).setOnClickListener(v ->
+                startActivity(new Intent(requireContext(), RecurringExpenseActivity.class)));
         TextView tvRecentTitle = view.findViewById(R.id.tvRecentTitle);
         tvRecentTitle.setOnClickListener(v -> startActivity(new Intent(requireContext(),
                 vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.transaction.TransactionHistoryActivity.class)));
@@ -127,6 +133,10 @@ public class HomeFragment extends Fragment {
             String email = prefs.getString("USER_EMAIL", "");
 
             UserEntity user = db.userDao().getUserByEmail(email);
+            if (user != null) {
+                vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.RecurringExpenseProcessor
+                        .generateDue(db, user.userId);
+            }
             // Không có người dùng hợp lệ -> không hiển thị dữ liệu của người khác
             List<TransactionEntity> list = user != null
                     ? db.transactionDao().getTransactionsByUserId(user.userId)
