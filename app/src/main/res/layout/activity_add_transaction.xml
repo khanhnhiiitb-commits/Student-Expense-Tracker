@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="18dp"
-        android:paddingTop="40dp"
-        android:paddingBottom="10dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -49,6 +49,45 @@
         </LinearLayout>
     </RelativeLayout>
 
+    <!-- Số tiền luôn hiển thị khi cuộn bàn phím số -->
+    <LinearLayout
+        android:id="@+id/layoutStickyAmount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/bg_amount_box"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingVertical="8dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SỐ TIỀN GIAO DỊCH"
+            android:textColor="#64748B"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="18sp"
+            android:autoSizeMaxTextSize="30sp"
+            android:autoSizeStepGranularity="1sp"
+            android:text="0 đ"
+            android:textColor="#2563EB"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
     <!-- 2. Nút Xác nhận lưu giao dịch cố định dưới đáy -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSaveTransaction"
@@ -77,7 +116,7 @@
         app:layout_constraintBottom_toTopOf="@id/btnSaveTransaction"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutHeader">
+        app:layout_constraintTop_toBottomOf="@id/layoutStickyAmount">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -117,37 +156,6 @@
                     android:text="↗ Khoản thu nhập"
                     android:textColor="#64748B"
                     android:textSize="13sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <!-- Khung hiển thị Số tiền -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/bg_amount_box"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingVertical="18dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:letterSpacing="0.06"
-                    android:text="SỐ TIỀN GIAO DỊCH"
-                    android:textColor="#64748B"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvAmount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:gravity="center"
-                    android:text="0 đ"
-                    android:textColor="#2563EB"
-                    android:textSize="36sp"
                     android:textStyle="bold" />
             </LinearLayout>
 

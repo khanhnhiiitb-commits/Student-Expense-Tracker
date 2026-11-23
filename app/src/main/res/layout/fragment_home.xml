@@ -53,32 +53,22 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvWelcome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Chào mừng bạn! 👋"
-                android:textColor="#0F172A"
-                android:textSize="21sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/bg_pill_amber_soft"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="3dp"
-                android:text="☀  Quản lý tài chính thông minh"
-                android:textColor="#B45309"
-                android:textSize="11sp"
-                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 
     <!-- Thẻ Tổng số dư khả dụng -->
+
+    <TextView
+        android:id="@+id/tvWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Chào mừng bạn! "
+        android:textColor="#0F172A"
+        android:textSize="21sp"
+        android:textStyle="normal" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -165,6 +155,7 @@
         android:layout_marginEnd="2dp"
         android:orientation="horizontal">
 
+        <!-- Lối tắt Lịch sử -->
         <LinearLayout
             android:id="@+id/btnShortcutHistory"
             android:layout_width="0dp"
@@ -200,8 +191,11 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <Space android:layout_width="10dp" android:layout_height="match_parent" />
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="match_parent" />
 
+        <!-- Lối tắt Danh mục -->
         <LinearLayout
             android:id="@+id/btnShortcutCategory"
             android:layout_width="0dp"
@@ -238,8 +232,11 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <Space android:layout_width="10dp" android:layout_height="match_parent" />
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="match_parent" />
 
+        <!-- Lối tắt Chi phí cố định -->
         <LinearLayout
             android:id="@+id/btnShortcutFixed"
             android:layout_width="0dp"

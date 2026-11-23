@@ -18,11 +18,22 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.android.material.button.MaterialButton;
 
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.R;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.AppDatabase;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.BudgetEntity;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.CategoryEntity;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.TransactionEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.UserEntity;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.RecurringExpenseProcessor;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.auth.LoginActivity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.BCryptUtils;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.ValidationUtils;
@@ -31,6 +42,9 @@ import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.ValidationUti
 public class ProfileFragment extends Fragment {
 
     private TextView tvProfileName;
+    private TextView tvWalletScore, tvWalletScoreBadge;
+    private TextView tvMonthlySavingsRate, tvMonthlySavingsBadge;
+    private TextView tvSpendingStreak, tvSpendingStreakBadge;
 
     @Nullable
     @Override
@@ -39,6 +53,12 @@ public class ProfileFragment extends Fragment {
 
         tvProfileName = view.findViewById(R.id.tvProfileName);
         TextView tvProfileEmail = view.findViewById(R.id.tvProfileEmail);
+        tvWalletScore = view.findViewById(R.id.tvWalletScore);
+        tvWalletScoreBadge = view.findViewById(R.id.tvWalletScoreBadge);
+        tvMonthlySavingsRate = view.findViewById(R.id.tvMonthlySavingsRate);
+        tvMonthlySavingsBadge = view.findViewById(R.id.tvMonthlySavingsBadge);
+        tvSpendingStreak = view.findViewById(R.id.tvSpendingStreak);
+        tvSpendingStreakBadge = view.findViewById(R.id.tvSpendingStreakBadge);
         MaterialButton btnLogout = view.findViewById(R.id.btnLogout);
         MaterialButton btnEdit = view.findViewById(R.id.btnEditProfile);
         MaterialButton btnPass = view.findViewById(R.id.btnChangePassword);
@@ -66,6 +86,131 @@ public class ProfileFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadStats();
+    }
+
+    /**
+     * Tính 3 chỉ số từ dữ liệu thật của tháng hiện tại:
+     * - Tiết kiệm tháng = (thu - chi) / thu. Từ 20% trở lên là "Đạt mục tiêu".
+     * - Đánh giá ví (0-100) = 60% theo tỷ lệ tiết kiệm (đạt 20% là đủ điểm)
+     *   + 40% theo số danh mục không vượt ngân sách (nếu chưa đặt ngân sách thì chỉ tính phần tiết kiệm).
+     * - Chuỗi ghi chép = số ngày liên tiếp có ghi giao dịch, tính đến hôm nay (hoặc hôm qua nếu hôm nay chưa ghi).
+     */
+    private void loadStats() {
+        if (getContext() == null) return;
+        final Context app = requireContext().getApplicationContext();
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.getDatabase(app);
+            SharedPreferences prefs = app.getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
+            UserEntity u = db.userDao().getUserByEmail(prefs.getString("USER_EMAIL", ""));
+            if (u == null) return;
+
+            RecurringExpenseProcessor.generateDue(db, u.userId);
+            List<TransactionEntity> txs = db.transactionDao().getTransactionsByUserId(u.userId);
+            Map<Long, String> types = new HashMap<>();
+            for (CategoryEntity c : db.categoryDao().getAllCategories()) types.put(c.categoryId, c.type);
+
+            Calendar now = Calendar.getInstance();
+            final int month = now.get(Calendar.MONTH) + 1;
+            final int year = now.get(Calendar.YEAR);
+
+            long income = 0, expense = 0;
+            Map<Long, Long> spentByCat = new HashMap<>();
+            Set<Long> days = new HashSet<>();
+            Calendar c = Calendar.getInstance();
+            for (TransactionEntity tx : txs) {
+                if (tx.amount == null) continue;
+                c.setTimeInMillis(tx.transactionDate);
+                boolean sameMonth = c.get(Calendar.MONTH) + 1 == month && c.get(Calendar.YEAR) == year;
+                days.add(startOfDay(c));
+                if (!sameMonth) continue;
+                long a = tx.amount.longValue();
+                String type = types.get(tx.categoryID);
+                if ("Income".equalsIgnoreCase(type)) {
+                    income += a;
+                } else if ("Expense".equalsIgnoreCase(type)) {
+                    expense += a;
+                    Long old = spentByCat.get(tx.categoryID);
+                    spentByCat.put(tx.categoryID, (old == null ? 0 : old) + a);
+                }
+            }
+
+            // Chuỗi ghi chép
+            Calendar d = Calendar.getInstance();
+            d.set(Calendar.HOUR_OF_DAY, 0); d.set(Calendar.MINUTE, 0);
+            d.set(Calendar.SECOND, 0); d.set(Calendar.MILLISECOND, 0);
+            if (!days.contains(d.getTimeInMillis())) d.add(Calendar.DAY_OF_MONTH, -1);
+            int streak = 0;
+            while (days.contains(d.getTimeInMillis())) {
+                streak++;
+                d.add(Calendar.DAY_OF_MONTH, -1);
+            }
+
+            // Tiết kiệm + Đánh giá ví
+            final boolean hasData = income > 0 || expense > 0;
+            final boolean hasIncome = income > 0;
+            double rate = hasIncome ? (double) (income - expense) / income : 0;
+            double savingsPart = hasIncome ? Math.max(0, Math.min(1, rate / 0.2)) : 0;
+
+            List<BudgetEntity> budgets = db.budgetDao().getAllBudgetsForMonth(u.userId, month, year);
+            double score;
+            if (budgets != null && !budgets.isEmpty()) {
+                int ok = 0;
+                for (BudgetEntity b : budgets) {
+                    Long spent = spentByCat.get(b.categoryID);
+                    if ((spent == null ? 0 : spent) <= b.amount) ok++;
+                }
+                score = 100 * (0.6 * savingsPart + 0.4 * ok / budgets.size());
+            } else {
+                score = 100 * savingsPart;
+            }
+
+            final int finalScore = (int) Math.round(score);
+            final double finalRate = rate;
+            final int finalStreak = streak;
+
+            if (getActivity() == null) return;
+            getActivity().runOnUiThread(() -> {
+                if (!isAdded()) return;
+
+                if (!hasData) {
+                    tvWalletScore.setText("--");
+                    tvWalletScoreBadge.setText("Chưa có dữ liệu");
+                } else {
+                    tvWalletScore.setText(String.valueOf(finalScore));
+                    tvWalletScoreBadge.setText(finalScore >= 80 ? "Tốt" : finalScore >= 50 ? "Khá" : "Cần cải thiện");
+                }
+
+                if (!hasIncome) {
+                    tvMonthlySavingsRate.setText("--");
+                    tvMonthlySavingsBadge.setText("Chưa có thu nhập");
+                } else if (finalRate < 0) {
+                    tvMonthlySavingsRate.setText("0%");
+                    tvMonthlySavingsBadge.setText("Chi vượt thu");
+                } else {
+                    tvMonthlySavingsRate.setText(Math.round(finalRate * 100) + "%");
+                    tvMonthlySavingsBadge.setText(finalRate >= 0.2 ? "Đạt mục tiêu" : "Cần cải thiện");
+                }
+
+                tvSpendingStreak.setText("🔥 " + finalStreak);
+                tvSpendingStreakBadge.setText(finalStreak == 0 ? "Bắt đầu nào"
+                        : finalStreak < 7 ? "Đang tập" : "Kỷ luật cao");
+            });
+        }).start();
+    }
+
+    private static long startOfDay(Calendar src) {
+        Calendar c = (Calendar) src.clone();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c.getTimeInMillis();
     }
 
     private EditText newField(String hint, boolean password, int pad) {
