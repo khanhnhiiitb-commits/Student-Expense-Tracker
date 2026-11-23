@@ -27,7 +27,7 @@
                 android:layout_gravity="top|center_horizontal"
                 android:background="@drawable/bg_chip_primary_soft"
                 android:gravity="center"
-                android:text="UEH"
+                android:text=""
                 android:textColor="#1D4ED8"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -39,7 +39,7 @@
                 android:background="@drawable/bg_btn_pill_blue"
                 android:paddingHorizontal="7dp"
                 android:paddingVertical="1dp"
-                android:text="SV"
+                android:text=""
                 android:textColor="@android:color/white"
                 android:textSize="9sp"
                 android:textStyle="bold" />
@@ -156,10 +156,6 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-    <!-- Tiêu đề Giao dịch gần đây (bấm vào mở Lịch sử giao dịch) -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
     <!-- Lối tắt quản lý -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -281,14 +277,15 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvRecentTitle"
-        android:layout_width="wrap_content"
+    <!-- Tiêu đề giao dịch gần đây -->
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
         android:layout_marginBottom="12dp">
 
         <TextView
+            android:id="@+id/tvRecentTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -299,7 +296,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvRecentTitle"
+            android:id="@+id/tvViewAllTransactions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

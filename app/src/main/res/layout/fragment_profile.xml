@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Hồ sơ sinh viên"
+                android:text="Hồ sơ"
                 android:textColor="#0F172A"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -116,7 +116,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Người dùng UEH"
+                        android:text="Người dùng"
                         android:textColor="@android:color/white"
                         android:textSize="19sp"
                         android:textStyle="bold" />
@@ -128,7 +128,7 @@
                         android:layout_marginTop="3dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="sinhvien@ueh.edu.vn"
+                        android:text="sinhvien@gmail.com"
                         android:textColor="#E0F2FE"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -138,7 +138,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="K50 • CNTT Kinh doanh (BIT)"
+                        android:text=""
                         android:textColor="#BAE6FD"
                         android:textSize="12sp" />
                 </LinearLayout>
