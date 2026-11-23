@@ -14,7 +14,7 @@
         android:paddingTop="18dp"
         android:paddingBottom="28dp">
 
-        <!-- 1. Top Bar: Tiêu đề + Chuông thông báo -->
+        <!-- 1. Top Bar: Tiêu đề -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="44dp"
@@ -24,38 +24,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Hồ sơ sinh viên"
+                android:text="Hồ sơ cá nhân"
                 android:textColor="#0F172A"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <FrameLayout
-                android:id="@+id/btnProfileNotification"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_notification"
-                    app:tint="#334155" />
-
-                <!-- Chấm đỏ thông báo mới -->
-                <View
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginTop="7dp"
-                    android:layout_marginEnd="7dp"
-                    android:background="#EF4444" />
-            </FrameLayout>
         </RelativeLayout>
 
-        <!-- 2. Thẻ Thông tin Sinh viên UEH (Nền xanh gradient) -->
+        <!-- 2. Thẻ thông tin tài khoản (Nền xanh gradient) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,16 +66,6 @@
                             app:tint="@android:color/white" />
                     </FrameLayout>
 
-                    <TextView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="bottom|end"
-                        android:background="@drawable/bg_pill_mint"
-                        android:gravity="center"
-                        android:text="✓"
-                        android:textColor="#065F46"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
                 </FrameLayout>
 
                 <!-- Tên, Email & Ngành học -->
@@ -116,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Người dùng UEH"
+                        android:text="Người dùng"
                         android:textColor="@android:color/white"
                         android:textSize="19sp"
                         android:textStyle="bold" />
@@ -128,19 +94,11 @@
                         android:layout_marginTop="3dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="sinhvien@ueh.edu.vn"
+                        android:text="Chưa có email"
                         android:textColor="#E0F2FE"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tvStudentClassInfo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="K50 • CNTT Kinh doanh (BIT)"
-                        android:textColor="#BAE6FD"
-                        android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -315,7 +273,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chuỗi chi tiêu"
+                    android:text="Chuỗi ghi chép"
                     android:textColor="#64748B"
                     android:textSize="11sp" />
 
@@ -344,329 +302,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- 4. Tiêu đề nhóm CÀI ĐẶT & TIỆN ÍCH -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="10dp"
-            android:letterSpacing="0.05"
-            android:text="CÀI ĐẶT &amp; TIỆN ÍCH"
-            android:textColor="#475569"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <!-- 5. Thẻ danh sách 5 chức năng Cài đặt & Tiện ích -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_item_transaction"
-            android:orientation="vertical"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="6dp">
-
-            <!-- Mục 1: Mã sinh viên & Ngành học -->
-            <LinearLayout
-                android:id="@+id/rowStudentInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingVertical="12dp">
-
-                <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_chip_primary_soft">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_badge_id" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mã sinh viên &amp; Ngành học"
-                        android:textColor="#0F172A"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvMajorSummary"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="BIT - Khóa 50 Đại học UEH"
-                        android:textColor="#64748B"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Chi tiết  ›"
-                    android:textColor="#475569"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#F1F5F9" />
-
-            <!-- Mục 2: Thông báo ngân sách (Switch) -->
-            <LinearLayout
-                android:id="@+id/rowBudgetAlert"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingVertical="12dp">
-
-                <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_pill_amber_soft">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_notification"
-                        app:tint="#D97706" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Thông báo ngân sách"
-                        android:textColor="#0F172A"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Báo khi chi tiêu chạm ngưỡng 80%"
-                        android:textColor="#64748B"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchBudgetAlert"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    app:thumbTint="@android:color/white"
-                    app:trackTint="#1D4ED8" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#F1F5F9" />
-
-            <!-- Mục 3: Phương thức xác thực (Switch) -->
-            <LinearLayout
-                android:id="@+id/rowBiometricAuth"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingVertical="12dp">
-
-                <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_pill_purple_soft">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_fingerprint" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Phương thức xác thực"
-                        android:textColor="#0F172A"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Sinh trắc học FaceID / Vân tay"
-                        android:textColor="#64748B"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchBiometricAuth"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    app:thumbTint="@android:color/white"
-                    app:trackTint="#1D4ED8" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#F1F5F9" />
-
-            <!-- Mục 4: Giao diện & Ngôn ngữ -->
-            <LinearLayout
-                android:id="@+id/rowThemeLanguage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingVertical="12dp">
-
-                <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_circle_gray">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_language" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Giao diện &amp; Ngôn ngữ"
-                        android:textColor="#0F172A"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvThemeLanguageValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Sáng • Tiếng Việt"
-                        android:textColor="#64748B"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="›"
-                    android:textColor="#94A3B8"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#F1F5F9" />
-
-            <!-- Mục 5: Xuất sao kê học kỳ -->
-            <LinearLayout
-                android:id="@+id/rowExportPdf"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingVertical="12dp">
-
-                <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_pill_mint">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_pdf_doc" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Xuất sao kê học kỳ"
-                        android:textColor="#0F172A"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Báo cáo chi tiêu dạng tệp PDF"
-                        android:textColor="#64748B"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/btnExportPdf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_chip_primary_soft"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="5dp"
-                    android:text="PDF ↓"
-                    android:textColor="#1D4ED8"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- 6. Nút Đăng xuất tài khoản -->
+        <!-- 4. Nút Đăng xuất tài khoản -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogout"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -686,16 +322,6 @@
             app:iconTint="@null"
             app:strokeColor="#FCA5A5"
             app:strokeWidth="1dp" />
-
-        <!-- 7. Footer phiên bản -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="14dp"
-            android:text="UEH Student Expense Tracker • Phiên bản 2.4.1"
-            android:textColor="#94A3B8"
-            android:textSize="11sp" />
 
     </LinearLayout>
 </ScrollView>

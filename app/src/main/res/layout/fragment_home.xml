@@ -17,33 +17,6 @@
         android:orientation="horizontal">
 
         <!-- Vòng tròn Avatar + Nhãn UEH -->
-        <FrameLayout
-            android:layout_width="54dp"
-            android:layout_height="56dp">
-
-            <TextView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="top|center_horizontal"
-                android:background="@drawable/bg_chip_primary_soft"
-                android:gravity="center"
-                android:text="UEH"
-                android:textColor="#1D4ED8"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:background="@drawable/bg_btn_pill_blue"
-                android:paddingHorizontal="7dp"
-                android:paddingVertical="1dp"
-                android:text="SV"
-                android:textColor="@android:color/white"
-                android:textSize="9sp"
-                android:textStyle="bold" />
-        </FrameLayout>
 
         <!-- Tên người dùng & Badge -->
         <LinearLayout
@@ -53,32 +26,22 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvWelcome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Chào mừng bạn! 👋"
-                android:textColor="#0F172A"
-                android:textSize="21sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/bg_pill_amber_soft"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="3dp"
-                android:text="☀  Quản lý tài chính thông minh"
-                android:textColor="#B45309"
-                android:textSize="11sp"
-                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 
     <!-- Thẻ Tổng số dư khả dụng -->
+
+    <TextView
+        android:id="@+id/tvWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Chào mừng bạn! "
+        android:textColor="#0F172A"
+        android:textSize="21sp"
+        android:textStyle="normal" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
