@@ -15,6 +15,15 @@ public class UserEntity {
     public String passwordHash;
     public long createdAt;
 
+    // Phân quyền: "Student" (mặc định) hoặc "Admin"
+    public String role = ROLE_STUDENT;
+
+    // false = tài khoản bị quản trị viên khóa (UC14)
+    public boolean isActive = true;
+
+    public static final String ROLE_STUDENT = "Student";
+    public static final String ROLE_ADMIN = "Admin";
+
     // Constructor dùng để Room đọc dữ liệu từ SQLite
     public UserEntity(
             int userId,

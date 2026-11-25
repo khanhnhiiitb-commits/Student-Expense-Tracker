@@ -1,85 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginBottom="12dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="0dp"
-    app:strokeColor="#E0E0E0"
-    app:strokeWidth="1dp"
-    android:backgroundTint="@android:color/white">
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_card_rounded"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="12dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <!-- Khung bo góc: Java tô màu nền tvCategoryIcon, khung này cắt theo bo góc -->
+    <FrameLayout
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_icon_clip"
+        android:clipToOutline="true">
+
+        <TextView
+            android:id="@+id/tvCategoryIcon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="📦"
+            android:textSize="22sp" />
+    </FrameLayout>
+
+    <!-- Tên và phân loại danh mục -->
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <!-- Khung chứa Icon Emoji (Đảm bảo chỉ có 1 khung này) -->
-        <FrameLayout
-            android:id="@+id/flIconContainer"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/bg_rounded_gray"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <TextView
-                android:id="@+id/tvCategoryIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="20sp"
-                tools:text="🍜" />
-        </FrameLayout>
-
-        <!-- Tên danh mục -->
         <TextView
             android:id="@+id/tvCategoryName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="8dp"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/flIconContainer"
-            app:layout_constraintEnd_toStartOf="@+id/edtBudgetAmount"
-            app:layout_constraintStart_toEndOf="@+id/flIconContainer"
-            app:layout_constraintTop_toTopOf="@+id/flIconContainer"
-            tools:text="Ăn uống" />
-
-        <!-- Đơn vị tiền tệ ("đ") -->
-        <TextView
-            android:id="@+id/tvCurrency"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="đ"
-            android:textColor="#757575"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/flIconContainer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/flIconContainer" />
+            android:text="Ăn uống"
+            android:textColor="@color/text_main"
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
-        <!-- Ô nhập số tiền hạn mức -->
-        <EditText
-            android:id="@+id/edtBudgetAmount"
-            android:layout_width="120dp"
+        <TextView
+            android:id="@+id/tvCategorySubtitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/editbox_background_normal"
-            android:gravity="end|center_vertical"
-            android:hint="Nhập số tiền"
-            android:inputType="numberDecimal"
-            android:digits="0123456789,"
-            android:padding="8dp"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/flIconContainer"
-            app:layout_constraintEnd_toStartOf="@+id/tvCurrency"
-            app:layout_constraintTop_toTopOf="@+id/flIconContainer" />
+            android:layout_marginTop="2dp"
+            android:text="Mặc định · Cố định hệ thống"
+            android:textColor="@color/text_sub"
+            android:textSize="12sp" />
+    </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+    <!-- Ô nhập hạn mức -->
+    <EditText
+        android:id="@+id/edtBudgetAmount"
+        android:layout_width="120dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_input"
+        android:gravity="center_vertical|end"
+        android:hint="0"
+        android:inputType="number"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/text_main"
+        android:textColorHint="@color/text_hint"
+        android:textSize="14sp" />
+
+</LinearLayout>

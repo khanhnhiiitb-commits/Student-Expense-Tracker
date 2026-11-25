@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dán "Web client ID" lấy từ Google Cloud Console vào đây (loại OAuth client: Web application) -->
+    <string name="google_web_client_id" translatable="false">102280812482-9ad0ibje2gtl17fjgu13gabjpsrl36lp.apps.googleusercontent.com</string></resources>

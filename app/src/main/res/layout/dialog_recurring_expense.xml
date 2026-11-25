@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:theme="@style/ThemeOverlay.App.Fixed"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="12dp">
+
+    <EditText
+        android:id="@+id/edtRecAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Số tiền mỗi tháng (đ)"
+        android:inputType="number"
+        android:maxLength="12" />
+
+    <EditText
+        android:id="@+id/edtRecNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ghi chú (vd: Tiền nhà, Wifi...)"
+        android:inputType="text"
+        android:maxLength="100" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="Danh mục"
+        android:textColor="@color/text_sub"
+        android:textSize="12sp" />
+
+    <Spinner
+        android:id="@+id/spRecCategory"
+        android:layout_width="match_parent"
+        android:layout_height="48dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Ngày trong tháng"
+        android:textColor="@color/text_sub"
+        android:textSize="12sp" />
+
+    <Spinner
+        android:id="@+id/spRecDay"
+        android:layout_width="match_parent"
+        android:layout_height="48dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Tháng không có ngày này sẽ tính vào ngày cuối tháng."
+        android:textColor="@color/text_hint"
+        android:textSize="11sp" />
+</LinearLayout>

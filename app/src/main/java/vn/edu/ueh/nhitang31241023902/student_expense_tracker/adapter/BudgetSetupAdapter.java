@@ -57,12 +57,24 @@ public class BudgetSetupAdapter extends RecyclerView.Adapter<BudgetSetupAdapter.
             if (rawName != null && rawName.contains("#")) {
                 int colorIndex = rawName.indexOf("#");
                 String hexColor = rawName.substring(colorIndex, colorIndex + 7); // Lấy mã #XXXXXX
-                holder.cardView.setCardBackgroundColor(android.graphics.Color.parseColor(hexColor));
+                holder.cardView.setBackgroundTintList(
+                        android.content.res.ColorStateList.valueOf(
+                                android.graphics.Color.parseColor(hexColor)
+                        )
+                );
             } else {
-                holder.cardView.setCardBackgroundColor(android.graphics.Color.WHITE); // Mặc định nếu không có màu
+                holder.cardView.setBackgroundTintList(
+                        android.content.res.ColorStateList.valueOf(
+                                android.graphics.Color.WHITE
+                        )
+                );// Mặc định nếu không có màu
             }
         } catch (Exception e) {
-            holder.cardView.setCardBackgroundColor(android.graphics.Color.WHITE);
+            holder.cardView.setBackgroundTintList(
+                    android.content.res.ColorStateList.valueOf(
+                            android.graphics.Color.WHITE
+                    )
+            );
         }
         if (holder.textWatcher != null) {
             holder.edtBudgetAmount.removeTextChangedListener(holder.textWatcher);
@@ -89,7 +101,8 @@ public class BudgetSetupAdapter extends RecyclerView.Adapter<BudgetSetupAdapter.
                 if (!s.toString().equals(current)) {
                     holder.edtBudgetAmount.removeTextChangedListener(this);
 
-                    String cleanString = s.toString().replaceAll("[,.]", "");
+                    String cleanString = s.toString().replaceAll("[^0-9]", "");
+                    if (cleanString.length() > 12) cleanString = cleanString.substring(0, 12);
                     long parsed = 0;
 
                     try {
@@ -144,18 +157,19 @@ public class BudgetSetupAdapter extends RecyclerView.Adapter<BudgetSetupAdapter.
         return "📦";
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvCategoryName;
         EditText edtBudgetAmount;
-        TextWatcher textWatcher;
         TextView tvCategoryIcon;
-        com.google.android.material.card.MaterialCardView cardView;
+        View cardView;
+        TextWatcher textWatcher;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvCategoryName = itemView.findViewById(R.id.tvCategoryName);
             edtBudgetAmount = itemView.findViewById(R.id.edtBudgetAmount);
             tvCategoryIcon = itemView.findViewById(R.id.tvCategoryIcon);
-            cardView = (com.google.android.material.card.MaterialCardView) itemView;
+            cardView = itemView;
         }
     }
 }

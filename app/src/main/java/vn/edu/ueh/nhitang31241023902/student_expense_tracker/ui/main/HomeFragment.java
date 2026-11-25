@@ -55,6 +55,15 @@ public class HomeFragment extends Fragment {
         tvWelcome = view.findViewById(R.id.tvWelcome);
         tvTotalBalance = view.findViewById(R.id.tvTotalBalance);
         rcvRecentTransactions = view.findViewById(R.id.rcvRecentTransactions);
+        view.findViewById(R.id.btnShortcutHistory).setOnClickListener(v -> startActivity(new Intent(requireContext(),
+                vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.transaction.TransactionHistoryActivity.class)));
+        view.findViewById(R.id.btnShortcutCategory).setOnClickListener(v ->
+                startActivity(new Intent(requireContext(), CategoryActivity.class)));
+        view.findViewById(R.id.btnShortcutFixed).setOnClickListener(v ->
+                startActivity(new Intent(requireContext(), RecurringExpenseActivity.class)));
+        TextView tvRecentTitle = view.findViewById(R.id.tvRecentTitle);
+        tvRecentTitle.setOnClickListener(v -> startActivity(new Intent(requireContext(),
+                vn.edu.ueh.nhitang31241023902.student_expense_tracker.ui.transaction.TransactionHistoryActivity.class)));
     }
 
     private void setupRecyclerView() {
@@ -116,45 +125,47 @@ public class HomeFragment extends Fragment {
 
     private void loadDashboardData() {
         if (getContext() == null) return;
+        final Context appContext = requireContext().getApplicationContext();
 
         new Thread(() -> {
-            AppDatabase db = AppDatabase.getDatabase(requireContext().getApplicationContext());
-            SharedPreferences prefs = requireContext().getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
+            AppDatabase db = AppDatabase.getDatabase(appContext);
+            SharedPreferences prefs = appContext.getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
             String email = prefs.getString("USER_EMAIL", "");
 
-            long currentUserId = -1;
             UserEntity user = db.userDao().getUserByEmail(email);
             if (user != null) {
-                currentUserId = user.userId;
+                vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.RecurringExpenseProcessor
+                        .generateDue(db, user.userId);
             }
+            // Không có người dùng hợp lệ -> không hiển thị dữ liệu của người khác
+            List<TransactionEntity> list = user != null
+                    ? db.transactionDao().getTransactionsByUserId(user.userId)
+                    : new java.util.ArrayList<>();
 
-            List<TransactionEntity> list;
-            if (currentUserId != -1) {
-                list = db.transactionDao().getTransactionsByUserId(currentUserId);
-            } else {
-                list = db.transactionDao().getAllTransactions();
-            }
+            java.util.Map<Long, CategoryEntity> categoryMap = new java.util.HashMap<>();
+            for (CategoryEntity c : db.categoryDao().getAllCategories()) categoryMap.put(c.categoryId, c);
 
             BigDecimal total = BigDecimal.ZERO;
-            if (list != null) {
-                for (TransactionEntity tx : list) {
-                    if (tx.amount == null) continue;
-                    CategoryEntity cat = db.categoryDao().getCategoryById(tx.categoryID);
-                    if (cat != null && "Income".equalsIgnoreCase(cat.type)) {
-                        total = total.add(tx.amount);
-                    } else {
-                        total = total.subtract(tx.amount);
-                    }
+            for (TransactionEntity tx : list) {
+                if (tx.amount == null) continue;
+                CategoryEntity cat = categoryMap.get(tx.categoryID);
+                if (cat != null && "Income".equalsIgnoreCase(cat.type)) {
+                    total = total.add(tx.amount);
+                } else {
+                    total = total.subtract(tx.amount);
                 }
             }
 
             final BigDecimal finalTotal = total;
+            // Trang chủ chỉ hiện 10 giao dịch gần nhất; xem đầy đủ ở Lịch sử giao dịch
+            final List<TransactionEntity> recent = list.size() > 10 ? new java.util.ArrayList<>(list.subList(0, 10)) : list;
 
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
+                    if (!isAdded()) return;
                     DecimalFormat df = new DecimalFormat("#,###");
-                    tvTotalBalance.setText(df.format(finalTotal) + " VNĐ");
-                    transactionAdapter.setData(list);
+                    tvTotalBalance.setText((finalTotal.signum() < 0 ? "-" : "") + df.format(finalTotal.abs()) + " VNĐ");
+                    transactionAdapter.setData(recent, categoryMap);
                 });
             }
         }).start();

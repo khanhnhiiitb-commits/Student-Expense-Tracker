@@ -2,9 +2,39 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="bgColor">#F7F9FC</color>
-    <color name="primaryBlue">#1E88E5</color>
-    <color name="textColorDark">#1A1A1A</color>
-    <color name="textColorGray">#757575</color>
-    <color name="borderColor">#E0E0E0</color>
+
+    <!-- Bảng màu chính -->
+    <color name="primary">#2563EB</color>
+    <color name="primary_dark">#1D4ED8</color>
+    <color name="primaryBlue">#2563EB</color>
+    <color name="screen_bg">#F0F5FF</color>
+    <color name="bgColor">#F0F5FF</color>
+    <color name="info_bg">#E3EEFF</color>
+
+    <!-- Chữ -->
+    <color name="text_main">#0F172A</color>
+    <color name="text_sub">#64748B</color>
+    <color name="text_hint">#94A3B8</color>
+    <color name="textColorDark">#0F172A</color>
+    <color name="textColorGray">#64748B</color>
+
+    <!-- Viền -->
+    <color name="border">#E8ECF4</color>
+    <color name="borderColor">#D9DFEA</color>
+
+    <!-- Thu / chi -->
+    <color name="income_green">#10B981</color>
+    <color name="expense_red">#F43F5E</color>
+
+    <!-- Màu nhấn (xen kẽ cùng xanh chủ đạo) -->
+    <color name="accent_cyan">#06B6D4</color>
+    <color name="accent_indigo">#4F46E5</color>
+    <color name="accent_amber">#F59E0B</color>
+    <color name="accent_violet">#8B5CF6</color>
+    <color name="accent_cyan_soft">#E0F7FB</color>
+    <color name="accent_amber_soft">#FFF4DC</color>
+    <color name="accent_violet_soft">#EFEAFE</color>
+
+    <!-- Thanh điều hướng -->
+    <color name="nav_inactive">#94A3B8</color>
 </resources>

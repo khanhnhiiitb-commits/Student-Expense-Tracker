@@ -9,7 +9,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.DefaultCategorySeeder;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.NotificationHelper;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,10 +19,8 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.R;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.adapter.CategorySelectAdapter;
@@ -29,7 +28,10 @@ import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.AppDatab
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.CategoryEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.TransactionEntity;
 import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.UserEntity;
+import java.util.ArrayList;
 
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.data.local.entity.BudgetEntity;
+import vn.edu.ueh.nhitang31241023902.student_expense_tracker.utils.BudgetWarningUtils;
 public class AddTransactionActivity extends AppCompatActivity {
 
     private TextView btnClose;
@@ -40,7 +42,7 @@ public class AddTransactionActivity extends AppCompatActivity {
     private TextView tvTransactionDate;
     private EditText edtTransactionNote;
     private AppCompatButton btnSaveTransaction;
-
+    private int categoryLoadVersion = 0;
     private CategorySelectAdapter categorySelectAdapter;
     private String currentType = "Expense"; // Mặc định là Expense
     private final StringBuilder rawAmountBuilder = new StringBuilder();
@@ -60,56 +62,226 @@ public class AddTransactionActivity extends AppCompatActivity {
         setupDatePicker();
         setupCategoryList();
 
-        // Mặc định tải danh mục cho tab hiện tại
-        loadCategories(currentType);
 
         // --- BẮT ĐẦU ĐOẠN CODE THÊM MỚI ---
-        editTransactionId = getIntent().getLongExtra("EDIT_TRANSACTION_ID", -1);
+        editTransactionId = getIntent()
+                .getLongExtra("EDIT_TRANSACTION_ID", -1);
+
         if (editTransactionId != -1) {
             btnSaveTransaction.setText("Cập nhật giao dịch");
+            btnSaveTransaction.setEnabled(false);
             loadTransactionForEdit();
+        } else {
+            loadCategories(currentType);
         }
         // --- KẾT THÚC ĐOẠN CODE THÊM MỚI ---
 
         btnSaveTransaction.setOnClickListener(v -> saveTransaction());
     }
 
+
     private void loadTransactionForEdit() {
         new Thread(() -> {
-            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-            // Lấy giao dịch cũ từ Room
-            existingTransaction = db.transactionDao().getTransactionById(editTransactionId);
+            try {
+                AppDatabase db = AppDatabase.getDatabase(
+                        getApplicationContext()
+                );
 
-            if (existingTransaction != null) {
-                // Lấy thêm thông tin danh mục để biết là Thu nhập hay Chi tiêu
-                CategoryEntity cat = db.categoryDao().getCategoryById(existingTransaction.categoryID);
+                SharedPreferences prefs = getSharedPreferences(
+                        "ExpenseAppPrefs",
+                        Context.MODE_PRIVATE
+                );
+
+                String email = prefs.getString("USER_EMAIL", "");
+
+                if (email == null || email.trim().isEmpty()) {
+                    showEditLoadError("Không thể chỉnh sửa giao dịch");
+                    return;
+                }
+
+                UserEntity user = db.userDao().getUserByEmail(email);
+
+                if (user == null || user.userId <= 0) {
+                    showEditLoadError("Không tìm thấy tài khoản");
+                    return;
+                }
+
+                TransactionEntity transaction =
+                        db.transactionDao()
+                                .getTransactionById(editTransactionId);
+
+                if (transaction == null
+                        || transaction.userID != user.userId) {
+                    showEditLoadError(
+                            "Giao dịch không tồn tại hoặc không thuộc tài khoản này"
+                    );
+                    return;
+                }
+
+                CategoryEntity category =
+                        db.categoryDao()
+                                .getCategoryById(transaction.categoryID);
+
+                if (category == null
+                        || category.type == null
+                        || (!"Expense".equals(category.type)
+                        && !"Income".equals(category.type))) {
+                    showEditLoadError(
+                            "Không tìm thấy danh mục hợp lệ của giao dịch"
+                    );
+                    return;
+                }
+
+                if (category.userId != null
+                        && category.userId != -1
+                        && category.userId != user.userId) {
+                    showEditLoadError(
+                            "Bạn không có quyền sử dụng danh mục này"
+                    );
+                    return;
+                }
+
+                if (transaction.amount == null
+                        || transaction.amount.signum() <= 0
+                        || transaction.amount.scale() > 0
+                        || transaction.amount.toPlainString()
+                        .replace(".", "").length() > 12) {
+                    showEditLoadError(
+                            "Số tiền giao dịch không phù hợp với biểu mẫu hiện tại"
+                    );
+                    return;
+                }
 
                 runOnUiThread(() -> {
-                    // 1. Điền lại số tiền cũ
-                    if (existingTransaction.amount != null) {
-                        rawAmountBuilder.setLength(0);
-                        rawAmountBuilder.append(existingTransaction.amount.toBigInteger().toString());
-                        updateAmountDisplay();
+                    if (isFinishing() || isDestroyed()) return;
+
+                    existingTransaction = transaction;
+
+                    rawAmountBuilder.setLength(0);
+                    rawAmountBuilder.append(
+                            transaction.amount.toBigIntegerExact()
+                                    .toString()
+                    );
+                    updateAmountDisplay();
+
+                    edtTransactionNote.setText(
+                            transaction.note != null
+                                    ? transaction.note : ""
+                    );
+
+                    selectedDateMillis = transaction.transactionDate;
+
+                    SimpleDateFormat sdf = new SimpleDateFormat(
+                            "dd/MM/yyyy",
+                            Locale.getDefault()
+                    );
+
+                    tvTransactionDate.setText(
+                            sdf.format(
+                                    new java.util.Date(selectedDateMillis)
+                            )
+                    );
+
+                    // Khôi phục đúng danh mục theo ID.
+
+                    if (!currentType.equals(category.type)) {
+                        switchTab(category.type);
+
+                        categorySelectAdapter.setSelectedCategoryId(
+                                category.categoryId
+                        );
+                    } else {
+                        categorySelectAdapter.setSelectedCategoryId(
+                                category.categoryId
+                        );
+
+                        loadCategories(category.type);
                     }
 
-                    // 2. Điền lại ghi chú cũ
-                    if (existingTransaction.note != null) {
-                        edtTransactionNote.setText(existingTransaction.note);
-                    }
-
-                    // 3. Đặt lại ngày giao dịch cũ
-                    selectedDateMillis = existingTransaction.transactionDate;
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                    tvTransactionDate.setText(sdf.format(new java.util.Date(selectedDateMillis)));
-
-                    // 4. Chuyển đúng Tab (Thu/Chi) và gắn lại Danh mục
-                    if (cat != null) {
-                        switchTab(cat.type);
-                        selectedCategoryId = cat.categoryId;
-                    }
+                    // Chưa bật Lưu ở đây.
+                    // Chỉ bật sau khi danh sách danh mục tải xong.
                 });
+
+            } catch (Exception e) {
+                android.util.Log.e(
+                        "TransactionEdit",
+                        "Lỗi tải giao dịch",
+                        e
+                );
+
+                showEditLoadError(
+                        "Không thể tải giao dịch để chỉnh sửa"
+                );
             }
         }).start();
+    }
+
+    private void showEditLoadError(String message) {
+        runOnUiThread(() -> {
+            if (isFinishing() || isDestroyed()) return;
+
+            btnSaveTransaction.setEnabled(false);
+
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Không thể chỉnh sửa giao dịch")
+                    .setMessage(message)
+                    .setPositiveButton(
+                            "Đóng",
+                            (dialog, which) -> finish()
+                    )
+                    .setOnCancelListener(dialog -> finish())
+                    .show();
+        });
+    }
+
+
+    // Gọi trên background thread, TRƯỚC khi ghi giao dịch vào Room.
+    // Chỉ cảnh báo khi danh mục mới tăng qua một mức cảnh báo.
+    private String evaluateBudgetAlert(AppDatabase db, long userId,
+                                       long categoryId, long transactionDate, long newAmount,
+                                       TransactionEntity oldTransaction) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(transactionDate);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int year = cal.get(Calendar.YEAR);
+        BudgetEntity budget = db.budgetDao().getBudgetForCategoryAndMonth(userId, categoryId, month, year);
+        if (budget == null || budget.amount <= 0) return null;
+
+        long spentBefore = 0;
+        List<TransactionEntity> transactions = db.transactionDao().getTransactionsByUserId(userId);
+        for (TransactionEntity tx : transactions) {
+            if (tx.categoryID != categoryId || tx.amount == null) continue;
+            cal.setTimeInMillis(tx.transactionDate);
+            if (cal.get(Calendar.MONTH) + 1 == month && cal.get(Calendar.YEAR) == year) {
+                spentBefore = Math.addExact(spentBefore, tx.amount.longValueExact());
+            }
+        }
+
+        long spentAfter = spentBefore;
+        // Nếu đang sửa một giao dịch thuộc cùng danh mục/tháng, bỏ khoản cũ trước khi cộng khoản mới.
+        if (oldTransaction != null && oldTransaction.categoryID == categoryId && oldTransaction.amount != null) {
+            cal.setTimeInMillis(oldTransaction.transactionDate);
+            if (cal.get(Calendar.MONTH) + 1 == month && cal.get(Calendar.YEAR) == year) {
+                spentAfter = Math.subtractExact(spentAfter, oldTransaction.amount.longValueExact());
+            }
+        }
+        spentAfter = Math.addExact(spentAfter, newAmount);
+
+        BudgetWarningUtils.WarningLevel before = BudgetWarningUtils.checkBudget(budget.amount, spentBefore);
+        BudgetWarningUtils.WarningLevel after = BudgetWarningUtils.checkBudget(budget.amount, spentAfter);
+        if (!BudgetWarningUtils.shouldAlert(before, after)) return null;
+        DecimalFormat fmt = new DecimalFormat("#,###");
+        return BudgetWarningUtils.getMessage(after) + "\nĐã chi: "
+                + fmt.format(spentAfter) + " / " + fmt.format(budget.amount) + " đ";
+    }
+
+    private void showAlertIfNeeded(String warning) {
+        if (warning == null || isFinishing() || isDestroyed()) return;
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Cảnh báo ngân sách")
+                .setMessage(warning)
+                .setPositiveButton("Đã hiểu", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     private void initViews() {
@@ -166,17 +338,29 @@ public class AddTransactionActivity extends AppCompatActivity {
         });
     }
 
+
     private void updateAmountDisplay() {
         if (rawAmountBuilder.length() == 0) {
             tvAmount.setText("0 đ");
             return;
         }
+
         try {
-            double value = Double.parseDouble(rawAmountBuilder.toString());
-            DecimalFormat formatter = new DecimalFormat("#,###");
-            tvAmount.setText(formatter.format(value) + " đ");
-        } catch (NumberFormatException ignored) {}
+            BigDecimal value =
+                    new BigDecimal(rawAmountBuilder.toString());
+
+            DecimalFormat formatter =
+                    new DecimalFormat("#,###");
+
+            tvAmount.setText(
+                    formatter.format(value) + " đ"
+            );
+
+        } catch (NumberFormatException e) {
+            tvAmount.setText("0 đ");
+        }
     }
+
 
     // 2. Chuyển Tab Chi tiêu / Thu nhập
     private void setupTabs() {
@@ -184,31 +368,44 @@ public class AddTransactionActivity extends AppCompatActivity {
         tabIncome.setOnClickListener(v -> switchTab("Income"));
     }
 
+
     private void switchTab(String selectedType) {
-        if (currentType.equals(selectedType)) return;
+        if (currentType.equals(selectedType)) {
+            return;
+        }
+
         currentType = selectedType;
 
-        if (selectedType.equals("Expense")) {
-            tabExpense.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        categorySelectAdapter.clearSelection();
+        selectedCategoryId = -1;
+
+        if ("Expense".equals(selectedType)) {
+            tabExpense.setBackgroundColor(Color.WHITE);
             tabExpense.setTextColor(Color.parseColor("#2563EB"));
+
             tabIncome.setBackgroundColor(Color.TRANSPARENT);
             tabIncome.setTextColor(Color.parseColor("#64748B"));
+
             tvAmount.setTextColor(Color.parseColor("#2563EB"));
         } else {
-            tabIncome.setBackgroundColor(Color.parseColor("#FFFFFF"));
-            tabIncome.setTextColor(Color.parseColor("#16A34A")); // Xanh lá cho Thu nhập
+            tabIncome.setBackgroundColor(Color.WHITE);
+            tabIncome.setTextColor(Color.parseColor("#10B981"));
+
             tabExpense.setBackgroundColor(Color.TRANSPARENT);
             tabExpense.setTextColor(Color.parseColor("#64748B"));
-            tvAmount.setTextColor(Color.parseColor("#16A34A"));
+
+            tvAmount.setTextColor(Color.parseColor("#10B981"));
         }
 
         loadCategories(currentType);
     }
 
+
     // 3. Chọn ngày giao dịch
     private void setupDatePicker() {
-        Calendar calendar = Calendar.getInstance();
         btnSelectDate.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(selectedDateMillis);
             DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth);
                 selectedDateMillis = calendar.getTimeInMillis();
@@ -222,48 +419,133 @@ public class AddTransactionActivity extends AppCompatActivity {
 
     // 4. Khởi tạo danh sách danh mục
     private void setupCategoryList() {
-        categorySelectAdapter = new CategorySelectAdapter(this, category -> {
-            if (category != null) {
-                selectedCategoryId = category.categoryId;
-            }
-        });
+        categorySelectAdapter = new CategorySelectAdapter(
+                this,
+                category -> {
+                    selectedCategoryId =
+                            category != null ? category.categoryId : -1;
+                }
+        );
+
         rcvTransactionCategories.setAdapter(categorySelectAdapter);
     }
 
+
     private void loadCategories(String type) {
+        final int requestVersion = ++categoryLoadVersion;
+
+        if (editTransactionId != -1) {
+            btnSaveTransaction.setEnabled(false);
+        }
+
         new Thread(() -> {
-            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+            try {
+                AppDatabase db = AppDatabase.getDatabase(
+                        getApplicationContext()
+                );
 
-            SharedPreferences prefs = getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
-            String userEmail = prefs.getString("USER_EMAIL", "");
-            int currentUserId = -1;
-            if (!userEmail.isEmpty()) {
-                UserEntity user = db.userDao().getUserByEmail(userEmail);
-                if (user != null) {
-                    currentUserId = user.userId;
+                SharedPreferences prefs = getSharedPreferences(
+                        "ExpenseAppPrefs",
+                        Context.MODE_PRIVATE
+                );
+
+                String email = prefs.getString("USER_EMAIL", "");
+                if (email == null || email.trim().isEmpty()) {
+                    showCategoryLoadError("Vui lòng đăng nhập lại");
+                    return;
                 }
-            }
 
-            List<CategoryEntity> list = db.categoryDao().getCategoriesByType(type, currentUserId);
+                UserEntity user =
+                        db.userDao().getUserByEmail(email);
 
-            runOnUiThread(() -> {
-                // Khử trùng theo tên danh mục
-                Map<String, CategoryEntity> uniqueMap = new LinkedHashMap<>();
-                if (list != null) {
-                    for (CategoryEntity cat : list) {
-                        if (cat.categoryName != null && !uniqueMap.containsKey(cat.categoryName.trim())) {
-                            uniqueMap.put(cat.categoryName.trim(), cat);
-                        }
+                if (user == null) {
+                    showCategoryLoadError("Không tìm thấy tài khoản");
+                    return;
+                }
+
+                // Also handles existing sessions that bypass LoginActivity.
+                DefaultCategorySeeder.ensureDefaults(db);
+
+                List<CategoryEntity> categories =
+                        db.categoryDao().getCategoriesByType(
+                                type,
+                                user.userId
+                        );
+
+                runOnUiThread(() -> {
+                    if (requestVersion != categoryLoadVersion
+                            || !type.equals(currentType)
+                            || isFinishing()
+                            || isDestroyed()) {
+                        return;
                     }
-                }
-                categorySelectAdapter.setData(new java.util.ArrayList<>(uniqueMap.values()));
 
-                CategoryEntity selected = categorySelectAdapter.getSelectedCategory();
-                if (selected != null) {
-                    selectedCategoryId = selected.categoryId;
-                }
-            });
+                    // Không khử trùng theo tên: các danh mục có ID khác nhau đều hợp lệ.
+                    categorySelectAdapter.setData(
+                            categories != null ? categories : new ArrayList<>()
+                    );
+
+                    CategoryEntity selected =
+                            categorySelectAdapter.getSelectedCategory();
+
+                    selectedCategoryId = selected != null
+                            ? selected.categoryId : -1;
+
+
+                    if (editTransactionId != -1) {
+                        boolean validSelection =
+                                existingTransaction != null
+                                        && selected != null
+                                        && selected.categoryId == selectedCategoryId
+                                        && type.equals(selected.type);
+
+                        btnSaveTransaction.setEnabled(validSelection);
+                    }
+
+                });
+
+            } catch (Exception e) {
+                android.util.Log.e(
+                        "CategoryLoad",
+                        "Không thể tải danh mục",
+                        e
+                );
+
+                runOnUiThread(() -> {
+                    if (requestVersion != categoryLoadVersion
+                            || isFinishing()
+                            || isDestroyed()) {
+                        return;
+                    }
+
+                    btnSaveTransaction.setEnabled(false);
+                    Toast.makeText(
+                            this,
+                            "Không thể tải danh mục. Vui lòng thử lại",
+                            Toast.LENGTH_LONG
+                    ).show();
+                });
+            }
         }).start();
+    }
+
+
+    private void showCategoryLoadError(String message) {
+        runOnUiThread(() -> {
+            if (isFinishing() || isDestroyed()) return;
+
+            btnSaveTransaction.setEnabled(false);
+
+            if (editTransactionId != -1) {
+                showEditLoadError(message);
+            } else {
+                Toast.makeText(
+                        this,
+                        message,
+                        Toast.LENGTH_LONG
+                ).show();
+            }
+        });
     }
 
     // 5. Lưu giao dịch Thu nhập / Chi tiêu và tiếp tục ghi
@@ -329,9 +611,8 @@ public class AddTransactionActivity extends AppCompatActivity {
         btnSaveTransaction.setEnabled(false);
 
         new Thread(() -> {
-            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-
             try {
+                AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
                 // 7. Kiểm tra người dùng
                 SharedPreferences prefs = getSharedPreferences("ExpenseAppPrefs", Context.MODE_PRIVATE);
                 String userEmail = prefs.getString("USER_EMAIL", "");
@@ -381,40 +662,85 @@ public class AddTransactionActivity extends AppCompatActivity {
                     return;
                 }
 
-                // 11. Chỉ lưu khi tất cả kiểm tra đều hợp lệ
-                if (editTransactionId != -1 && existingTransaction != null) {
-                    // CHẾ ĐỘ CẬP NHẬT GIAO DỊCH
-                    existingTransaction.amount = amountDecimal;
-                    existingTransaction.categoryID = categoryIdToSave;
-                    existingTransaction.note = note;
-                    existingTransaction.transactionDate = dateToSave;
+                // 11. Lấy bản ghi cũ từ DB để tránh sửa nhầm người dùng hoặc dữ liệu lỗi thời.
+                TransactionEntity oldTx = null;
+                if (editTransactionId != -1) {
+                    oldTx = db.transactionDao().getTransactionById(editTransactionId);
+                    if (oldTx == null || oldTx.userID != user.userId) {
+                        runOnUiThread(() -> {
+                            btnSaveTransaction.setEnabled(true);
+                            Toast.makeText(this, "Giao dịch không tồn tại hoặc không thuộc tài khoản này", Toast.LENGTH_SHORT).show();
+                        });
+                        return;
+                    }
+                }
 
-                    db.transactionDao().updateTransaction(existingTransaction);
+                // Tính trạng thái trước/sau trên dữ liệu hiện tại, trước khi ghi.
+                String warning = null;
 
-                    runOnUiThread(() -> {
-                        Toast.makeText(AddTransactionActivity.this, "Đã cập nhật giao dịch thành công!", Toast.LENGTH_SHORT).show();
-                        finish(); // Sửa xong thì đóng màn hình về lại trang chủ
-                    });
-                } else {
-                    // CHẾ ĐỘ THÊM MỚI GIAO DỊCH
-                    TransactionEntity transaction = new TransactionEntity(
+                if ("Expense".equalsIgnoreCase(typeToSave)) {
+                    warning = getBudgetWarningSafely(
+                            db,
                             user.userId,
                             categoryIdToSave,
-                            amountDecimal,
-                            note,
                             dateToSave,
-                            System.currentTimeMillis()
+                            amountDecimal,
+                            oldTx
                     );
+                }
 
-                    db.transactionDao().insertTransaction(transaction);
+                final String finalWarning = warning;
+
+                if (oldTx != null) {
+                    oldTx.amount = amountDecimal;
+                    oldTx.categoryID = categoryIdToSave;
+                    oldTx.note = note;
+                    oldTx.transactionDate = dateToSave;
+                    int updated = db.transactionDao().updateTransaction(oldTx);
+                    if (updated != 1) throw new IllegalStateException("Không cập nhật được giao dịch");
+
+                    if (finalWarning != null) {
+                        NotificationHelper.showBudgetNotification(
+                                getApplicationContext(),
+                                finalWarning
+                        );
+                    }
 
                     runOnUiThread(() -> {
-                        String message = typeToSave.equals("Income")
-                                ? "Đã lưu thu nhập thành công!"
-                                : "Đã lưu chi tiêu thành công!";
-                        Toast.makeText(AddTransactionActivity.this, message, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Đã cập nhật giao dịch thành công!", Toast.LENGTH_SHORT).show();
+                        if (finalWarning != null) {
+                            // Không đóng Activity cho tới khi người dùng đọc cảnh báo.
+                            new androidx.appcompat.app.AlertDialog.Builder(this)
+                                    .setTitle("Cảnh báo ngân sách")
+                                    .setMessage(finalWarning)
+                                    .setPositiveButton("Đã hiểu", (dialog, which) -> finish())
+                                    .setOnCancelListener(dialog -> finish())
+                                    .show();
+                        } else {
+                            finish();
+                        }
+                    });
+                } else {
+                    TransactionEntity transaction = new TransactionEntity(
+                            user.userId, categoryIdToSave, amountDecimal, note,
+                            dateToSave, System.currentTimeMillis());
+                    db.transactionDao().insertTransaction(transaction);
+                    runOnUiThread(() -> {
+                        String message = "Income".equalsIgnoreCase(typeToSave)
+                                ? "Đã lưu thu nhập thành công!" : "Đã lưu chi tiêu thành công!";
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                         resetInputFields();
                         btnSaveTransaction.setEnabled(true);
+
+                        if (finalWarning != null) {
+                            NotificationHelper.showBudgetNotification(
+                                    getApplicationContext(),
+                                    finalWarning
+                            );
+                        }
+
+                        showAlertIfNeeded(finalWarning);
+
                     });
                 }
 
@@ -432,6 +758,33 @@ public class AddTransactionActivity extends AppCompatActivity {
         }).start();
     }
 
+
+    private String getBudgetWarningSafely(
+            AppDatabase db,
+            long userId,
+            long categoryId,
+            long date,
+            BigDecimal amount,
+            TransactionEntity oldTx
+    ) {
+        try {
+            return evaluateBudgetAlert(
+                    db,
+                    userId,
+                    categoryId,
+                    date,
+                    amount.longValueExact(),
+                    oldTx
+            );
+        } catch (Exception e) {
+            android.util.Log.e(
+                    "BudgetWarning",
+                    "Không thể tính cảnh báo ngân sách",
+                    e
+            );
+            return null;
+        }
+    }
 
     // 6. Đưa các ô nhập liệu về trạng thái ban đầu
     private void resetInputFields() {

@@ -89,5 +89,21 @@
             app:layout_constraintStart_toStartOf="@+id/flIconContainer"
             app:layout_constraintTop_toBottomOf="@+id/tvCategoryAmountInfo" />
 
+        <!-- Cảnh báo ngân sách theo danh mục -->
+        <TextView
+            android:id="@+id/tvCategoryWarning"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:gravity="center_vertical"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/pbCategoryProgress"
+            app:layout_constraintEnd_toEndOf="@id/pbCategoryProgress"
+            app:layout_constraintTop_toBottomOf="@id/pbCategoryProgress"
+            tools:text="⚠ Bạn sắp vượt ngân sách!"
+            tools:visibility="visible" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
